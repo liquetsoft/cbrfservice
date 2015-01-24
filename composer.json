@@ -1,0 +1,20 @@
+{
+	"name": "marvin255/cbrfservice",
+	"description": "Component for bank of Russia daily web service",
+	"version": "0.0.1",
+	"type": "library",
+	"keywords": ["php", "banks", "soap", "service"],
+	"license": "MIT",
+	"require": {
+		"php": ">=5.3.2"
+	},
+	"autoload": {
+		"psr-4": { "cbrfservice\\": "lib/" }
+	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/marvin255/cbrfservice"
+		}
+	]
+}
