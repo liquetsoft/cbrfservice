@@ -13,20 +13,8 @@ Php обертка для [сервиса цб РФ](http://www.cbr.ru/scripts/R
 
 ```javascript
 "require": {
-    "php": ">=5.3.3",
-    "marvin255/cbrfservice": "dev-master"
+    "marvin255/cbrfservice": "*"
 }
-```
-
-И в раздел `repositories`:
-
-```javascript
-"repositories": [
-    {
-        "type": "git",
-        "url": "https://github.com/marvin255/cbrfservice"
-    }
-]
 ```
 
 **Обычная**
@@ -53,8 +41,6 @@ $enumCurrencies = $cbrf->EnumValutes();
 
 Настройка
 ---------
-
-Внимание! Все настройки soap должны быть заданы до первого запроса к сервису.
 
 При инициализации:
 

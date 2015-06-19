@@ -1,7 +1,7 @@
 {
 	"name": "marvin255/cbrfservice",
 	"description": "Component for bank of Russia daily web service",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"type": "library",
 	"keywords": ["php", "banks", "soap", "service"],
 	"license": "MIT",
