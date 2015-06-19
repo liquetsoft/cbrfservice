@@ -71,11 +71,11 @@ $cbrf->config(array(
 Методы
 ------
 
-* `array \cbrfservice\BaseService::getErrors( void )` - возвращает массив ошибок, полученных во время запросов к сервису.
+* `array \cbrfservice\CbrfDaily::getErrors( void )` - возвращает массив ошибок, полученных во время запросов к сервису.
 
-* `bool \cbrfservice\BaseService::hasErrors( void )` - возвращает истину, если во время выполнения запроса были ошибки.
+* `bool \cbrfservice\CbrfDaily::hasErrors( void )` - возвращает истину, если во время выполнения запроса были ошибки.
 
-* `void \cbrfservice\BaseService::clearErrors( void )` - очищает список ошибок.
+* `void \cbrfservice\CbrfDaily::clearErrors( void )` - очищает список ошибок.
 
 * `array \cbrfservice\CbrfDaily::GetCursOnDate( [mixed $onDate, mixed $currency] )` - возвращает массив с курсами валют за заданную дату. Если `$onDate` не задан, то возвращается список валют за текущее время. Если задан `$currency`, то возвращается значение только для этой валюты.
 
