@@ -143,29 +143,16 @@ class CbrfDailyTest extends BaseTestCase
 
     protected function getCoursesFixture()
     {
-        $courses = [
-            [
-                'VchCode' => 'VchCode_0',
-                'Vname' => 'Vname_0',
-                'Vcode' => 'Vcode_0',
+        $courses = [];
+        for ($i = 0; $i <= 3; $i++) {
+            $courses[] = [
+                'VchCode' => "VchCode_{$i}",
+                'Vname' => "Vname_{$i}",
+                'Vcode' => "Vcode_{$i}",
                 'Vcurs' => floatval(mt_rand()),
                 'Vnom' => floatval(mt_rand()),
-            ],
-            [
-                'VchCode' => 'VchCode_1',
-                'Vname' => 'Vname_1',
-                'Vcode' => 'Vcode_1',
-                'Vcurs' => floatval(mt_rand()),
-                'Vnom' => floatval(mt_rand()),
-            ],
-            [
-                'VchCode' => 'VchCode_2',
-                'Vname' => 'Vname_2',
-                'Vcode' => 'Vcode_2',
-                'Vcurs' => floatval(mt_rand()),
-                'Vnom' => floatval(mt_rand()),
-            ],
-        ];
+            ];
+        }
 
         $soapResponse = new \stdClass;
         $soapResponse->GetCursOnDateResult = new \stdClass;
@@ -187,35 +174,18 @@ class CbrfDailyTest extends BaseTestCase
 
     protected function getEnumValutesFixture()
     {
-        $courses = [
-            [
-                'Vcode' => 'Vcode_0',
-                'Vname' => 'Vname_0',
-                'VEngname' => 'VEngname_0',
-                'Vnom' => 'Vnom_0',
-                'VcommonCode' => 'VcommonCode_0',
-                'VnumCode' => 'VnumCode_0',
-                'VcharCode' => 'VcharCode_0',
-            ],
-            [
-                'Vcode' => 'Vcode_1',
-                'Vname' => 'Vname_1',
-                'VEngname' => 'VEngname_1',
-                'Vnom' => 'Vnom_1',
-                'VcommonCode' => 'VcommonCode_1',
-                'VnumCode' => 'VnumCode_1',
-                'VcharCode' => 'VcharCode_1',
-            ],
-            [
-                'Vcode' => 'Vcode_2',
-                'Vname' => 'Vname_2',
-                'VEngname' => 'VEngname_2',
-                'Vnom' => 'Vnom_2',
-                'VcommonCode' => 'VcommonCode_2',
-                'VnumCode' => 'VnumCode_2',
-                'VcharCode' => 'VcharCode_2',
-            ],
-        ];
+        $courses = [];
+        for ($i = 0; $i <= 3; $i++) {
+            $courses[] = [
+                'Vcode' => "Vcode_{$i}",
+                'Vname' => "Vname_{$i}",
+                'VEngname' => "VEngname_{$i}",
+                'Vnom' => "Vnom_{$i}",
+                'VcommonCode' => "VcommonCode_{$i}",
+                'VnumCode' => "VnumCode_{$i}",
+                'VcharCode' => "VcharCode_{$i}",
+            ];
+        }
 
         $soapResponse = new \stdClass;
         $soapResponse->EnumValutesResult = new \stdClass;
