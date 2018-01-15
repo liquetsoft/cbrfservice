@@ -1,6 +1,6 @@
 <?php
 
-namespace cbrfservice;
+namespace marvin255\cbrfservice;
 
 /**
  * Class for a basic service utilits.

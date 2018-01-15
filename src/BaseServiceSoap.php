@@ -1,6 +1,6 @@
 <?php
 
-namespace cbrfservice;
+namespace marvin255\cbrfservice;
 
 use SoapFault;
 use Exception;
