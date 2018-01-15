@@ -48,4 +48,4 @@ class Autoloader
     }
 }
 
-\cbrfservice\Autoloader::register();
+\marvin255\cbrfservice\Autoloader::register();

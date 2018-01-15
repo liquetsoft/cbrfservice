@@ -26,7 +26,9 @@ class SoapService
     {
         if (is_string($client)) {
             try {
-                $this->client = new SoapClient($client);
+                $this->client = new SoapClient($client, [
+                    'exceptions' => true,
+                ]);
             } catch (\Exception $e) {
                 throw new InvalidArgumentException(
                     "Can't create SoapClient by wsdl ({$client}): " . $e->getMessage()
