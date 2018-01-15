@@ -74,6 +74,22 @@ class CbrfDailyTest extends BaseTestCase
         );
     }
 
+    public function testGetCursOnDateException()
+    {
+        $exceptionMessage = 'exception_message_' . mt_rand();
+        $soapClient = $this->getMockBuilder('\SoapClient')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetCursOnDate'))
+            ->will($this->throwException(new \Exception($exceptionMessage)));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->setExpectedException('\marvin255\cbrfservice\Exception', $service);
+        $service->GetCursOnDate();
+    }
+
     protected function getCoursesFixture()
     {
         $courses = [
