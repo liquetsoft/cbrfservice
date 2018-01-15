@@ -577,9 +577,7 @@ class CbrfDaily extends SoapService
     }
 
     /**
-     * @param mixed $result
-     *
-     * @return mixed
+     * @inheritdoc
      */
     protected function parseSoapResult($result, $method, $params)
     {
