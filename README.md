@@ -1,6 +1,11 @@
 Php класс, получает курсы валют
 ===============================
 
+[![Latest Stable Version](https://poser.pugx.org/marvin255/cbrfservice/v/stable.png)](https://packagist.org/packages/marvin255/cbrfservice)
+[![Total Downloads](https://poser.pugx.org/marvin255/cbrfservice/downloads.png)](https://packagist.org/packages/marvin255/cbrfservice)
+[![License](https://poser.pugx.org/marvin255/cbrfservice/license.svg)](https://packagist.org/packages/marvin255/cbrfservice)
+[![Build Status](https://travis-ci.org/marvin255/cbrfservice.svg?branch=master)](https://travis-ci.org/marvin255/cbrfservice)
+
 Php обертка для [сервиса Центробанка РФ](http://www.cbr.ru/scripts/Root.asp?PrtId=DWS).
 
 
@@ -22,7 +27,7 @@ Php обертка для [сервиса Центробанка РФ](http://ww
 Скачайте библиотеку и распакуйте ее в свой проект. Убедитесь, что файл `Autoloader.php` подключен в вашем скрипте.
 
 ```php
-require_once 'lib/Autoloader.php';
+require_once 'src/Autoloader.php';
 ```
 
 
@@ -31,7 +36,26 @@ require_once 'lib/Autoloader.php';
 
 ```php
 //инициируем новый объект сервиса
-$cbrf = new \cbrfservice\CbrfDaily;
+$cbrf = new \marvin255\cbrfservice\CbrfDaily;
+//получаем курсы валют
+$currencies = $cbrf->GetCursOnDate();
+//получаем список доступных валют
+$enumCurrencies = $cbrf->EnumValutes();
+```
+
+В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:
+
+```php
+//инициируем новый объект SoapClient
+$client = new SoapClient(
+    'some.wsdl',
+    [
+        'proxy_host' => 'localhost',
+        'proxy_port' => 8080
+    ]
+);
+//инициируем новый объект сервиса
+$cbrf = new \marvin255\cbrfservice\CbrfDaily($client);
 //получаем курсы валют
 $currencies = $cbrf->GetCursOnDate();
 //получаем список доступных валют
@@ -39,43 +63,16 @@ $enumCurrencies = $cbrf->EnumValutes();
 ```
 
 
-Настройка
----------
 
-При инициализации:
+Обработка ошибок
+----------------
 
-```php
-$cbrf = new \cbrfservice\CbrfDaily(array(
-    'wsdl' => 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL',
-));
-```
+все ошибк, которые будут перехвачены при запросах, будут выброшены как исключение `\marvin255\cbrfservice\Exception`. Если `\SoapClient` будет сконфигурирован без исключений, то обработка ошибок остается на стороне клиентского скрипта.
 
-После инициализации:
-
-```php
-$cbrf->config(array(
-    'catchExceptions' => false,
-));
-```
-
-Опции
------
-
-* `wsdl` - ссылка на WSDL описание, по умолчанию `'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL'`;
-
-* `soapOptions` - настройки [SoapClient](http://php.net/manual/ru/soapclient.soapclient.php), по умолчанию `array()`;
-
-* `catchExceptions` - если значение истинно, то все исключения будут перехвачены классом и внесены во внутренний массив ошибок, в противном случае исключения не будут обрабатываться, по умолчанию `true`;
 
 
 Методы
 ------
-
-* `array \cbrfservice\CbrfDaily::getErrors( void )` - возвращает массив ошибок, полученных во время запросов к сервису.
-
-* `bool \cbrfservice\CbrfDaily::hasErrors( void )` - возвращает истину, если во время выполнения запроса были ошибки.
-
-* `void \cbrfservice\CbrfDaily::clearErrors( void )` - очищает список ошибок.
 
 * `array \cbrfservice\CbrfDaily::GetCursOnDate( [mixed $onDate, mixed $currency] )` - возвращает массив с курсами валют за заданную дату. Если `$onDate` не задан, то возвращается список валют за текущее время. Если задан `$currency`, то возвращается значение только для этой валюты.
 
