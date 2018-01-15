@@ -1,0 +1,15 @@
+language: php
+sudo: false
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+before_script:
+  - composer self-update
+  - composer install --no-interaction --prefer-source --dev
+script:
+  - vendor/bin/phpunit --version
+  - vendor/bin/phpunit -c phpunit.xml.dist
+  - vendor/bin/php-cs-fixer fix --version
+  - vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no
