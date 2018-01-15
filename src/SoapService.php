@@ -8,7 +8,7 @@ use InvalidArgumentException;
 /**
  * Class for a basic soap service utilits.
  */
-class SoapService
+abstract class SoapService
 {
     /**
      * @var \SoapClient
@@ -16,31 +16,22 @@ class SoapService
     private $client = null;
 
     /**
+     * @param mixed $result
+     *
+     * @return mixed
+     */
+    abstract protected function parseSoapResult($result, $method, $params);
+
+    /**
      * Constructor.
      *
-     * @param string|\SoapClient $client soapClient instance to connect to service or string instance with wsdl url
+     * @param \SoapClient $client soapClient instance to connect to service or string instance with wsdl url
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($client = null)
+    public function __construct(SoapClient $client = null)
     {
-        if (is_string($client)) {
-            try {
-                $this->client = new SoapClient($client, [
-                    'exceptions' => true,
-                ]);
-            } catch (\Exception $e) {
-                throw new InvalidArgumentException(
-                    "Can't create SoapClient by wsdl ({$client}): " . $e->getMessage()
-                );
-            }
-        } elseif ($client instanceof SoapClient) {
-            $this->client = $client;
-        } else {
-            throw new InvalidArgumentException(
-                "Constructor's parameter must be a string or SoapClient instance"
-            );
-        }
+        $this->client = $client;
     }
 
     /**
@@ -69,21 +60,11 @@ class SoapService
     }
 
     /**
-     * @param mixed $result
-     *
-     * @return mixed
-     */
-    protected function parseSoapResult($result, $method, $params)
-    {
-        return $result;
-    }
-
-    /**
      * Returns a SoapClient instance for soap requests.
      *
      * @return \SoapClient
      */
-    protected function getSoapClient()
+    public function getSoapClient()
     {
         return $this->client;
     }

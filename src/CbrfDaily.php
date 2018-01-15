@@ -2,6 +2,8 @@
 
 namespace marvin255\cbrfservice;
 
+use SoapClient;
+
 /**
  * Class for a daily cb RF service.
  */
@@ -10,9 +12,16 @@ class CbrfDaily extends SoapService
     /**
      * @inheritdoc
      */
-    public function __construct($client = null)
+    public function __construct(SoapClient $client = null)
     {
-        $client = $client ?: 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
+        if (!$client) {
+            $client = new SoapClient(
+                'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL',
+                [
+                    'exception' => true,
+                ]
+            );
+        }
 
         return parent::__construct($client);
     }

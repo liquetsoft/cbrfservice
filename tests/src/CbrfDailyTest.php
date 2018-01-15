@@ -6,17 +6,11 @@ use marvin255\cbrfservice\CbrfDaily;
 
 class CbrfDailyTest extends BaseTestCase
 {
-    // public function testConstructSoapClientException()
-    // {
-    //     $wsdl = 'wsdl_' . mt_rand();
-    //     $this->setExpectedException('\InvalidArgumentException', $wsdl);
-    //     $service = new CbrfDaily($wsdl);
-    // }
-
-    public function testConstructWrongClientType()
+    public function testDefaultClien()
     {
-        $this->setExpectedException('\InvalidArgumentException');
-        $service = new CbrfDaily(123);
+        $service = new CbrfDaily;
+
+        $this->assertInstanceOf('\SoapClient', $service->getSoapClient());
     }
 
     public function testGetCursOnDate()
@@ -86,8 +80,22 @@ class CbrfDailyTest extends BaseTestCase
 
         $service = new CbrfDaily($soapClient);
 
-        $this->setExpectedException('\marvin255\cbrfservice\Exception', $service);
+        $this->setExpectedException('\marvin255\cbrfservice\Exception', $exceptionMessage);
         $service->GetCursOnDate();
+    }
+
+    public function testGetCursOnDateWrongDateException()
+    {
+        $exceptionDate = 'wrong_date_' . mt_rand();
+        $soapClient = $this->getMockBuilder('\SoapClient')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')->with($this->equalTo('GetCursOnDate'));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->setExpectedException('\InvalidArgumentException', $exceptionDate);
+        $service->GetCursOnDate($exceptionDate);
     }
 
     protected function getCoursesFixture()
