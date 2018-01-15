@@ -19,6 +19,7 @@ class CbrfDaily extends SoapService
 
     /**
      * @param string|int $onDate
+     * @param string     $currency
      *
      * @return array
      */
@@ -58,7 +59,8 @@ class CbrfDaily extends SoapService
     }
 
     /**
-     * @param bool $seld
+     * @param bool   $seld
+     * @param string $currency
      *
      * @return array
      */
