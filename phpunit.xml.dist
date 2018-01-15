@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="tests/bootstrap.php"
+    colors="true"
+    beStrictAboutTestSize="true"
+    beStrictAboutTestsThatDoNotTestAnything="true">
+
+    <testsuites>
+        <testsuite name="Cbrfservice Test Suite">
+            <directory>tests/src</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>src</directory>
+            <exclude>
+                <file>src/Autoloader.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
