@@ -1,7 +1,7 @@
 Php класс, получает курсы валют
 ===============================
 
-Php обертка для [сервиса цб РФ](http://www.cbr.ru/scripts/Root.asp?PrtId=DWS).
+Php обертка для [сервиса Центробанка РФ](http://www.cbr.ru/scripts/Root.asp?PrtId=DWS).
 
 
 Установка
@@ -46,7 +46,7 @@ $enumCurrencies = $cbrf->EnumValutes();
 
 ```php
 $cbrf = new \cbrfservice\CbrfDaily(array(
-	'wsdl' => 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL',
+    'wsdl' => 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL',
 ));
 ```
 
@@ -54,7 +54,7 @@ $cbrf = new \cbrfservice\CbrfDaily(array(
 
 ```php
 $cbrf->config(array(
-	'catchExceptions' => false,
+    'catchExceptions' => false,
 ));
 ```
 

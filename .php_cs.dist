@@ -1,0 +1,18 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__ . '/lib')
+;
+
+$rules = [
+    '@Symfony' => true,
+    'new_with_braces' => false,
+    'phpdoc_inline_tag' => false,
+    'concat_space' => ['spacing' => 'one'],
+];
+
+if (class_exists('\\PhpCsFixer\\Fixer\\ControlStructure\\YodaStyleFixer')) {
+    $rules['yoda_style'] = false;
+}
+
+return PhpCsFixer\Config::create()->setRules($rules)->setFinder($finder);
