@@ -9,6 +9,7 @@ $rules = [
     'new_with_braces' => false,
     'phpdoc_inline_tag' => false,
     'concat_space' => ['spacing' => 'one'],
+    'array_syntax' => ['syntax' => 'short'],
 ];
 
 if (class_exists('\\PhpCsFixer\\Fixer\\ControlStructure\\YodaStyleFixer')) {

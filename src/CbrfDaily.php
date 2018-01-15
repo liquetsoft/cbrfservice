@@ -3,14 +3,19 @@
 namespace marvin255\cbrfservice;
 
 /**
- * Class for a cb RF service.
+ * Class for a daily cb RF service.
  */
-class CbrfDaily extends BaseServiceSoap
+class CbrfDaily extends SoapService
 {
     /**
-     * @var string
+     * @inheritdoc
      */
-    public $wsdl = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
+    public function __construct($client = null)
+    {
+        $client = $client ?: 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
+
+        return parent::__construct($client);
+    }
 
     /**
      * @param string|int $onDate
@@ -19,22 +24,25 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function GetCursOnDate($onDate = null, $currency = null)
     {
-        $results = array();
+        $results = [];
         $onDate = $onDate === null ? time() : $onDate;
-        $res = $this->doSoapCall('GetCursOnDate', array(
-            array('On_date' => $this->getXsdDateTimeFromDate($onDate)),
-        ));
+
+        $res = $this->doSoapCall('GetCursOnDate', [
+            ['On_date' => $this->getXsdDateTimeFromDate($onDate)],
+        ]);
+
         if (!empty($res->ValuteData->ValuteCursOnDate)) {
             foreach ($res->ValuteData->ValuteCursOnDate as $value) {
-                $results[] = array(
-                    'VchCode' => (string) $value->VchCode,
-                    'Vname' => (string) $value->Vname,
-                    'Vcode' => (string) $value->Vcode,
+                $results[] = [
+                    'VchCode' => trim($value->VchCode),
+                    'Vname' => trim($value->Vname),
+                    'Vcode' => trim($value->Vcode),
                     'Vcurs' => floatval($value->Vcurs),
                     'Vnom' => floatval($value->Vnom),
-                );
+                ];
             }
         }
+
         if ($currency !== null) {
             $return = null;
             foreach ($results as $value) {
@@ -43,11 +51,10 @@ class CbrfDaily extends BaseServiceSoap
                     break;
                 }
             }
-
-            return $return;
-        } else {
-            return $results;
+            $results = $return;
         }
+
+        return $results;
     }
 
     /**
@@ -57,13 +64,15 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function EnumValutes($seld = false, $currency = null)
     {
-        $results = array();
-        $res = $this->doSoapCall('EnumValutes', array(
-            array('Seld' => $seld),
-        ));
+        $results = [];
+
+        $res = $this->doSoapCall('EnumValutes', [
+            ['Seld' => $seld],
+        ]);
+
         if (!empty($res->ValuteData->EnumValutes)) {
             foreach ($res->ValuteData->EnumValutes as $value) {
-                $results[] = array(
+                $results[] = [
                     'Vcode' => trim($value->Vcode),
                     'Vname' => trim($value->Vname),
                     'VEngname' => trim($value->VEngname),
@@ -71,9 +80,10 @@ class CbrfDaily extends BaseServiceSoap
                     'VcommonCode' => trim($value->VcommonCode),
                     'VnumCode' => trim($value->VnumCode),
                     'VcharCode' => trim($value->VcharCode),
-                );
+                ];
             }
         }
+
         if ($currency !== null) {
             $return = null;
             foreach ($results as $value) {
@@ -82,11 +92,10 @@ class CbrfDaily extends BaseServiceSoap
                     break;
                 }
             }
-
-            return $return;
-        } else {
-            return $results;
+            $results = $return;
         }
+
+        return $results;
     }
 
     /**
@@ -107,23 +116,6 @@ class CbrfDaily extends BaseServiceSoap
     public function GetLatestDateTimeSeld($format = 'd.m.Y H:i:s')
     {
         return $this->getTimeMethod('GetLatestDateTimeSeld', $format);
-    }
-
-    /**
-     * @param string $method
-     * @param string $format
-     *
-     * @return string
-     */
-    protected function getTimeMethod($method, $format = null)
-    {
-        $return = null;
-        $res = $this->doSoapCall($method);
-        if (!empty($res)) {
-            $return = $format == null ? strtotime($res) : date($format, strtotime($res));
-        }
-
-        return $return;
     }
 
     /**
@@ -152,7 +144,8 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function GetCursDynamic($fromDate, $toDate, $valutaCode, $findCode = false)
     {
-        $return = array();
+        $return = [];
+
         if ($findCode) {
             $valute = $this->EnumValutes(false, $valutaCode);
             if (!$valute) {
@@ -164,19 +157,21 @@ class CbrfDaily extends BaseServiceSoap
                 return $return;
             }
         }
-        $res = $this->doSoapCall('GetCursDynamic', array(array(
+
+        $res = $this->doSoapCall('GetCursDynamic', [[
             'FromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
             'ValutaCode' => trim($valutaCode),
-        )));
+        ]]);
+
         if (!empty($res->ValuteData->ValuteCursDynamic)) {
             foreach ($res->ValuteData->ValuteCursDynamic as $value) {
-                $return[] = array(
+                $return[] = [
                     'CursDate' => trim($value->CursDate),
                     'Vcode' => trim($value->Vcode),
                     'Vnom' => (float) $value->Vnom,
                     'Vcurs' => (float) $value->Vcurs,
-                );
+                ];
             }
         }
 
@@ -192,32 +187,33 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function DragMetDynamic($fromDate, $toDate, $code = null)
     {
-        $result = array();
-        $res = $this->doSoapCall('DragMetDynamic', array(array(
+        $result = [];
+        $res = $this->doSoapCall('DragMetDynamic', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->DragMetall->DrgMet)) {
             foreach ($res->DragMetall->DrgMet as $value) {
-                $result[] = array(
+                $result[] = [
                     'DateMet' => trim($value->DateMet),
                     'CodMet' => trim($value->CodMet),
                     'price' => (float) $value->price,
-                );
+                ];
             }
         }
+
         if ($code) {
-            $return = array();
+            $return = [];
             foreach ($result as $value) {
                 if ($value['CodMet'] == $code) {
                     $return[] = $value;
                 }
             }
-
-            return $return;
-        } else {
-            return $result;
+            $result = $return;
         }
+
+        return $result;
     }
 
     /**
@@ -228,19 +224,21 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function NewsInfo($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('NewsInfo', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('NewsInfo', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->NewsInfo->News)) {
             foreach ($res->NewsInfo->News as $value) {
-                $result[] = array(
+                $result[] = [
                     'Doc_id' => trim($value->Doc_id),
                     'DocDate' => trim($value->DocDate),
                     'Title' => trim($value->Title),
                     'Url' => trim($value->Url),
-                );
+                ];
             }
         }
 
@@ -255,14 +253,16 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function SwapDynamic($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('SwapDynamic', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('SwapDynamic', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->SwapDynamic->Swap)) {
             foreach ($res->SwapDynamic->Swap as $value) {
-                $result[] = array(
+                $result[] = [
                     'DateBuy' => trim($value->DateBuy),
                     'DateSell' => trim($value->DateSell),
                     'BaseRate' => floatval($value->BaseRate),
@@ -270,7 +270,7 @@ class CbrfDaily extends BaseServiceSoap
                     'TIR' => floatval($value->TIR),
                     'Stavka' => floatval($value->Stavka),
                     'Currency' => floatval($value->Currency),
-                );
+                ];
             }
         }
 
@@ -285,20 +285,22 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function DepoDynamic($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('DepoDynamic', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('DepoDynamic', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->DepoDynamic->Depo)) {
             foreach ($res->DepoDynamic->Depo as $value) {
-                $result[] = array(
+                $result[] = [
                     'DateDepo' => trim($value->DateDepo),
                     'Overnight' => floatval($value->Overnight),
                     'TomNext' => floatval($value->TomNext),
                     'SpotNext' => floatval($value->SpotNext),
                     'CallDeposit' => floatval($value->CallDeposit),
-                );
+                ];
             }
         }
 
@@ -313,18 +315,20 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function OstatDynamic($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('OstatDynamic', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('OstatDynamic', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->OstatDynamic->Ostat)) {
             foreach ($res->OstatDynamic->Ostat as $value) {
-                $result[] = array(
+                $result[] = [
                     'DateOst' => trim($value->DateOst),
                     'InRuss' => floatval($value->InRuss),
                     'InMoscow' => floatval($value->InMoscow),
-                );
+                ];
             }
         }
 
@@ -339,19 +343,21 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function OstatDepo($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('OstatDepo', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('OstatDepo', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->OD->odr)) {
             foreach ($res->OD->odr as $value) {
-                $result[] = array(
+                $result[] = [
                     'D0' => trim($value->D0),
                     'D1_7' => floatval($value->D1_7),
                     'depo' => floatval($value->depo),
                     'total' => floatval($value->total),
-                );
+                ];
             }
         }
 
@@ -366,17 +372,19 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function Saldo($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('Saldo', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('Saldo', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->Saldo->So)) {
             foreach ($res->Saldo->So as $value) {
-                $result[] = array(
+                $result[] = [
                     'Dt' => trim($value->Dt),
                     'DEADLINEBS' => floatval($value->DEADLINEBS),
-                );
+                ];
             }
         }
 
@@ -391,18 +399,20 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function Ruonia($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('Ruonia', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('Ruonia', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->Ruonia->ro)) {
             foreach ($res->Ruonia->ro as $value) {
-                $result[] = array(
+                $result[] = [
                     'D0' => trim($value->D0),
                     'ruo' => floatval($value->ruo),
                     'vol' => floatval($value->vol),
-                );
+                ];
             }
         }
 
@@ -417,14 +427,16 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function ROISfix($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('ROISfix', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('ROISfix', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->ROISfix->rf)) {
             foreach ($res->ROISfix->rf as $value) {
-                $result[] = array(
+                $result[] = [
                     'D0' => trim($value->D0),
                     'R1W' => floatval($value->R1W),
                     'R2W' => floatval($value->R2W),
@@ -432,7 +444,7 @@ class CbrfDaily extends BaseServiceSoap
                     'R2M' => floatval($value->R2M),
                     'R3M' => floatval($value->R3M),
                     'R6M' => floatval($value->R6M),
-                );
+                ];
             }
         }
 
@@ -447,14 +459,16 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function MKR($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('MKR', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('MKR', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->mkr_base->MKR)) {
             foreach ($res->mkr_base->MKR as $value) {
-                $result[] = array(
+                $result[] = [
                     'CDate' => trim($value->CDate),
                     'p1' => floatval($value->p1),
                     'd1' => floatval($value->d1),
@@ -463,7 +477,7 @@ class CbrfDaily extends BaseServiceSoap
                     'd90' => floatval($value->d90),
                     'd180' => floatval($value->d180),
                     'd360' => floatval($value->d360),
-                );
+                ];
             }
         }
 
@@ -478,14 +492,16 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function DV($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('DV', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('DV', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->DV_base->DV)) {
             foreach ($res->DV_base->DV as $value) {
-                $result[] = array(
+                $result[] = [
                     'Date' => trim($value->Date),
                     'VIDate' => trim($value->VIDate),
                     'VOvern' => floatval($value->VOvern),
@@ -493,7 +509,7 @@ class CbrfDaily extends BaseServiceSoap
                     'VIDay' => floatval($value->VIDay),
                     'VOther' => floatval($value->VOther),
                     'Vol_Gold' => floatval($value->Vol_Gold),
-                );
+                ];
             }
         }
 
@@ -508,18 +524,20 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function Repo_debt($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('Repo_debt', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('Repo_debt', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->Repo_debt->RD)) {
             foreach ($res->Repo_debt->RD as $value) {
-                $result[] = array(
+                $result[] = [
                     'Date' => trim($value->Date),
                     'debt' => floatval($value->debt),
                     'debt_fix' => floatval($value->debt_fix),
-                );
+                ];
             }
         }
 
@@ -534,14 +552,16 @@ class CbrfDaily extends BaseServiceSoap
      */
     public function Coins_base($fromDate, $toDate)
     {
-        $result = array();
-        $res = $this->doSoapCall('Coins_base', array(array(
+        $result = [];
+
+        $res = $this->doSoapCall('Coins_base', [[
             'fromDate' => $this->getXsdDateTimeFromDate($fromDate),
             'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-        )));
+        ]]);
+
         if (!empty($res->Coins_base->CB)) {
             foreach ($res->Coins_base->CB as $value) {
-                $result[] = array(
+                $result[] = [
                     'date' => trim($value->date),
                     'Cat_number' => trim($value->Cat_number),
                     'name' => trim($value->name),
@@ -549,7 +569,7 @@ class CbrfDaily extends BaseServiceSoap
                     'nominal' => floatval($value->nominal),
                     'Q' => floatval($value->Q),
                     'PriceBR' => floatval($value->PriceBR),
-                );
+                ];
             }
         }
 
@@ -563,13 +583,34 @@ class CbrfDaily extends BaseServiceSoap
      */
     protected function parseSoapResult($result, $method, $params)
     {
+        $return = null;
         $resName = $method . 'Result';
+
         if (!empty($result->$resName->any)) {
-            return simplexml_load_string($result->$resName->any);
+            $return = simplexml_load_string($result->$resName->any);
         } elseif (!empty($result->$resName)) {
-            return $result->$resName;
+            $return = $result->$resName;
         } else {
-            return null;
+            $return = null;
         }
+
+        return $return;
+    }
+
+    /**
+     * @param string $method
+     * @param string $format
+     *
+     * @return string
+     */
+    protected function getTimeMethod($method, $format = null)
+    {
+        $return = null;
+        $res = $this->doSoapCall($method);
+        if (!empty($res)) {
+            $return = $format == null ? strtotime($res) : date($format, strtotime($res));
+        }
+
+        return $return;
     }
 }
