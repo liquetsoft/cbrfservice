@@ -169,8 +169,8 @@ class CbrfDaily extends SoapService
                 $return[] = [
                     'CursDate' => trim($value->CursDate),
                     'Vcode' => trim($value->Vcode),
-                    'Vnom' => (float) $value->Vnom,
-                    'Vcurs' => (float) $value->Vcurs,
+                    'Vnom' => floatval($value->Vnom),
+                    'Vcurs' => floatval($value->Vcurs),
                 ];
             }
         }
@@ -198,7 +198,7 @@ class CbrfDaily extends SoapService
                 $result[] = [
                     'DateMet' => trim($value->DateMet),
                     'CodMet' => trim($value->CodMet),
-                    'price' => (float) $value->price,
+                    'price' => floatval($value->price),
                 ];
             }
         }
