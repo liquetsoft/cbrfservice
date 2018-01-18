@@ -132,17 +132,33 @@ class CbrfDaily extends SoapService
     /**
      * @return string
      */
-    public function GetLatestDate()
+    public function GetLatestDate($format = 'Ymd')
     {
-        return $this->doSoapCall('GetLatestDate');
+        $return = null;
+        if ($res = $this->doSoapCall('GetLatestDate')) {
+            $timestamp = strtotime(
+                substr($res, 0, 4) . '-' . substr($res, 4, 2) . '-' . substr($res, 6, 2)
+            );
+            $return = $format ? date($format, $timestamp) : $timestamp;
+        }
+
+        return $return;
     }
 
     /**
      * @return string
      */
-    public function GetLatestDateSeld()
+    public function GetLatestDateSeld($format = 'Ymd')
     {
-        return $this->doSoapCall('GetLatestDateSeld');
+        $return = null;
+        if ($res = $this->doSoapCall('GetLatestDateSeld')) {
+            $timestamp = strtotime(
+                substr($res, 0, 4) . '-' . substr($res, 4, 2) . '-' . substr($res, 6, 2)
+            );
+            $return = $format ? date($format, $timestamp) : $timestamp;
+        }
+
+        return $return;
     }
 
     /**
@@ -599,8 +615,6 @@ class CbrfDaily extends SoapService
             $return = simplexml_load_string($result->$resName->any);
         } elseif (!empty($result->$resName)) {
             $return = $result->$resName;
-        } else {
-            $return = null;
         }
 
         return $return;
