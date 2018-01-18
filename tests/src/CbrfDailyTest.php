@@ -82,6 +82,37 @@ class CbrfDailyTest extends BaseTestCase
         $service->GetCursOnDate($exceptionDate);
     }
 
+    protected function getCoursesFixture()
+    {
+        $courses = [];
+        for ($i = 0; $i <= 3; $i++) {
+            $courses[] = [
+                'VchCode' => "VchCode_{$i}",
+                'Vname' => "Vname_{$i}",
+                'Vcode' => "Vcode_{$i}",
+                'Vcurs' => floatval(mt_rand()),
+                'Vnom' => floatval(mt_rand()),
+            ];
+        }
+
+        $soapResponse = new \stdClass;
+        $soapResponse->GetCursOnDateResult = new \stdClass;
+
+        $soapResponse->GetCursOnDateResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
+        $soapResponse->GetCursOnDateResult->any .= '<ValuteData xmlns="">';
+        foreach ($courses as $course) {
+            $soapResponse->GetCursOnDateResult->any .= '<ValuteCursOnDate xmlns="">';
+            foreach ($course as $key => $value) {
+                $soapResponse->GetCursOnDateResult->any .= "<{$key}>{$value}</{$key}>";
+            }
+            $soapResponse->GetCursOnDateResult->any .= '</ValuteCursOnDate>';
+        }
+        $soapResponse->GetCursOnDateResult->any .= '</ValuteData>';
+        $soapResponse->GetCursOnDateResult->any .= '</diffgr:diffgram>';
+
+        return [$courses, $soapResponse];
+    }
+
     public function testEnumValutes()
     {
         list($courses, $response) = $this->getEnumValutesFixture();
@@ -141,37 +172,6 @@ class CbrfDailyTest extends BaseTestCase
         $service->EnumValutes();
     }
 
-    protected function getCoursesFixture()
-    {
-        $courses = [];
-        for ($i = 0; $i <= 3; $i++) {
-            $courses[] = [
-                'VchCode' => "VchCode_{$i}",
-                'Vname' => "Vname_{$i}",
-                'Vcode' => "Vcode_{$i}",
-                'Vcurs' => floatval(mt_rand()),
-                'Vnom' => floatval(mt_rand()),
-            ];
-        }
-
-        $soapResponse = new \stdClass;
-        $soapResponse->GetCursOnDateResult = new \stdClass;
-
-        $soapResponse->GetCursOnDateResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-        $soapResponse->GetCursOnDateResult->any .= '<ValuteData xmlns="">';
-        foreach ($courses as $course) {
-            $soapResponse->GetCursOnDateResult->any .= '<ValuteCursOnDate xmlns="">';
-            foreach ($course as $key => $value) {
-                $soapResponse->GetCursOnDateResult->any .= "<{$key}>{$value}</{$key}>";
-            }
-            $soapResponse->GetCursOnDateResult->any .= '</ValuteCursOnDate>';
-        }
-        $soapResponse->GetCursOnDateResult->any .= '</ValuteData>';
-        $soapResponse->GetCursOnDateResult->any .= '</diffgr:diffgram>';
-
-        return [$courses, $soapResponse];
-    }
-
     protected function getEnumValutesFixture()
     {
         $courses = [];
@@ -203,5 +203,129 @@ class CbrfDailyTest extends BaseTestCase
         $soapResponse->EnumValutesResult->any .= '</diffgr:diffgram>';
 
         return [$courses, $soapResponse];
+    }
+
+    public function testGetLatestDateTime()
+    {
+        $response = new \stdClass;
+        $response->GetLatestDateTimeResult = '2018-01-19T00:00:00';
+
+        $soapClient = $this->getMockBuilder('\SoapClient')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateTime'))
+            ->will($this->returnValue($response));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->assertSame(
+            '19.01.2018 00:00:00',
+            $service->GetLatestDateTime(),
+            'default format'
+        );
+        $this->assertSame(
+            '01/19/2018',
+            $service->GetLatestDateTime('m/d/Y'),
+            'any format'
+        );
+        $this->assertSame(
+            1516302000,
+            $service->GetLatestDateTime(null),
+            'timestamp'
+        );
+    }
+
+    public function testGetLatestDateTimeSeld()
+    {
+        $response = new \stdClass;
+        $response->GetLatestDateTimeSeldResult = '2018-01-19T00:00:00';
+
+        $soapClient = $this->getMockBuilder('\SoapClient')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateTimeSeld'))
+            ->will($this->returnValue($response));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->assertSame(
+            '19.01.2018 00:00:00',
+            $service->GetLatestDateTimeSeld(),
+            'default format'
+        );
+        $this->assertSame(
+            '01/19/2018',
+            $service->GetLatestDateTimeSeld('m/d/Y'),
+            'any format'
+        );
+        $this->assertSame(
+            1516302000,
+            $service->GetLatestDateTimeSeld(null),
+            'timestamp'
+        );
+    }
+
+    public function testGetLatestDate()
+    {
+        $response = new \stdClass;
+        $response->GetLatestDateResult = '20180119';
+
+        $soapClient = $this->getMockBuilder('\SoapClient')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDate'))
+            ->will($this->returnValue($response));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->assertSame(
+            '20180119',
+            $service->GetLatestDate(),
+            'default format'
+        );
+        $this->assertSame(
+            '01/19/2018',
+            $service->GetLatestDate('m/d/Y'),
+            'any format'
+        );
+        $this->assertSame(
+            1516302000,
+            $service->GetLatestDate(null),
+            'timestamp'
+        );
+    }
+
+    public function testGetLatestDateSeld()
+    {
+        $response = new \stdClass;
+        $response->GetLatestDateSeldResult = '20180119';
+
+        $soapClient = $this->getMockBuilder('\SoapClient')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateSeld'))
+            ->will($this->returnValue($response));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->assertSame(
+            '20180119',
+            $service->GetLatestDateSeld(),
+            'default format'
+        );
+        $this->assertSame(
+            '01/19/2018',
+            $service->GetLatestDateSeld('m/d/Y'),
+            'any format'
+        );
+        $this->assertSame(
+            1516302000,
+            $service->GetLatestDateSeld(null),
+            'timestamp'
+        );
     }
 }
