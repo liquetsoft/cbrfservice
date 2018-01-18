@@ -230,7 +230,7 @@ class CbrfDailyTest extends BaseTestCase
             'any format'
         );
         $this->assertSame(
-            1516302000,
+            strtotime($response->GetLatestDateTimeResult),
             $service->GetLatestDateTime(null),
             'timestamp'
         );
@@ -261,7 +261,7 @@ class CbrfDailyTest extends BaseTestCase
             'any format'
         );
         $this->assertSame(
-            1516302000,
+            strtotime($response->GetLatestDateTimeSeldResult),
             $service->GetLatestDateTimeSeld(null),
             'timestamp'
         );
@@ -292,7 +292,7 @@ class CbrfDailyTest extends BaseTestCase
             'any format'
         );
         $this->assertSame(
-            1516302000,
+            strtotime('2018-01-19'),
             $service->GetLatestDate(null),
             'timestamp'
         );
@@ -323,7 +323,7 @@ class CbrfDailyTest extends BaseTestCase
             'any format'
         );
         $this->assertSame(
-            1516302000,
+            strtotime('2018-01-19'),
             $service->GetLatestDateSeld(null),
             'timestamp'
         );
