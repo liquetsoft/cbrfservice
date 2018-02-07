@@ -2,7 +2,6 @@ Php класс, получает курсы валют
 ===============================
 
 [![Latest Stable Version](https://poser.pugx.org/marvin255/cbrfservice/v/stable.png)](https://packagist.org/packages/marvin255/cbrfservice)
-[![Total Downloads](https://poser.pugx.org/marvin255/cbrfservice/downloads.png)](https://packagist.org/packages/marvin255/cbrfservice)
 [![License](https://poser.pugx.org/marvin255/cbrfservice/license.svg)](https://packagist.org/packages/marvin255/cbrfservice)
 [![Build Status](https://travis-ci.org/marvin255/cbrfservice.svg?branch=master)](https://travis-ci.org/marvin255/cbrfservice)
 
