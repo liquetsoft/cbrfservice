@@ -17,7 +17,7 @@ Php обертка для [сервиса Центробанка РФ](http://ww
 
 ```javascript
 "require": {
-    "marvin255/cbrfservice": "*"
+    "marvin255/cbrfservice": "~1.0"
 }
 ```
 
