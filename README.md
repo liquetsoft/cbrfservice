@@ -2,10 +2,11 @@ Php класс, получает курсы валют
 ===============================
 
 [![Latest Stable Version](https://poser.pugx.org/marvin255/cbrfservice/v/stable.png)](https://packagist.org/packages/marvin255/cbrfservice)
+[![Total Downloads](https://poser.pugx.org/marvin255/cbrfservice/downloads.png)](https://packagist.org/packages/marvin255/cbrfservice)
 [![License](https://poser.pugx.org/marvin255/cbrfservice/license.svg)](https://packagist.org/packages/marvin255/cbrfservice)
-[![Build Status](https://travis-ci.org/marvin255/cbrfservice.svg?branch=master)](https://travis-ci.org/marvin255/cbrfservice)
+[![Build Status](https://github.com/marvin255/cbrfservice/workflows/cbrf_service/badge.svg)](https://github.com/marvin255/cbrfservice/actions?query=workflow%3A%22cbrf_service%22)
 
-Php обертка для [сервиса Центробанка РФ](http://www.cbr.ru/scripts/Root.asp?PrtId=DWS).
+Php обертка для [сервиса Центробанка РФ](https://www.cbr.ru/development/DWS/).
 
 
 Установка
@@ -67,4 +68,4 @@ $enumCurrencies = $cbrf->EnumValutes();
 
 * `array \Marvin255\CbrfService\CbrfDaily::EnumValutes( [bool $seld, mixed $currency] )` - возвращает список с описаниями валютю $seld: false — перечень ежедневных валют, true — перечень ежемесячных валют. Если задан `$currency`, то возвращается значение только для этой валюты.
 
-* Описание остальных методов вы можете найти на [сайте банка России](http://www.cbr.ru/scripts/Root.asp?PrtId=DWS). Даты для этих методов могут быть заданы в любом формате пригодном для `strtotime()`.
+* Описание остальных методов вы можете найти на [сайте банка России](https://www.cbr.ru/development/DWS/). Даты для этих методов могут быть заданы в любом формате пригодном для `strtotime()`.
