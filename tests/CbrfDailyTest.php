@@ -4,101 +4,366 @@ declare(strict_types=1);
 
 namespace Marvin255\CbrfService\Tests;
 
+use DateTime;
+use Exception;
 use Marvin255\CbrfService\CbrfDaily;
+use Marvin255\CbrfService\CbrfException;
+use Marvin255\CbrfService\Entity\Currency;
+use Marvin255\CbrfService\Entity\CurrencyRate;
+use SoapClient;
+use stdClass;
 
 class CbrfDailyTest extends BaseTestCase
 {
-    public function testDefaultClien()
+    /**
+     * @test
+     */
+    public function testGetCursOnDate(): void
     {
-        $service = new CbrfDaily();
+        $dateFormat = 'Y-m-d\TH:i:s';
+        [$courses, $response] = $this->getCoursesFixture();
+        $onDate = new DateTime();
 
-        $this->assertInstanceOf('\SoapClient', $service->getSoapClient());
-    }
-
-    public function testGetCursOnDateCurrency()
-    {
-        list($courses, $response) = $this->getCoursesFixture();
-        $time = time();
-
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
             ->with(
                 $this->equalTo('GetCursOnDate'),
-                $this->equalTo([['On_date' => date('Y-m-d\TH:i:s', $time)]])
+                $this->equalTo(
+                    [
+                        [
+                            'On_date' => $onDate->format($dateFormat),
+                        ],
+                    ]
+                )
             )
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $service = new CbrfDaily($soapClient);
+        $list = $service->getCursOnDate($onDate);
 
-        $this->assertSame(
-            $courses,
-            $service->GetCursOnDate(date('d.m.Y H:i:s', $time)),
-            'all list'
-        );
-        $this->assertSame(
-            $courses[2],
-            $service->GetCursOnDate(date('d.m.Y H:i:s', $time), 'VchCode_2'),
-            'by VchCode'
-        );
-        $this->assertSame(
-            $courses[1],
-            $service->GetCursOnDate(date('Y-m-d\TH:i:sP', $time), 'Vname_1'),
-            'by Vname'
-        );
-        $this->assertSame(
-            $courses[0],
-            $service->GetCursOnDate($time, 'Vcode_0'),
-            'by Vcode'
-        );
+        $this->assertCount(4, $list);
+        $this->assertContainsOnlyInstancesOf(CurrencyRate::class, $list);
+        foreach ($courses as $key => $course) {
+            $this->assertSame(strtoupper($course['VchCode']), $list[$key]->getChCode());
+            $this->assertSame($course['Vname'], $list[$key]->getName());
+            $this->assertSame($course['Vcode'], $list[$key]->getCode());
+            $this->assertSame($course['Vcurs'], $list[$key]->getCurs());
+            $this->assertSame($course['Vnom'], $list[$key]->getNom());
+            $this->assertSame($onDate->format($dateFormat), $list[$key]->getDate()->format($dateFormat));
+        }
     }
 
+    /**
+     * @test
+     */
+    public function testGetCursOnDateByCode(): void
+    {
+        $dateFormat = 'Y-m-d\TH:i:s';
+        [$courses, $response] = $this->getCoursesFixture();
+        $code = $courses[0]['VchCode'] ?? null;
+        $onDate = new DateTime();
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with(
+                $this->equalTo('GetCursOnDate'),
+                $this->equalTo(
+                    [
+                        [
+                            'On_date' => $onDate->format($dateFormat),
+                        ],
+                    ]
+                )
+            )
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $item = $service->getCursOnDateByCode($onDate, $code);
+
+        $this->assertInstanceOf(CurrencyRate::class, $item);
+        $this->assertSame(strtoupper($code), $item->getChCode());
+    }
+
+    /**
+     * @test
+     */
     public function testGetCursOnDateException()
     {
-        $exceptionMessage = 'exception_message_' . mt_rand();
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
             ->with($this->equalTo('GetCursOnDate'))
-            ->will($this->throwException(new \Exception($exceptionMessage)));
+            ->will($this->throwException(new Exception()));
 
         $service = new CbrfDaily($soapClient);
 
-        $this->expectException('\marvin255\cbrfservice\Exception');
-        $service->GetCursOnDate();
+        $this->expectException(CbrfException::class);
+        $service->getCursOnDate(new DateTime());
     }
 
-    public function testGetCursOnDateWrongDateException()
+    /**
+     * @test
+     */
+    public function testEnumValutes(): void
     {
-        $exceptionDate = 'wrong_date_' . mt_rand();
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $seld = false;
+        [$currencies, $response] = $this->getEnumValutesFixture();
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $soapClient->method('__soapCall')->with($this->equalTo('GetCursOnDate'));
+        $soapClient->method('__soapCall')
+            ->with(
+                $this->equalTo('EnumValutes'),
+                $this->equalTo(
+                    [
+                        [
+                            'Seld' => $seld,
+                        ],
+                    ]
+                )
+            )
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->enumValutes($seld);
+
+        $this->assertCount(4, $list);
+        $this->assertContainsOnlyInstancesOf(Currency::class, $list);
+        foreach ($currencies as $key => $currency) {
+            $this->assertSame(strtoupper($currency['VcharCode']), $list[$key]->getCharCode());
+            $this->assertSame($currency['Vname'], $list[$key]->getName());
+            $this->assertSame($currency['Vcode'], $list[$key]->getCode());
+            $this->assertSame($currency['VEngname'], $list[$key]->getEngName());
+            $this->assertSame($currency['Vnom'], $list[$key]->getNom());
+            $this->assertSame($currency['VnumCode'], $list[$key]->getNumCode());
+            $this->assertSame($currency['VcommonCode'], $list[$key]->getCommonCode());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testEnumValutesException(): void
+    {
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('EnumValutes'))
+            ->will($this->throwException(new Exception()));
 
         $service = new CbrfDaily($soapClient);
 
-        $this->expectException('\InvalidArgumentException');
-        $service->GetCursOnDate($exceptionDate);
+        $this->expectException(CbrfException::class);
+        $service->enumValutes();
     }
 
-    protected function getCoursesFixture()
+    /**
+     * @test
+     */
+    public function testGetLatestDateTime(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateTimeResult = '2018-01-19T00:00:00';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateTime'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $date = $service->getLatestDateTime();
+
+        $this->assertSame(
+            $response->GetLatestDateTimeResult,
+            $date->format('Y-m-d\TH:i:s')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDateTimeException(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateTimeResult = 'broken test';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateTime'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->expectException(CbrfException::class);
+        $service->getLatestDateTime();
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDateTimeSeld(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateTimeSeldResult = '2019-01-19T00:00:00';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateTimeSeld'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $date = $service->getLatestDateTimeSeld();
+
+        $this->assertSame(
+            $response->GetLatestDateTimeSeldResult,
+            $date->format('Y-m-d\TH:i:s')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDateTimeSeldException(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateTimeSeldResult = 'broken test';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateTimeSeld'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->expectException(CbrfException::class);
+        $service->getLatestDateTimeSeld();
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDate(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateResult = '20190119';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDate'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $date = $service->getLatestDate();
+
+        $this->assertSame(
+            '2019-01-19T00:00:00',
+            $date->format('Y-m-d\TH:i:s')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDateException(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateResult = 'broken test';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDate'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->expectException(CbrfException::class);
+        $service->getLatestDate();
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDateSeld(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateSeldResult = '20190119';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateSeld'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $date = $service->getLatestDateSeld();
+
+        $this->assertSame(
+            '2019-01-19T00:00:00',
+            $date->format('Y-m-d\TH:i:s')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testGetLatestDateSeldException(): void
+    {
+        $response = new stdClass();
+        $response->GetLatestDateSeldResult = 'broken test';
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetLatestDateSeld'))
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->expectException(CbrfException::class);
+        $service->getLatestDateSeld();
+    }
+
+    /**
+     * Returns fixture for courses checking.
+     *
+     * @return array
+     */
+    private function getCoursesFixture(): array
     {
         $courses = [];
         for ($i = 0; $i <= 3; ++$i) {
             $courses[] = [
                 'VchCode' => "VchCode_{$i}",
                 'Vname' => "Vname_{$i}",
-                'Vcode' => "Vcode_{$i}",
+                'Vcode' => mt_rand(),
                 'Vcurs' => floatval(mt_rand()),
-                'Vnom' => floatval(mt_rand()),
+                'Vnom' => mt_rand(),
             ];
         }
 
-        $soapResponse = new \stdClass();
-        $soapResponse->GetCursOnDateResult = new \stdClass();
+        $soapResponse = new stdClass();
+        $soapResponse->GetCursOnDateResult = new stdClass();
 
         $soapResponse->GetCursOnDateResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $soapResponse->GetCursOnDateResult->any .= '<ValuteData xmlns="">';
@@ -115,66 +380,12 @@ class CbrfDailyTest extends BaseTestCase
         return [$courses, $soapResponse];
     }
 
-    public function testEnumValutes()
-    {
-        list($courses, $response) = $this->getEnumValutesFixture();
-
-        $soapClient = $this->getMockBuilder('\SoapClient')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with(
-                $this->equalTo('EnumValutes'),
-                $this->equalTo([['Seld' => false]])
-            )
-            ->will($this->returnValue($response));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->assertSame(
-            $courses,
-            $service->EnumValutes(false),
-            'all list'
-        );
-        $this->assertSame(
-            $courses[2],
-            $service->EnumValutes(false, 'VcommonCode_2'),
-            'by VcommonCode'
-        );
-        $this->assertSame(
-            $courses[1],
-            $service->EnumValutes(false, 'VcharCode_1'),
-            'by VcharCode'
-        );
-        $this->assertSame(
-            $courses[0],
-            $service->EnumValutes(false, 'Vname_0'),
-            'by Vname'
-        );
-        $this->assertSame(
-            $courses[2],
-            $service->EnumValutes(false, 'Vcode_2'),
-            'by Vcode'
-        );
-    }
-
-    public function testEnumValutesException()
-    {
-        $exceptionMessage = 'exception_message_' . mt_rand();
-        $soapClient = $this->getMockBuilder('\SoapClient')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('EnumValutes'))
-            ->will($this->throwException(new \Exception($exceptionMessage)));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException('\marvin255\cbrfservice\Exception');
-        $service->EnumValutes();
-    }
-
-    protected function getEnumValutesFixture()
+    /**
+     * Returns fixture for currencies checking.
+     *
+     * @return array
+     */
+    private function getEnumValutesFixture(): array
     {
         $courses = [];
         for ($i = 0; $i <= 3; ++$i) {
@@ -182,15 +393,15 @@ class CbrfDailyTest extends BaseTestCase
                 'Vcode' => "Vcode_{$i}",
                 'Vname' => "Vname_{$i}",
                 'VEngname' => "VEngname_{$i}",
-                'Vnom' => "Vnom_{$i}",
+                'Vnom' => $i,
                 'VcommonCode' => "VcommonCode_{$i}",
-                'VnumCode' => "VnumCode_{$i}",
+                'VnumCode' => $i,
                 'VcharCode' => "VcharCode_{$i}",
             ];
         }
 
-        $soapResponse = new \stdClass();
-        $soapResponse->EnumValutesResult = new \stdClass();
+        $soapResponse = new stdClass();
+        $soapResponse->EnumValutesResult = new stdClass();
 
         $soapResponse->EnumValutesResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $soapResponse->EnumValutesResult->any .= '<ValuteData xmlns="">';
@@ -205,129 +416,5 @@ class CbrfDailyTest extends BaseTestCase
         $soapResponse->EnumValutesResult->any .= '</diffgr:diffgram>';
 
         return [$courses, $soapResponse];
-    }
-
-    public function testGetLatestDateTime()
-    {
-        $response = new \stdClass();
-        $response->GetLatestDateTimeResult = '2018-01-19T00:00:00';
-
-        $soapClient = $this->getMockBuilder('\SoapClient')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDateTime'))
-            ->will($this->returnValue($response));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->assertSame(
-            '19.01.2018 00:00:00',
-            $service->GetLatestDateTime(),
-            'default format'
-        );
-        $this->assertSame(
-            '01/19/2018',
-            $service->GetLatestDateTime('m/d/Y'),
-            'any format'
-        );
-        $this->assertSame(
-            strtotime($response->GetLatestDateTimeResult),
-            $service->GetLatestDateTime(null),
-            'timestamp'
-        );
-    }
-
-    public function testGetLatestDateTimeSeld()
-    {
-        $response = new \stdClass();
-        $response->GetLatestDateTimeSeldResult = '2018-01-19T00:00:00';
-
-        $soapClient = $this->getMockBuilder('\SoapClient')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDateTimeSeld'))
-            ->will($this->returnValue($response));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->assertSame(
-            '19.01.2018 00:00:00',
-            $service->GetLatestDateTimeSeld(),
-            'default format'
-        );
-        $this->assertSame(
-            '01/19/2018',
-            $service->GetLatestDateTimeSeld('m/d/Y'),
-            'any format'
-        );
-        $this->assertSame(
-            strtotime($response->GetLatestDateTimeSeldResult),
-            $service->GetLatestDateTimeSeld(null),
-            'timestamp'
-        );
-    }
-
-    public function testGetLatestDate()
-    {
-        $response = new \stdClass();
-        $response->GetLatestDateResult = '20180119';
-
-        $soapClient = $this->getMockBuilder('\SoapClient')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDate'))
-            ->will($this->returnValue($response));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->assertSame(
-            '20180119',
-            $service->GetLatestDate(),
-            'default format'
-        );
-        $this->assertSame(
-            '01/19/2018',
-            $service->GetLatestDate('m/d/Y'),
-            'any format'
-        );
-        $this->assertSame(
-            strtotime('2018-01-19'),
-            $service->GetLatestDate(null),
-            'timestamp'
-        );
-    }
-
-    public function testGetLatestDateSeld()
-    {
-        $response = new \stdClass();
-        $response->GetLatestDateSeldResult = '20180119';
-
-        $soapClient = $this->getMockBuilder('\SoapClient')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDateSeld'))
-            ->will($this->returnValue($response));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->assertSame(
-            '20180119',
-            $service->GetLatestDateSeld(),
-            'default format'
-        );
-        $this->assertSame(
-            '01/19/2018',
-            $service->GetLatestDateSeld('m/d/Y'),
-            'any format'
-        );
-        $this->assertSame(
-            strtotime('2018-01-19'),
-            $service->GetLatestDateSeld(null),
-            'timestamp'
-        );
     }
 }

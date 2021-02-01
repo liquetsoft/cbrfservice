@@ -5,7 +5,9 @@
     "keywords": ["php", "banks", "currency rate", "soap", "service"],
     "license": "MIT",
     "require": {
-        "php": ">=7.3"
+        "php": ">=7.4",
+        "ext-soap": "*",
+        "ext-SimpleXML": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
