@@ -1,14 +1,16 @@
 <?php
 
-namespace marvin255\cbrfservice\tests;
+declare(strict_types=1);
 
-use marvin255\cbrfservice\CbrfDaily;
+namespace Marvin255\CbrfService\Tests;
+
+use Marvin255\CbrfService\CbrfDaily;
 
 class CbrfDailyTest extends BaseTestCase
 {
     public function testDefaultClien()
     {
-        $service = new CbrfDaily;
+        $service = new CbrfDaily();
 
         $this->assertInstanceOf('\SoapClient', $service->getSoapClient());
     }
@@ -64,7 +66,7 @@ class CbrfDailyTest extends BaseTestCase
 
         $service = new CbrfDaily($soapClient);
 
-        $this->setExpectedException('\marvin255\cbrfservice\Exception', $exceptionMessage);
+        $this->expectException('\marvin255\cbrfservice\Exception');
         $service->GetCursOnDate();
     }
 
@@ -78,14 +80,14 @@ class CbrfDailyTest extends BaseTestCase
 
         $service = new CbrfDaily($soapClient);
 
-        $this->setExpectedException('\InvalidArgumentException', $exceptionDate);
+        $this->expectException('\InvalidArgumentException');
         $service->GetCursOnDate($exceptionDate);
     }
 
     protected function getCoursesFixture()
     {
         $courses = [];
-        for ($i = 0; $i <= 3; $i++) {
+        for ($i = 0; $i <= 3; ++$i) {
             $courses[] = [
                 'VchCode' => "VchCode_{$i}",
                 'Vname' => "Vname_{$i}",
@@ -95,8 +97,8 @@ class CbrfDailyTest extends BaseTestCase
             ];
         }
 
-        $soapResponse = new \stdClass;
-        $soapResponse->GetCursOnDateResult = new \stdClass;
+        $soapResponse = new \stdClass();
+        $soapResponse->GetCursOnDateResult = new \stdClass();
 
         $soapResponse->GetCursOnDateResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $soapResponse->GetCursOnDateResult->any .= '<ValuteData xmlns="">';
@@ -168,14 +170,14 @@ class CbrfDailyTest extends BaseTestCase
 
         $service = new CbrfDaily($soapClient);
 
-        $this->setExpectedException('\marvin255\cbrfservice\Exception', $exceptionMessage);
+        $this->expectException('\marvin255\cbrfservice\Exception');
         $service->EnumValutes();
     }
 
     protected function getEnumValutesFixture()
     {
         $courses = [];
-        for ($i = 0; $i <= 3; $i++) {
+        for ($i = 0; $i <= 3; ++$i) {
             $courses[] = [
                 'Vcode' => "Vcode_{$i}",
                 'Vname' => "Vname_{$i}",
@@ -187,8 +189,8 @@ class CbrfDailyTest extends BaseTestCase
             ];
         }
 
-        $soapResponse = new \stdClass;
-        $soapResponse->EnumValutesResult = new \stdClass;
+        $soapResponse = new \stdClass();
+        $soapResponse->EnumValutesResult = new \stdClass();
 
         $soapResponse->EnumValutesResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $soapResponse->EnumValutesResult->any .= '<ValuteData xmlns="">';
@@ -207,7 +209,7 @@ class CbrfDailyTest extends BaseTestCase
 
     public function testGetLatestDateTime()
     {
-        $response = new \stdClass;
+        $response = new \stdClass();
         $response->GetLatestDateTimeResult = '2018-01-19T00:00:00';
 
         $soapClient = $this->getMockBuilder('\SoapClient')
@@ -238,7 +240,7 @@ class CbrfDailyTest extends BaseTestCase
 
     public function testGetLatestDateTimeSeld()
     {
-        $response = new \stdClass;
+        $response = new \stdClass();
         $response->GetLatestDateTimeSeldResult = '2018-01-19T00:00:00';
 
         $soapClient = $this->getMockBuilder('\SoapClient')
@@ -269,7 +271,7 @@ class CbrfDailyTest extends BaseTestCase
 
     public function testGetLatestDate()
     {
-        $response = new \stdClass;
+        $response = new \stdClass();
         $response->GetLatestDateResult = '20180119';
 
         $soapClient = $this->getMockBuilder('\SoapClient')
@@ -300,7 +302,7 @@ class CbrfDailyTest extends BaseTestCase
 
     public function testGetLatestDateSeld()
     {
-        $response = new \stdClass;
+        $response = new \stdClass();
         $response->GetLatestDateSeldResult = '20180119';
 
         $soapClient = $this->getMockBuilder('\SoapClient')

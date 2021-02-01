@@ -1,9 +1,9 @@
 <?php
 
-namespace marvin255\cbrfservice;
+namespace Marvin255\CbrfService;
 
-use SoapClient;
 use InvalidArgumentException;
+use SoapClient;
 
 /**
  * Class for a basic soap service utilits.
@@ -11,12 +11,14 @@ use InvalidArgumentException;
 abstract class SoapService
 {
     /**
-     * @var \SoapClient
+     * @var \SoapClient|null
      */
     private $client = null;
 
     /**
-     * @param mixed $result
+     * @param mixed  $result
+     * @param string $method
+     * @param array  $params
      *
      * @return mixed
      */
@@ -42,7 +44,7 @@ abstract class SoapService
      *
      * @return mixed
      *
-     * @throws \marvin255\cbrfservice\Exception
+     * @throws \Marvin255\CbrfService\Exception
      */
     protected function doSoapCall($method, array $params = [])
     {
@@ -66,13 +68,17 @@ abstract class SoapService
      */
     public function getSoapClient()
     {
+        if ($this->client === null) {
+            throw new InvalidArgumentException('Client not found.');
+        }
+
         return $this->client;
     }
 
     /**
      * Converts any date in any format to xsd DateTime format.
      *
-     * @param string $date
+     * @param string|int $date
      *
      * @return string
      *
@@ -80,7 +86,7 @@ abstract class SoapService
      */
     protected function getXsdDateTimeFromDate($date)
     {
-        $timestamp = is_numeric($date) ? $date : strtotime($date);
+        $timestamp = is_numeric($date) ? (int) $date : strtotime($date);
         if ($timestamp === false) {
             throw new InvalidArgumentException(
                 "Can't parse date: $date"

@@ -1,6 +1,6 @@
 <?php
 
-namespace marvin255\cbrfservice;
+namespace Marvin255\CbrfService;
 
 /**
  * Autoloader's class.
@@ -10,7 +10,7 @@ class Autoloader
     /**
      * Path to project folder.
      *
-     * @var string
+     * @var string|null
      */
     protected static $path = null;
 
@@ -32,9 +32,15 @@ class Autoloader
      * Class loader method.
      *
      * @param string $class Class that's need to be loaded
+     *
+     * @return void
      */
     public static function load($class)
     {
+        if (self::$path === null) {
+            return;
+        }
+
         $prefix = __NAMESPACE__ . '\\';
         $len = strlen($prefix);
 
@@ -48,4 +54,4 @@ class Autoloader
     }
 }
 
-\marvin255\cbrfservice\Autoloader::register();
+\Marvin255\CbrfService\Autoloader::register();

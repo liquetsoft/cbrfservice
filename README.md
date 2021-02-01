@@ -13,20 +13,10 @@ Php обертка для [сервиса Центробанка РФ](http://ww
 
 **С помощью [Composer](https://getcomposer.org/doc/00-intro.md).**
 
-Добавьте в ваш composer.json в раздел `require`:
+Добавьте библиотеку с помощью composer:
 
-```javascript
-"require": {
-    "marvin255/cbrfservice": "~1.0"
-}
-```
-
-**Обычная**
-
-Скачайте библиотеку и распакуйте ее в свой проект. Убедитесь, что файл `Autoloader.php` подключен в вашем скрипте.
-
-```php
-require_once 'src/Autoloader.php';
+```bash
+composer req marvin255/cbrfservice
 ```
 
 
@@ -35,7 +25,7 @@ require_once 'src/Autoloader.php';
 
 ```php
 //инициируем новый объект сервиса
-$cbrf = new \marvin255\cbrfservice\CbrfDaily;
+$cbrf = new \Marvin255\CbrfService\CbrfDaily();
 //получаем курсы валют
 $currencies = $cbrf->GetCursOnDate();
 //получаем список доступных валют
@@ -54,7 +44,7 @@ $client = new SoapClient(
     ]
 );
 //инициируем новый объект сервиса
-$cbrf = new \marvin255\cbrfservice\CbrfDaily($client);
+$cbrf = new \Marvin255\CbrfService\CbrfDaily($client);
 //получаем курсы валют
 $currencies = $cbrf->GetCursOnDate();
 //получаем список доступных валют
@@ -66,15 +56,15 @@ $enumCurrencies = $cbrf->EnumValutes();
 Обработка ошибок
 ----------------
 
-Все ошибки, которые будут перехвачены при запросах, будут выброшены как исключение `\marvin255\cbrfservice\Exception`. Если `\SoapClient` будет сконфигурирован без исключений, то обработка ошибок остается на стороне клиентского скрипта.
+Все ошибки, которые будут перехвачены при запросах, будут выброшены как исключение `\Marvin255\CbrfService\Exception`. Если `\SoapClient` будет сконфигурирован без исключений, то обработка ошибок остается на стороне клиентского скрипта.
 
 
 
 Методы
 ------
 
-* `array \cbrfservice\CbrfDaily::GetCursOnDate( [mixed $onDate, mixed $currency] )` - возвращает массив с курсами валют за заданную дату. Если `$onDate` не задан, то возвращается список валют за текущее время. Если задан `$currency`, то возвращается значение только для этой валюты.
+* `array \Marvin255\CbrfService\CbrfDaily::GetCursOnDate( [mixed $onDate, mixed $currency] )` - возвращает массив с курсами валют за заданную дату. Если `$onDate` не задан, то возвращается список валют за текущее время. Если задан `$currency`, то возвращается значение только для этой валюты.
 
-* `array \cbrfservice\CbrfDaily::EnumValutes( [bool $seld, mixed $currency] )` - возвращает список с описаниями валютю $seld: false — перечень ежедневных валют, true — перечень ежемесячных валют. Если задан `$currency`, то возвращается значение только для этой валюты.
+* `array \Marvin255\CbrfService\CbrfDaily::EnumValutes( [bool $seld, mixed $currency] )` - возвращает список с описаниями валютю $seld: false — перечень ежедневных валют, true — перечень ежемесячных валют. Если задан `$currency`, то возвращается значение только для этой валюты.
 
 * Описание остальных методов вы можете найти на [сайте банка России](http://www.cbr.ru/scripts/Root.asp?PrtId=DWS). Даты для этих методов могут быть заданы в любом формате пригодном для `strtotime()`.

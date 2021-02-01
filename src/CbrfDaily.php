@@ -1,6 +1,6 @@
 <?php
 
-namespace marvin255\cbrfservice;
+namespace Marvin255\CbrfService;
 
 use SoapClient;
 
@@ -10,7 +10,7 @@ use SoapClient;
 class CbrfDaily extends SoapService
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __construct(SoapClient $client = null)
     {
@@ -30,7 +30,7 @@ class CbrfDaily extends SoapService
      * @param string|int $onDate
      * @param string     $currency
      *
-     * @return array
+     * @return array|null
      */
     public function GetCursOnDate($onDate = null, $currency = null)
     {
@@ -71,7 +71,7 @@ class CbrfDaily extends SoapService
      * @param bool   $seld
      * @param string $currency
      *
-     * @return array
+     * @return array|null
      */
     public function EnumValutes($seld = false, $currency = null)
     {
@@ -112,7 +112,7 @@ class CbrfDaily extends SoapService
     /**
      * @param string $format
      *
-     * @return string
+     * @return int|string|null
      */
     public function GetLatestDateTime($format = 'd.m.Y H:i:s')
     {
@@ -122,7 +122,7 @@ class CbrfDaily extends SoapService
     /**
      * @param string $format
      *
-     * @return string
+     * @return int|string|null
      */
     public function GetLatestDateTimeSeld($format = 'd.m.Y H:i:s')
     {
@@ -130,7 +130,9 @@ class CbrfDaily extends SoapService
     }
 
     /**
-     * @return string
+     * @param string $format
+     *
+     * @return string|int|null
      */
     public function GetLatestDate($format = 'Ymd')
     {
@@ -139,14 +141,18 @@ class CbrfDaily extends SoapService
             $timestamp = strtotime(
                 substr($res, 0, 4) . '-' . substr($res, 4, 2) . '-' . substr($res, 6, 2)
             );
-            $return = $format ? date($format, $timestamp) : $timestamp;
+            if ($timestamp !== false) {
+                $return = $format ? date($format, $timestamp) : $timestamp;
+            }
         }
 
         return $return;
     }
 
     /**
-     * @return string
+     * @param string $format
+     *
+     * @return string|int|null
      */
     public function GetLatestDateSeld($format = 'Ymd')
     {
@@ -155,7 +161,9 @@ class CbrfDaily extends SoapService
             $timestamp = strtotime(
                 substr($res, 0, 4) . '-' . substr($res, 4, 2) . '-' . substr($res, 6, 2)
             );
-            $return = $format ? date($format, $timestamp) : $timestamp;
+            if ($timestamp !== false) {
+                $return = $format ? date($format, $timestamp) : $timestamp;
+            }
         }
 
         return $return;
@@ -604,7 +612,7 @@ class CbrfDaily extends SoapService
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function parseSoapResult($result, $method, $params)
     {
@@ -624,14 +632,17 @@ class CbrfDaily extends SoapService
      * @param string $method
      * @param string $format
      *
-     * @return string
+     * @return string|int|null
      */
     protected function getTimeMethod($method, $format = null)
     {
         $return = null;
         $res = $this->doSoapCall($method);
         if (!empty($res)) {
-            $return = $format == null ? strtotime($res) : date($format, strtotime($res));
+            $strtotime = strtotime($res);
+            if ($strtotime !== false) {
+                $return = $format === null ? $strtotime : date($format, $strtotime);
+            }
         }
 
         return $return;

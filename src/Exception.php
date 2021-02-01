@@ -1,6 +1,6 @@
 <?php
 
-namespace marvin255\cbrfservice;
+namespace Marvin255\CbrfService;
 
 /**
  * Class for a lib exception.
