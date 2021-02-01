@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Marvin255\CbrfService;
 
 use InvalidArgumentException;
 use SoapClient;
+use Throwable;
 
 /**
  * Class for a basic soap service utilits.
@@ -48,7 +51,7 @@ abstract class SoapService
     {
         try {
             $res = $this->getSoapClient()->__soapCall($method, $params);
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             throw new CbrfException(
                 "Fail while request {$method}: " . $e->getMessage(),
                 0,
