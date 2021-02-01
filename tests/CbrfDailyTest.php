@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace Marvin255\CbrfService\Tests;
 
+use Exception;
+use InvalidArgumentException;
 use Marvin255\CbrfService\CbrfDaily;
+use Marvin255\CbrfService\CbrfException;
+use SoapClient;
+use stdClass;
 
 class CbrfDailyTest extends BaseTestCase
 {
-    public function testDefaultClien()
-    {
-        $service = new CbrfDaily();
-
-        $this->assertInstanceOf('\SoapClient', $service->getSoapClient());
-    }
-
+    /**
+     * @test
+     */
     public function testGetCursOnDateCurrency()
     {
         list($courses, $response) = $this->getCoursesFixture();
         $time = time();
 
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
@@ -54,36 +55,45 @@ class CbrfDailyTest extends BaseTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testGetCursOnDateException()
     {
         $exceptionMessage = 'exception_message_' . mt_rand();
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
             ->with($this->equalTo('GetCursOnDate'))
-            ->will($this->throwException(new \Exception($exceptionMessage)));
+            ->will($this->throwException(new Exception($exceptionMessage)));
 
         $service = new CbrfDaily($soapClient);
 
-        $this->expectException('\marvin255\cbrfservice\Exception');
+        $this->expectException(CbrfException::class);
         $service->GetCursOnDate();
     }
 
+    /**
+     * @test
+     */
     public function testGetCursOnDateWrongDateException()
     {
         $exceptionDate = 'wrong_date_' . mt_rand();
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')->with($this->equalTo('GetCursOnDate'));
 
         $service = new CbrfDaily($soapClient);
 
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
         $service->GetCursOnDate($exceptionDate);
     }
 
+    /**
+     * @test
+     */
     protected function getCoursesFixture()
     {
         $courses = [];
@@ -97,8 +107,8 @@ class CbrfDailyTest extends BaseTestCase
             ];
         }
 
-        $soapResponse = new \stdClass();
-        $soapResponse->GetCursOnDateResult = new \stdClass();
+        $soapResponse = new stdClass();
+        $soapResponse->GetCursOnDateResult = new stdClass();
 
         $soapResponse->GetCursOnDateResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $soapResponse->GetCursOnDateResult->any .= '<ValuteData xmlns="">';
@@ -115,11 +125,14 @@ class CbrfDailyTest extends BaseTestCase
         return [$courses, $soapResponse];
     }
 
+    /**
+     * @test
+     */
     public function testEnumValutes()
     {
         list($courses, $response) = $this->getEnumValutesFixture();
 
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
@@ -158,22 +171,28 @@ class CbrfDailyTest extends BaseTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testEnumValutesException()
     {
         $exceptionMessage = 'exception_message_' . mt_rand();
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
             ->with($this->equalTo('EnumValutes'))
-            ->will($this->throwException(new \Exception($exceptionMessage)));
+            ->will($this->throwException(new Exception($exceptionMessage)));
 
         $service = new CbrfDaily($soapClient);
 
-        $this->expectException('\marvin255\cbrfservice\Exception');
+        $this->expectException(CbrfException::class);
         $service->EnumValutes();
     }
 
+    /**
+     * @test
+     */
     protected function getEnumValutesFixture()
     {
         $courses = [];
@@ -189,8 +208,8 @@ class CbrfDailyTest extends BaseTestCase
             ];
         }
 
-        $soapResponse = new \stdClass();
-        $soapResponse->EnumValutesResult = new \stdClass();
+        $soapResponse = new stdClass();
+        $soapResponse->EnumValutesResult = new stdClass();
 
         $soapResponse->EnumValutesResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $soapResponse->EnumValutesResult->any .= '<ValuteData xmlns="">';
@@ -207,12 +226,15 @@ class CbrfDailyTest extends BaseTestCase
         return [$courses, $soapResponse];
     }
 
+    /**
+     * @test
+     */
     public function testGetLatestDateTime()
     {
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->GetLatestDateTimeResult = '2018-01-19T00:00:00';
 
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
@@ -238,12 +260,15 @@ class CbrfDailyTest extends BaseTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testGetLatestDateTimeSeld()
     {
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->GetLatestDateTimeSeldResult = '2018-01-19T00:00:00';
 
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
@@ -269,12 +294,15 @@ class CbrfDailyTest extends BaseTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testGetLatestDate()
     {
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->GetLatestDateResult = '20180119';
 
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
@@ -300,12 +328,15 @@ class CbrfDailyTest extends BaseTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testGetLatestDateSeld()
     {
-        $response = new \stdClass();
+        $response = new stdClass();
         $response->GetLatestDateSeldResult = '20180119';
 
-        $soapClient = $this->getMockBuilder('\SoapClient')
+        $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')

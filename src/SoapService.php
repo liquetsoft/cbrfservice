@@ -11,7 +11,7 @@ use SoapClient;
 abstract class SoapService
 {
     /**
-     * @var \SoapClient|null
+     * @var SoapClient|null
      */
     private $client = null;
 
@@ -27,9 +27,7 @@ abstract class SoapService
     /**
      * Constructor.
      *
-     * @param \SoapClient $client soapClient instance to connect to service or string instance with wsdl url
-     *
-     * @throws \InvalidArgumentException
+     * @param SoapClient $client soapClient instance to connect to service or string instance with wsdl url
      */
     public function __construct(SoapClient $client = null)
     {
@@ -44,14 +42,14 @@ abstract class SoapService
      *
      * @return mixed
      *
-     * @throws \Marvin255\CbrfService\Exception
+     * @throws CbrfException
      */
     protected function doSoapCall($method, array $params = [])
     {
         try {
             $res = $this->getSoapClient()->__soapCall($method, $params);
         } catch (\Exception $e) {
-            throw new Exception(
+            throw new CbrfException(
                 "Fail while request {$method}: " . $e->getMessage(),
                 0,
                 $e
@@ -64,7 +62,7 @@ abstract class SoapService
     /**
      * Returns a SoapClient instance for soap requests.
      *
-     * @return \SoapClient
+     * @return SoapClient
      */
     public function getSoapClient()
     {
@@ -82,7 +80,7 @@ abstract class SoapService
      *
      * @return string
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getXsdDateTimeFromDate($date)
     {
