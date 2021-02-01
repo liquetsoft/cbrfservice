@@ -228,26 +228,6 @@ class CbrfDaily
     //
     //     return $return;
     // }
-    //
-    // /**
-    //  * @param string $method
-    //  * @param string $format
-    //  *
-    //  * @return string|int|null
-    //  */
-    // protected function getTimeMethod($method, $format = null)
-    // {
-    //     $return = null;
-    //     $res = $this->doSoapCall($method);
-    //     if (!empty($res)) {
-    //         $strtotime = strtotime($res);
-    //         if ($strtotime !== false) {
-    //             $return = $format === null ? $strtotime : date($format, $strtotime);
-    //         }
-    //     }
-    //
-    //     return $return;
-    // }
 
     /**
      * Converts any date to xsd DateTime format string.
