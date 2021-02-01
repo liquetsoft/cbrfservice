@@ -6,10 +6,10 @@ namespace Marvin255\CbrfService\Tests;
 
 use DateTime;
 use Exception;
-use InvalidArgumentException;
 use Marvin255\CbrfService\CbrfDaily;
 use Marvin255\CbrfService\CbrfException;
-use Marvin255\CbrfService\Entity\CursOnDate;
+use Marvin255\CbrfService\Entity\Currency;
+use Marvin255\CbrfService\Entity\CurrencyRate;
 use SoapClient;
 use stdClass;
 
@@ -18,7 +18,7 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testGetCursOnDateCurrency(): void
+    public function testGetCursOnDate(): void
     {
         $dateFormat = 'Y-m-d\TH:i:s';
         [$courses, $response] = $this->getCoursesFixture();
@@ -44,13 +44,13 @@ class CbrfDailyTest extends BaseTestCase
         $list = $service->getCursOnDate($onDate);
 
         $this->assertCount(4, $list);
-        $this->assertContainsOnlyInstancesOf(CursOnDate::class, $list);
+        $this->assertContainsOnlyInstancesOf(CurrencyRate::class, $list);
         foreach ($courses as $key => $course) {
-            $this->assertSame(strtoupper($course['VchCode']), $list[$key]->getVchCode());
-            $this->assertSame($course['Vname'], $list[$key]->getVname());
-            $this->assertSame($course['Vcode'], $list[$key]->getVcode());
-            $this->assertSame($course['Vcurs'], $list[$key]->getVcurs());
-            $this->assertSame($course['Vnom'], $list[$key]->getVnom());
+            $this->assertSame(strtoupper($course['VchCode']), $list[$key]->getChCode());
+            $this->assertSame($course['Vname'], $list[$key]->getName());
+            $this->assertSame($course['Vcode'], $list[$key]->getCode());
+            $this->assertSame($course['Vcurs'], $list[$key]->getCurs());
+            $this->assertSame($course['Vnom'], $list[$key]->getNom());
             $this->assertSame($onDate->format($dateFormat), $list[$key]->getDate()->format($dateFormat));
         }
     }
@@ -84,147 +84,86 @@ class CbrfDailyTest extends BaseTestCase
         $service = new CbrfDaily($soapClient);
         $item = $service->getCursOnDateByCode($onDate, $code);
 
-        $this->assertInstanceOf(CursOnDate::class, $item);
-        $this->assertSame(strtoupper($code), $item->getVchCode());
+        $this->assertInstanceOf(CurrencyRate::class, $item);
+        $this->assertSame(strtoupper($code), $item->getChCode());
     }
 
-    // /**
-    //  * @test
-    //  */
-    // public function testGetCursOnDateException()
-    // {
-    //     $exceptionMessage = 'exception_message_' . mt_rand();
-    //     $soapClient = $this->getMockBuilder(SoapClient::class)
-    //         ->disableOriginalConstructor()
-    //         ->getMock();
-    //     $soapClient->method('__soapCall')
-    //         ->with($this->equalTo('GetCursOnDate'))
-    //         ->will($this->throwException(new Exception($exceptionMessage)));
-    //
-    //     $service = new CbrfDaily($soapClient);
-    //
-    //     $this->expectException(CbrfException::class);
-    //     $service->GetCursOnDate();
-    // }
-    //
-    // /**
-    //  * @test
-    //  */
-    // public function testGetCursOnDateWrongDateException()
-    // {
-    //     $exceptionDate = 'wrong_date_' . mt_rand();
-    //     $soapClient = $this->getMockBuilder(SoapClient::class)
-    //         ->disableOriginalConstructor()
-    //         ->getMock();
-    //     $soapClient->method('__soapCall')->with($this->equalTo('GetCursOnDate'));
-    //
-    //     $service = new CbrfDaily($soapClient);
-    //
-    //     $this->expectException(InvalidArgumentException::class);
-    //     $service->GetCursOnDate($exceptionDate);
-    // }
-    //
-    // /**
-    //  * @test
-    //  */
-    // public function testEnumValutes()
-    // {
-    //     list($courses, $response) = $this->getEnumValutesFixture();
-    //
-    //     $soapClient = $this->getMockBuilder(SoapClient::class)
-    //         ->disableOriginalConstructor()
-    //         ->getMock();
-    //     $soapClient->method('__soapCall')
-    //         ->with(
-    //             $this->equalTo('EnumValutes'),
-    //             $this->equalTo([['Seld' => false]])
-    //         )
-    //         ->will($this->returnValue($response));
-    //
-    //     $service = new CbrfDaily($soapClient);
-    //
-    //     $this->assertSame(
-    //         $courses,
-    //         $service->EnumValutes(false),
-    //         'all list'
-    //     );
-    //     $this->assertSame(
-    //         $courses[2],
-    //         $service->EnumValutes(false, 'VcommonCode_2'),
-    //         'by VcommonCode'
-    //     );
-    //     $this->assertSame(
-    //         $courses[1],
-    //         $service->EnumValutes(false, 'VcharCode_1'),
-    //         'by VcharCode'
-    //     );
-    //     $this->assertSame(
-    //         $courses[0],
-    //         $service->EnumValutes(false, 'Vname_0'),
-    //         'by Vname'
-    //     );
-    //     $this->assertSame(
-    //         $courses[2],
-    //         $service->EnumValutes(false, 'Vcode_2'),
-    //         'by Vcode'
-    //     );
-    // }
-    //
-    // /**
-    //  * @test
-    //  */
-    // public function testEnumValutesException()
-    // {
-    //     $exceptionMessage = 'exception_message_' . mt_rand();
-    //     $soapClient = $this->getMockBuilder(SoapClient::class)
-    //         ->disableOriginalConstructor()
-    //         ->getMock();
-    //     $soapClient->method('__soapCall')
-    //         ->with($this->equalTo('EnumValutes'))
-    //         ->will($this->throwException(new Exception($exceptionMessage)));
-    //
-    //     $service = new CbrfDaily($soapClient);
-    //
-    //     $this->expectException(CbrfException::class);
-    //     $service->EnumValutes();
-    // }
-    //
-    // /**
-    //  * @test
-    //  */
-    // protected function getEnumValutesFixture()
-    // {
-    //     $courses = [];
-    //     for ($i = 0; $i <= 3; ++$i) {
-    //         $courses[] = [
-    //             'Vcode' => "Vcode_{$i}",
-    //             'Vname' => "Vname_{$i}",
-    //             'VEngname' => "VEngname_{$i}",
-    //             'Vnom' => "Vnom_{$i}",
-    //             'VcommonCode' => "VcommonCode_{$i}",
-    //             'VnumCode' => "VnumCode_{$i}",
-    //             'VcharCode' => "VcharCode_{$i}",
-    //         ];
-    //     }
-    //
-    //     $soapResponse = new stdClass();
-    //     $soapResponse->EnumValutesResult = new stdClass();
-    //
-    //     $soapResponse->EnumValutesResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-    //     $soapResponse->EnumValutesResult->any .= '<ValuteData xmlns="">';
-    //     foreach ($courses as $course) {
-    //         $soapResponse->EnumValutesResult->any .= '<EnumValutes xmlns="">';
-    //         foreach ($course as $key => $value) {
-    //             $soapResponse->EnumValutesResult->any .= "<{$key}>{$value}</{$key}>";
-    //         }
-    //         $soapResponse->EnumValutesResult->any .= '</EnumValutes>';
-    //     }
-    //     $soapResponse->EnumValutesResult->any .= '</ValuteData>';
-    //     $soapResponse->EnumValutesResult->any .= '</diffgr:diffgram>';
-    //
-    //     return [$courses, $soapResponse];
-    // }
-    //
+    /**
+     * @test
+     */
+    public function testGetCursOnDateException()
+    {
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('GetCursOnDate'))
+            ->will($this->throwException(new Exception()));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->expectException(CbrfException::class);
+        $service->getCursOnDate(new DateTime());
+    }
+
+    /**
+     * @test
+     */
+    public function testEnumValutes(): void
+    {
+        $seld = false;
+        [$currencies, $response] = $this->getEnumValutesFixture();
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with(
+                $this->equalTo('EnumValutes'),
+                $this->equalTo(
+                    [
+                        [
+                            'Seld' => $seld,
+                        ],
+                    ]
+                )
+            )
+            ->willReturn($response);
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->enumValutes($seld);
+
+        $this->assertCount(4, $list);
+        $this->assertContainsOnlyInstancesOf(Currency::class, $list);
+        foreach ($currencies as $key => $currency) {
+            $this->assertSame(strtoupper($currency['VcharCode']), $list[$key]->getCharCode());
+            $this->assertSame($currency['Vname'], $list[$key]->getName());
+            $this->assertSame($currency['Vcode'], $list[$key]->getCode());
+            $this->assertSame($currency['VEngname'], $list[$key]->getEngName());
+            $this->assertSame($currency['Vnom'], $list[$key]->getNom());
+            $this->assertSame($currency['VnumCode'], $list[$key]->getNumCode());
+            $this->assertSame($currency['VcommonCode'], $list[$key]->getCommonCode());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testEnumValutesException(): void
+    {
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $soapClient->method('__soapCall')
+            ->with($this->equalTo('EnumValutes'))
+            ->will($this->throwException(new Exception()));
+
+        $service = new CbrfDaily($soapClient);
+
+        $this->expectException(CbrfException::class);
+        $service->enumValutes();
+    }
+
     // /**
     //  * @test
     //  */
@@ -393,6 +332,44 @@ class CbrfDailyTest extends BaseTestCase
         }
         $soapResponse->GetCursOnDateResult->any .= '</ValuteData>';
         $soapResponse->GetCursOnDateResult->any .= '</diffgr:diffgram>';
+
+        return [$courses, $soapResponse];
+    }
+
+    /**
+     * Returns fixture for currencies checking.
+     *
+     * @return array
+     */
+    private function getEnumValutesFixture(): array
+    {
+        $courses = [];
+        for ($i = 0; $i <= 3; ++$i) {
+            $courses[] = [
+                'Vcode' => "Vcode_{$i}",
+                'Vname' => "Vname_{$i}",
+                'VEngname' => "VEngname_{$i}",
+                'Vnom' => $i,
+                'VcommonCode' => "VcommonCode_{$i}",
+                'VnumCode' => $i,
+                'VcharCode' => "VcharCode_{$i}",
+            ];
+        }
+
+        $soapResponse = new stdClass();
+        $soapResponse->EnumValutesResult = new stdClass();
+
+        $soapResponse->EnumValutesResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
+        $soapResponse->EnumValutesResult->any .= '<ValuteData xmlns="">';
+        foreach ($courses as $course) {
+            $soapResponse->EnumValutesResult->any .= '<EnumValutes xmlns="">';
+            foreach ($course as $key => $value) {
+                $soapResponse->EnumValutesResult->any .= "<{$key}>{$value}</{$key}>";
+            }
+            $soapResponse->EnumValutesResult->any .= '</EnumValutes>';
+        }
+        $soapResponse->EnumValutesResult->any .= '</ValuteData>';
+        $soapResponse->EnumValutesResult->any .= '</diffgr:diffgram>';
 
         return [$courses, $soapResponse];
     }

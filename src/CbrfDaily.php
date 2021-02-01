@@ -4,7 +4,8 @@ namespace Marvin255\CbrfService;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use Marvin255\CbrfService\Entity\CursOnDate;
+use Marvin255\CbrfService\Entity\Currency;
+use Marvin255\CbrfService\Entity\CurrencyRate;
 use SoapClient;
 use Throwable;
 
@@ -34,7 +35,7 @@ class CbrfDaily
      *
      * @param DateTimeInterface $onDate
      *
-     * @return CursOnDate[]
+     * @return CurrencyRate[]
      *
      * @throws CbrfException
      */
@@ -50,10 +51,10 @@ class CbrfDaily
         $results = [];
         $immutableDate = new DateTimeImmutable($date->format(DATE_ATOM));
 
-        $cursOnDateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
-        foreach ($cursOnDateList as $item) {
+        $CurrencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
+        foreach ($CurrencyRateList as $item) {
             if (is_array($item)) {
-                $results[] = new CursOnDate($item, $immutableDate);
+                $results[] = new CurrencyRate($item, $immutableDate);
             }
         }
 
@@ -65,11 +66,11 @@ class CbrfDaily
      *
      * @param DateTimeInterface $onDate
      *
-     * @return CursOnDate|null
+     * @return CurrencyRate|null
      *
      * @throws CbrfException
      */
-    public function getCursOnDateByCode(DateTimeInterface $date, string $code): ?CursOnDate
+    public function getCursOnDateByCode(DateTimeInterface $date, string $code): ?CurrencyRate
     {
         $currencyItem = null;
         $code = strtoupper(trim($code));
@@ -81,14 +82,14 @@ class CbrfDaily
             ]
         );
 
-        // looks like repeating of getCursOnDate
+        // looks like repeating of getCurrencyRate
         // but we do not want to instantiate objects for all currencies
-        $cursOnDateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
-        foreach ($cursOnDateList as $item) {
+        $CurrencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
+        foreach ($CurrencyRateList as $item) {
             $itemCode = strtoupper(trim($item['VchCode'] ?? ''));
             if ($code === $itemCode) {
                 $immutableDate = new DateTimeImmutable($date->format(DATE_ATOM));
-                $currencyItem = new CursOnDate($item, $immutableDate);
+                $currencyItem = new CurrencyRate($item, $immutableDate);
                 break;
             }
         }
@@ -96,48 +97,34 @@ class CbrfDaily
         return $currencyItem;
     }
 
-    // /**
-    //  * @param bool   $seld
-    //  * @param string $currency
-    //  *
-    //  * @return array|null
-    //  */
-    // public function EnumValutes($seld = false, $currency = null)
-    // {
-    //     $results = [];
-    //
-    //     $res = $this->doSoapCall('EnumValutes', [
-    //         ['Seld' => $seld],
-    //     ]);
-    //
-    //     if (!empty($res->ValuteData->EnumValutes)) {
-    //         foreach ($res->ValuteData->EnumValutes as $value) {
-    //             $results[] = [
-    //                 'Vcode' => trim($value->Vcode),
-    //                 'Vname' => trim($value->Vname),
-    //                 'VEngname' => trim($value->VEngname),
-    //                 'Vnom' => trim($value->Vnom),
-    //                 'VcommonCode' => trim($value->VcommonCode),
-    //                 'VnumCode' => trim($value->VnumCode),
-    //                 'VcharCode' => trim($value->VcharCode),
-    //             ];
-    //         }
-    //     }
-    //
-    //     if ($currency !== null) {
-    //         $return = null;
-    //         foreach ($results as $value) {
-    //             if ($value['VcommonCode'] == $currency || $value['VcharCode'] == $currency || $value['Vname'] == $currency || $value['Vcode'] == $currency) {
-    //                 $return = $value;
-    //                 break;
-    //             }
-    //         }
-    //         $results = $return;
-    //     }
-    //
-    //     return $results;
-    // }
-    //
+    /**
+     * List of all currencies that allowed on cbrf service.
+     *
+     * @param bool $seld
+     *
+     * @return Currency[]
+     */
+    public function enumValutes(bool $seld = false): array
+    {
+        $soapResult = $this->doSoapCall(
+            'EnumValutes',
+            [
+                'Seld' => $seld,
+            ]
+        );
+
+        $results = [];
+
+        $enumValutes = $soapResult['ValuteData']['EnumValutes'] ?? [];
+        foreach ($enumValutes as $item) {
+            if (is_array($item)) {
+                $results[] = new Currency($item);
+            }
+        }
+
+        return $results;
+    }
+
     // /**
     //  * @param string $format
     //  *
@@ -353,12 +340,16 @@ class CbrfDaily
             throw new CbrfException($message);
         }
 
-        $this->client = new SoapClient(
-            $this->wsdl,
-            [
-                'exception' => true,
-            ]
-        );
+        try {
+            $this->client = new SoapClient(
+                $this->wsdl,
+                [
+                    'exception' => true,
+                ]
+            );
+        } catch (Throwable $e) {
+            throw new CbrfException($e->getMessage(), 0, $e);
+        }
 
         return $this->client;
     }
