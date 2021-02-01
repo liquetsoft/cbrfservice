@@ -44,7 +44,7 @@ class CbrfDaily
         $soapResult = $this->doSoapCall(
             'GetCursOnDate',
             [
-                'On_date' => $this->convertDateToXsdFormat($date),
+                'On_date' => $date->format('Y-m-d\TH:i:s'),
             ]
         );
 
@@ -78,7 +78,7 @@ class CbrfDaily
         $soapResult = $this->doSoapCall(
             'GetCursOnDate',
             [
-                'On_date' => $this->convertDateToXsdFormat($date),
+                'On_date' => $date->format('Y-m-d\TH:i:s'),
             ]
         );
 
@@ -103,6 +103,8 @@ class CbrfDaily
      * @param bool $seld
      *
      * @return Currency[]
+     *
+     * @throws CbrfException
      */
     public function enumValutes(bool $seld = false): array
     {
@@ -125,120 +127,92 @@ class CbrfDaily
         return $results;
     }
 
-    // /**
-    //  * @param string $format
-    //  *
-    //  * @return int|string|null
-    //  */
-    // public function GetLatestDateTime($format = 'd.m.Y H:i:s')
-    // {
-    //     return $this->getTimeMethod('GetLatestDateTime', $format);
-    // }
-    //
-    // /**
-    //  * @param string $format
-    //  *
-    //  * @return int|string|null
-    //  */
-    // public function GetLatestDateTimeSeld($format = 'd.m.Y H:i:s')
-    // {
-    //     return $this->getTimeMethod('GetLatestDateTimeSeld', $format);
-    // }
-    //
-    // /**
-    //  * @param string $format
-    //  *
-    //  * @return string|int|null
-    //  */
-    // public function GetLatestDate($format = 'Ymd')
-    // {
-    //     $return = null;
-    //     if ($res = $this->doSoapCall('GetLatestDate')) {
-    //         $timestamp = strtotime(
-    //             substr($res, 0, 4) . '-' . substr($res, 4, 2) . '-' . substr($res, 6, 2)
-    //         );
-    //         if ($timestamp !== false) {
-    //             $return = $format ? date($format, $timestamp) : $timestamp;
-    //         }
-    //     }
-    //
-    //     return $return;
-    // }
-    //
-    // /**
-    //  * @param string $format
-    //  *
-    //  * @return string|int|null
-    //  */
-    // public function GetLatestDateSeld($format = 'Ymd')
-    // {
-    //     $return = null;
-    //     if ($res = $this->doSoapCall('GetLatestDateSeld')) {
-    //         $timestamp = strtotime(
-    //             substr($res, 0, 4) . '-' . substr($res, 4, 2) . '-' . substr($res, 6, 2)
-    //         );
-    //         if ($timestamp !== false) {
-    //             $return = $format ? date($format, $timestamp) : $timestamp;
-    //         }
-    //     }
-    //
-    //     return $return;
-    // }
-    //
-    // /**
-    //  * @param string $fromDate
-    //  * @param string $toDate
-    //  * @param string $valutaCode
-    //  * @param bool   $findCode
-    //  *
-    //  * @return array
-    //  */
-    // public function GetCursDynamic($fromDate, $toDate, $valutaCode, $findCode = false)
-    // {
-    //     $return = [];
-    //
-    //     if ($findCode) {
-    //         $valute = $this->EnumValutes(false, $valutaCode);
-    //         if (!$valute) {
-    //             $valute = $this->EnumValutes(true, $valutaCode);
-    //         }
-    //         if (!empty($valute['Vcode'])) {
-    //             $valutaCode = $valute['Vcode'];
-    //         } else {
-    //             return $return;
-    //         }
-    //     }
-    //
-    //     $res = $this->doSoapCall('GetCursDynamic', [[
-    //         'FromDate' => $this->getXsdDateTimeFromDate($fromDate),
-    //         'ToDate' => $this->getXsdDateTimeFromDate($toDate),
-    //         'ValutaCode' => trim($valutaCode),
-    //     ]]);
-    //
-    //     if (!empty($res->ValuteData->ValuteCursDynamic)) {
-    //         foreach ($res->ValuteData->ValuteCursDynamic as $value) {
-    //             $return[] = [
-    //                 'CursDate' => trim($value->CursDate),
-    //                 'Vcode' => trim($value->Vcode),
-    //                 'Vnom' => floatval($value->Vnom),
-    //                 'Vcurs' => floatval($value->Vcurs),
-    //             ];
-    //         }
-    //     }
-    //
-    //     return $return;
-    // }
+    /**
+     * Latest per day date and time of publication.
+     *
+     * @param string $format
+     *
+     * @return DateTimeInterface
+     *
+     * @throws CbrfException
+     */
+    public function getLatestDateTime(): DateTimeInterface
+    {
+        $soapResult = $this->doSoapCall('GetLatestDateTime');
+
+        try {
+            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateTimeResult'] ?? '');
+        } catch (Throwable $e) {
+            throw new CbrfException($e->getMessage(), 0, $e);
+        }
+
+        return $dateTime;
+    }
 
     /**
-     * Converts any date to xsd DateTime format string.
+     * Latest per day date and time of seld.
      *
-     * @param DateTimeInterface $date
+     * @param string $format
      *
-     * @return string
+     * @return DateTimeInterface
+     *
+     * @throws CbrfException
      */
-    private function convertDateToXsdFormat(DateTimeInterface $date): string
+    public function getLatestDateTimeSeld(): DateTimeInterface
     {
-        return $date->format('Y-m-d\TH:i:s');
+        $soapResult = $this->doSoapCall('GetLatestDateTimeSeld');
+
+        try {
+            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateTimeSeldResult'] ?? '');
+        } catch (Throwable $e) {
+            throw new CbrfException($e->getMessage(), 0, $e);
+        }
+
+        return $dateTime;
+    }
+
+    /**
+     * Latest per month date and time of publication.
+     *
+     * @param string $format
+     *
+     * @return DateTimeInterface
+     *
+     * @throws CbrfException
+     */
+    public function getLatestDate(): DateTimeInterface
+    {
+        $soapResult = $this->doSoapCall('GetLatestDate');
+
+        try {
+            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateResult'] ?? '');
+        } catch (Throwable $e) {
+            throw new CbrfException($e->getMessage(), 0, $e);
+        }
+
+        return $dateTime;
+    }
+
+    /**
+     * Latest per month date and time of seld.
+     *
+     * @param string $format
+     *
+     * @return DateTimeInterface
+     *
+     * @throws CbrfException
+     */
+    public function getLatestDateSeld(): DateTimeInterface
+    {
+        $soapResult = $this->doSoapCall('GetLatestDateSeld');
+
+        try {
+            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateSeldResult'] ?? '');
+        } catch (Throwable $e) {
+            throw new CbrfException($e->getMessage(), 0, $e);
+        }
+
+        return $dateTime;
     }
 
     /**
@@ -270,6 +244,8 @@ class CbrfDaily
                     LIBXML_NOCDATA
                 );
                 $parsedResult = $this->xml2array($xml);
+            } else {
+                $parsedResult = (array) $soapCallResult;
             }
         } catch (Throwable $e) {
             $message = sprintf("Fail on '%s': '%s'.", $method, $e->getMessage());
