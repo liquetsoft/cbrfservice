@@ -51,8 +51,8 @@ class CbrfDaily
         $results = [];
         $immutableDate = new DateTimeImmutable($date->format(DATE_ATOM));
 
-        $CurrencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
-        foreach ($CurrencyRateList as $item) {
+        $currencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
+        foreach ($currencyRateList as $item) {
             if (is_array($item)) {
                 $results[] = new CurrencyRate($item, $immutableDate);
             }
@@ -84,8 +84,8 @@ class CbrfDaily
 
         // looks like repeating of getCurrencyRate
         // but we do not want to instantiate objects for all currencies
-        $CurrencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
-        foreach ($CurrencyRateList as $item) {
+        $currencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
+        foreach ($currencyRateList as $item) {
             $itemCode = strtoupper(trim($item['VchCode'] ?? ''));
             if ($code === $itemCode) {
                 $immutableDate = new DateTimeImmutable($date->format(DATE_ATOM));
