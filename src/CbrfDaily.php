@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Marvin255\CbrfService;
 
 use DateTimeImmutable;
@@ -49,11 +51,11 @@ class CbrfDaily
         );
 
         $results = [];
-        $immutableDate = new DateTimeImmutable($date->format(DATE_ATOM));
+        $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
 
         $currencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
         foreach ($currencyRateList as $item) {
-            if (is_array($item)) {
+            if (\is_array($item)) {
                 $results[] = new CurrencyRate($item, $immutableDate);
             }
         }
@@ -88,7 +90,7 @@ class CbrfDaily
         foreach ($currencyRateList as $item) {
             $itemCode = strtoupper(trim($item['VchCode'] ?? ''));
             if ($code === $itemCode) {
-                $immutableDate = new DateTimeImmutable($date->format(DATE_ATOM));
+                $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
                 $currencyItem = new CurrencyRate($item, $immutableDate);
                 break;
             }
@@ -119,7 +121,7 @@ class CbrfDaily
 
         $enumValutes = $soapResult['ValuteData']['EnumValutes'] ?? [];
         foreach ($enumValutes as $item) {
-            if (is_array($item)) {
+            if (\is_array($item)) {
                 $results[] = new Currency($item);
             }
         }
@@ -241,7 +243,7 @@ class CbrfDaily
                 $xml = simplexml_load_string(
                     $soapCallResult->$resName->any,
                     'SimpleXMLElement',
-                    LIBXML_NOCDATA
+                    \LIBXML_NOCDATA
                 );
                 $parsedResult = $this->xml2array($xml);
             } else {
@@ -268,7 +270,7 @@ class CbrfDaily
 
         $xmlArray = (array) $xmlObject;
         foreach ($xmlArray as $index => $node) {
-            if (is_object($node) || is_array($node)) {
+            if (\is_object($node) || \is_array($node)) {
                 $out[$index] = $this->xml2array($node);
             } else {
                 $out[$index] = $node;
