@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Marvin255\CbrfService\Tests;
 
-use DateTime;
 use Exception;
 use Marvin255\CbrfService\CbrfDaily;
 use Marvin255\CbrfService\CbrfException;
@@ -13,6 +12,9 @@ use Marvin255\CbrfService\Entity\CurrencyRate;
 use SoapClient;
 use stdClass;
 
+/**
+ * @internal
+ */
 class CbrfDailyTest extends BaseTestCase
 {
     /**
@@ -22,7 +24,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         $dateFormat = 'Y-m-d\TH:i:s';
         [$courses, $response] = $this->getCoursesFixture();
-        $onDate = new DateTime();
+        $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
@@ -62,8 +64,8 @@ class CbrfDailyTest extends BaseTestCase
     {
         $dateFormat = 'Y-m-d\TH:i:s';
         [$courses, $response] = $this->getCoursesFixture();
-        $code = $courses[0]['VchCode'] ?? null;
-        $onDate = new DateTime();
+        $code = $courses[0]['VchCode'] ?? '';
+        $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
@@ -91,7 +93,7 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testGetCursOnDateException()
+    public function testGetCursOnDateException(): void
     {
         $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
@@ -103,7 +105,7 @@ class CbrfDailyTest extends BaseTestCase
         $service = new CbrfDaily($soapClient);
 
         $this->expectException(CbrfException::class);
-        $service->getCursOnDate(new DateTime());
+        $service->getCursOnDate(new \DateTimeImmutable());
     }
 
     /**
@@ -357,7 +359,7 @@ class CbrfDailyTest extends BaseTestCase
                 'VchCode' => "VchCode_{$i}",
                 'Vname' => "Vname_{$i}",
                 'Vcode' => mt_rand(),
-                'Vcurs' => floatval(mt_rand()),
+                'Vcurs' => (float) (mt_rand()),
                 'Vnom' => mt_rand(),
             ];
         }

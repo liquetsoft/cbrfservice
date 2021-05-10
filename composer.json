@@ -13,7 +13,8 @@
         "phpunit/phpunit": "^9.0",
         "friendsofphp/php-cs-fixer": "^2.11",
         "sebastian/phpcpd": "^6.0",
-        "vimeo/psalm": "^4.0"
+        "vimeo/psalm": "^4.0",
+        "psalm/plugin-phpunit": "^0.15.1"
     },
     "autoload": {
         "psr-4": {
@@ -28,8 +29,12 @@
     "scripts": {
         "test": "vendor/bin/phpunit --configuration phpunit.xml.dist",
         "coverage": "vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-html=tests/coverage",
-        "fixer": "vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v",
-        "linter": "vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation && vendor/bin/phpcpd ./ --exclude vendor --exclude tests && vendor/bin/psalm --show-info=true"
+        "fixer": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -vv --allow-risky=yes",
+        "linter": [
+            "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -vv --allow-risky=yes --dry-run --stop-on-violation",
+            "vendor/bin/phpcpd ./ --exclude vendor --exclude tests",
+            "vendor/bin/psalm --show-info=true"
+        ]
     },
     "repositories": [
         {
