@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Marvin255\CbrfService\Entity\Currency;
 use Marvin255\CbrfService\Entity\CurrencyRate;
+use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
 use SoapClient;
 use Throwable;
 
@@ -215,6 +216,52 @@ class CbrfDaily
         }
 
         return $dateTime;
+    }
+
+    /**
+     * Returns list of Reuters rates for all currencies for set date.
+     *
+     * @param DateTimeInterface $onDate
+     *
+     * @return CurrencyRate[]
+     *
+     * @throws CbrfException
+     */
+    public function getReutersCursOnDate(DateTimeInterface $date): array
+    {
+        $enumSoapResults = $this->doSoapCall(
+            'EnumReutersValutesXML',
+            [
+                'On_date' => $date->format('Y-m-d\TH:i:s'),
+            ]
+        );
+
+        $enumCurrencies = [];
+        foreach ($enumSoapResults['EnumRValutes'] as $enumSoapResult) {
+            $enumCurrencies[$enumSoapResult['num_code']] = $enumSoapResult;
+        }
+
+        $soapValutesResults = $this->doSoapCall(
+            'GetReutersCursOnDate',
+            [
+                'On_date' => $date->format('Y-m-d\TH:i:s'),
+            ]
+        );
+
+        foreach ($soapValutesResults['ReutersValutesData']['Currency'] as $soapValutesResult) {
+            $enumCurrencies[$soapValutesResult['num_code']] = array_merge($enumCurrencies[$soapValutesResult['num_code']], $soapValutesResult);
+        }
+
+        $results = [];
+        $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
+
+        foreach ($enumCurrencies as $item) {
+            if (\is_array($item)) {
+                $results[] = new ReutersCurrencyRate($item, $immutableDate);
+            }
+        }
+
+        return $results;
     }
 
     /**
