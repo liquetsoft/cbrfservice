@@ -230,14 +230,14 @@ class CbrfDaily
     public function getReutersCursOnDate(DateTimeInterface $date): array
     {
         $enumSoapResults = $this->doSoapCall(
-            'EnumReutersValutesXML',
+            'EnumReutersValutes',
             [
                 'On_date' => $date->format('Y-m-d\TH:i:s'),
             ]
         );
 
         $enumCurrencies = [];
-        foreach ($enumSoapResults['EnumRValutes'] as $enumSoapResult) {
+        foreach ($enumSoapResults['ReutersValutesList']['EnumRValutes'] as $enumSoapResult) {
             $enumCurrencies[$enumSoapResult['num_code']] = $enumSoapResult;
         }
 
