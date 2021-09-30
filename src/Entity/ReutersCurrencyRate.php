@@ -30,9 +30,9 @@ class ReutersCurrencyRate
         $this->chCode = strtoupper(trim($item['char_code'] ?? ''));
         $this->nameRu = trim($item['Title_ru'] ?? '');
         $this->nameEn = trim($item['Title_en'] ?? '');
-        $this->code = (int)($item['num_code'] ?? 0);
-        $this->curs = (float)($item['val'] ?? .0);
-        $this->dir = (int)($item['dir'] ?? 0);
+        $this->code = (int) ($item['num_code'] ?? 0);
+        $this->curs = (float) ($item['val'] ?? .0);
+        $this->dir = (int) ($item['dir'] ?? 0);
         $this->date = $date;
     }
 
