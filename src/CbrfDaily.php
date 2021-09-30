@@ -223,7 +223,7 @@ class CbrfDaily
      *
      * @param DateTimeInterface $onDate
      *
-     * @return CurrencyRate[]
+     * @return ReutersCurrencyRate[]
      *
      * @throws CbrfException
      */
