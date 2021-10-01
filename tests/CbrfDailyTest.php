@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Marvin255\CbrfService\Tests;
 
-use Exception;
 use Marvin255\CbrfService\CbrfDaily;
-use Marvin255\CbrfService\CbrfException;
 use Marvin255\CbrfService\Entity\Currency;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use SoapClient;
@@ -93,24 +91,6 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testGetCursOnDateException(): void
-    {
-        $soapClient = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetCursOnDate'))
-            ->will($this->throwException(new Exception()));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException(CbrfException::class);
-        $service->getCursOnDate(new \DateTimeImmutable());
-    }
-
-    /**
-     * @test
-     */
     public function testEnumValutes(): void
     {
         $seld = false;
@@ -151,24 +131,6 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testEnumValutesException(): void
-    {
-        $soapClient = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('EnumValutes'))
-            ->will($this->throwException(new Exception()));
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException(CbrfException::class);
-        $service->enumValutes();
-    }
-
-    /**
-     * @test
-     */
     public function testGetLatestDateTime(): void
     {
         $response = new stdClass();
@@ -188,27 +150,6 @@ class CbrfDailyTest extends BaseTestCase
             $response->GetLatestDateTimeResult,
             $date->format('Y-m-d\TH:i:s')
         );
-    }
-
-    /**
-     * @test
-     */
-    public function testGetLatestDateTimeException(): void
-    {
-        $response = new stdClass();
-        $response->GetLatestDateTimeResult = 'broken test';
-
-        $soapClient = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDateTime'))
-            ->willReturn($response);
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException(CbrfException::class);
-        $service->getLatestDateTime();
     }
 
     /**
@@ -238,27 +179,6 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testGetLatestDateTimeSeldException(): void
-    {
-        $response = new stdClass();
-        $response->GetLatestDateTimeSeldResult = 'broken test';
-
-        $soapClient = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDateTimeSeld'))
-            ->willReturn($response);
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException(CbrfException::class);
-        $service->getLatestDateTimeSeld();
-    }
-
-    /**
-     * @test
-     */
     public function testGetLatestDate(): void
     {
         $response = new stdClass();
@@ -283,27 +203,6 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testGetLatestDateException(): void
-    {
-        $response = new stdClass();
-        $response->GetLatestDateResult = 'broken test';
-
-        $soapClient = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDate'))
-            ->willReturn($response);
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException(CbrfException::class);
-        $service->getLatestDate();
-    }
-
-    /**
-     * @test
-     */
     public function testGetLatestDateSeld(): void
     {
         $response = new stdClass();
@@ -323,27 +222,6 @@ class CbrfDailyTest extends BaseTestCase
             '2019-01-19T00:00:00',
             $date->format('Y-m-d\TH:i:s')
         );
-    }
-
-    /**
-     * @test
-     */
-    public function testGetLatestDateSeldException(): void
-    {
-        $response = new stdClass();
-        $response->GetLatestDateSeldResult = 'broken test';
-
-        $soapClient = $this->getMockBuilder(SoapClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $soapClient->method('__soapCall')
-            ->with($this->equalTo('GetLatestDateSeld'))
-            ->willReturn($response);
-
-        $service = new CbrfDaily($soapClient);
-
-        $this->expectException(CbrfException::class);
-        $service->getLatestDateSeld();
     }
 
     /**
