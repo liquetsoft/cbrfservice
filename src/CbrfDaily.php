@@ -17,20 +17,14 @@ use Throwable;
  */
 class CbrfDaily
 {
-    private ?string $wsdl = null;
-
-    private ?SoapClient $client = null;
+    private CbrfSoapService $soapClient;
 
     /**
      * @param SoapClient|string $client
      */
     public function __construct($client = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL')
     {
-        if ($client instanceof SoapClient) {
-            $this->client = $client;
-        } else {
-            $this->wsdl = $client;
-        }
+        $this->soapClient = new CbrfSoapService($client);
     }
 
     /**
@@ -44,7 +38,7 @@ class CbrfDaily
      */
     public function getCursOnDate(DateTimeInterface $date): array
     {
-        $soapResult = $this->doSoapCall(
+        $soapResult = $this->soapClient->query(
             'GetCursOnDate',
             [
                 'On_date' => $date->format('Y-m-d\TH:i:s'),
@@ -78,7 +72,7 @@ class CbrfDaily
         $currencyItem = null;
         $code = strtoupper(trim($code));
 
-        $soapResult = $this->doSoapCall(
+        $soapResult = $this->soapClient->query(
             'GetCursOnDate',
             [
                 'On_date' => $date->format('Y-m-d\TH:i:s'),
@@ -111,7 +105,7 @@ class CbrfDaily
      */
     public function enumValutes(bool $seld = false): array
     {
-        $soapResult = $this->doSoapCall(
+        $soapResult = $this->soapClient->query(
             'EnumValutes',
             [
                 'Seld' => $seld,
@@ -141,15 +135,9 @@ class CbrfDaily
      */
     public function getLatestDateTime(): DateTimeInterface
     {
-        $soapResult = $this->doSoapCall('GetLatestDateTime');
+        $soapResult = $this->soapClient->query('GetLatestDateTime');
 
-        try {
-            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateTimeResult'] ?? '');
-        } catch (Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
-        }
-
-        return $dateTime;
+        return $this->createDateFromString($soapResult['GetLatestDateTimeResult'] ?? '');
     }
 
     /**
@@ -163,15 +151,9 @@ class CbrfDaily
      */
     public function getLatestDateTimeSeld(): DateTimeInterface
     {
-        $soapResult = $this->doSoapCall('GetLatestDateTimeSeld');
+        $soapResult = $this->soapClient->query('GetLatestDateTimeSeld');
 
-        try {
-            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateTimeSeldResult'] ?? '');
-        } catch (Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
-        }
-
-        return $dateTime;
+        return $this->createDateFromString($soapResult['GetLatestDateTimeSeldResult'] ?? '');
     }
 
     /**
@@ -185,15 +167,9 @@ class CbrfDaily
      */
     public function getLatestDate(): DateTimeInterface
     {
-        $soapResult = $this->doSoapCall('GetLatestDate');
+        $soapResult = $this->soapClient->query('GetLatestDate');
 
-        try {
-            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateResult'] ?? '');
-        } catch (Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
-        }
-
-        return $dateTime;
+        return $this->createDateFromString($soapResult['GetLatestDateResult'] ?? '');
     }
 
     /**
@@ -207,15 +183,9 @@ class CbrfDaily
      */
     public function getLatestDateSeld(): DateTimeInterface
     {
-        $soapResult = $this->doSoapCall('GetLatestDateSeld');
+        $soapResult = $this->soapClient->query('GetLatestDateSeld');
 
-        try {
-            $dateTime = new DateTimeImmutable($soapResult['GetLatestDateSeldResult'] ?? '');
-        } catch (Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
-        }
-
-        return $dateTime;
+        return $this->createDateFromString($soapResult['GetLatestDateSeldResult'] ?? '');
     }
 
     /**
@@ -229,7 +199,7 @@ class CbrfDaily
      */
     public function getReutersCursOnDate(DateTimeInterface $date): array
     {
-        $enumSoapResults = $this->doSoapCall(
+        $enumSoapResults = $this->soapClient->query(
             'EnumReutersValutes',
             [
                 'On_date' => $date->format('Y-m-d\TH:i:s'),
@@ -241,7 +211,7 @@ class CbrfDaily
             $enumCurrencies[$enumSoapResult['num_code']] = $enumSoapResult;
         }
 
-        $soapValutesResults = $this->doSoapCall(
+        $soapValutesResults = $this->soapClient->query(
             'GetReutersCursOnDate',
             [
                 'On_date' => $date->format('Y-m-d\TH:i:s'),
@@ -265,97 +235,20 @@ class CbrfDaily
     }
 
     /**
-     * Makes a soap call.
+     * Creates DateTimeInterface object from set string.
      *
-     * @param string $method
-     * @param array  $params
+     * @param string $date
      *
-     * @return array
-     *
-     * @throws CbrfException
-     */
-    private function doSoapCall(string $method, array $params = []): array
-    {
-        $parsedResult = [];
-
-        try {
-            // need to do this because every params list are nested to parameters object
-            if (!empty($params)) {
-                $params = [$params];
-            }
-            $soapCallResult = $this->getSoapClient()->__soapCall($method, $params);
-
-            $resName = $method . 'Result';
-            if (!empty($soapCallResult->$resName->any)) {
-                $xml = simplexml_load_string(
-                    $soapCallResult->$resName->any,
-                    'SimpleXMLElement',
-                    \LIBXML_NOCDATA
-                );
-                $parsedResult = $this->xml2array($xml);
-            } else {
-                $parsedResult = (array) $soapCallResult;
-            }
-        } catch (Throwable $e) {
-            $message = sprintf("Fail on '%s': '%s'.", $method, $e->getMessage());
-            throw new CbrfException($message, 0, $e);
-        }
-
-        return $parsedResult;
-    }
-
-    /**
-     * Converts SimpleXMLElement to an associative array,.
-     *
-     * @param mixed $xmlObject
-     *
-     * @return array<string, mixed>
-     */
-    private function xml2array($xmlObject): array
-    {
-        $out = [];
-
-        $xmlArray = (array) $xmlObject;
-        foreach ($xmlArray as $index => $node) {
-            if (\is_object($node) || \is_array($node)) {
-                $out[$index] = $this->xml2array($node);
-            } else {
-                $out[$index] = $node;
-            }
-        }
-
-        return $out;
-    }
-
-    /**
-     * Returns a SoapClient instance for soap requests.
-     *
-     * @return SoapClient
+     * @return DateTimeInterface
      *
      * @throws CbrfException
      */
-    private function getSoapClient()
+    private function createDateFromString(string $date): DateTimeInterface
     {
-        if ($this->client !== null) {
-            return $this->client;
-        }
-
-        if ($this->wsdl === null) {
-            $message = sprintf("Provided client must be string with valid url to WSDL file or a '%s' instance.", SoapClient::class);
-            throw new CbrfException($message);
-        }
-
         try {
-            $this->client = new SoapClient(
-                $this->wsdl,
-                [
-                    'exception' => true,
-                ]
-            );
+            return new DateTimeImmutable($date);
         } catch (Throwable $e) {
             throw new CbrfException($e->getMessage(), 0, $e);
         }
-
-        return $this->client;
     }
 }
