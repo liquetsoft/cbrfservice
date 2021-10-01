@@ -6,11 +6,10 @@ namespace Marvin255\CbrfService;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use Marvin255\CbrfService\Entity\Currency;
+use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
 use SoapClient;
-use Throwable;
 
 /**
  * Class for a daily cb RF service.
@@ -41,57 +40,65 @@ class CbrfDaily
         $soapResult = $this->soapClient->query(
             'GetCursOnDate',
             [
-                'On_date' => $date->format('Y-m-d\TH:i:s'),
+                'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
             ]
         );
 
-        $results = [];
-        $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
+        $immutableDate = DateTimeImmutable::createFromInterface($date);
+        $list = DataAccessor::array('ValuteData.ValuteCursOnDate', $soapResult);
+        $callback = fn (array $item): CurrencyRate => new CurrencyRate($item, $immutableDate);
 
-        $currencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
-        foreach ($currencyRateList as $item) {
-            if (\is_array($item)) {
-                $results[] = new CurrencyRate($item, $immutableDate);
-            }
-        }
-
-        return $results;
+        return array_map($callback, $list);
     }
 
     /**
-     * Returns list of rates for all currencies for set date.
+     * Returns rate for currency with set char code.
      *
      * @param DateTimeInterface $onDate
+     * @param string            $charCode
      *
      * @return CurrencyRate|null
      *
      * @throws CbrfException
      */
-    public function getCursOnDateByCode(DateTimeInterface $date, string $code): ?CurrencyRate
+    public function getCursOnDateByCharCode(DateTimeInterface $date, string $charCode): ?CurrencyRate
     {
-        $currencyItem = null;
-        $code = strtoupper(trim($code));
+        $list = $this->getCursOnDate($date);
 
-        $soapResult = $this->soapClient->query(
-            'GetCursOnDate',
-            [
-                'On_date' => $date->format('Y-m-d\TH:i:s'),
-            ]
-        );
-
-        // looks like repeating of getCurrencyRate
-        // but we do not want to instantiate objects for all currencies
-        $currencyRateList = $soapResult['ValuteData']['ValuteCursOnDate'] ?? [];
-        foreach ($currencyRateList as $item) {
-            $itemCode = strtoupper(trim($item['VchCode'] ?? ''));
-            if ($code === $itemCode) {
-                $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
-                $currencyItem = new CurrencyRate($item, $immutableDate);
+        $return = null;
+        foreach ($list as $item) {
+            if (strcasecmp($charCode, $item->getCharCode()) === 0) {
+                $return = $item;
                 break;
             }
         }
 
-        return $currencyItem;
+        return $return;
+    }
+
+    /**
+     * Returns rate for currency with set numeric code.
+     *
+     * @param DateTimeInterface $onDate
+     * @param int               $numericCode
+     *
+     * @return CurrencyRate|null
+     *
+     * @throws CbrfException
+     */
+    public function getCursOnDateByNumericCode(DateTimeInterface $date, int $numericCode): ?CurrencyRate
+    {
+        $list = $this->getCursOnDate($date);
+
+        $return = null;
+        foreach ($list as $item) {
+            if ($item->getNumericCode() === $numericCode) {
+                $return = $item;
+                break;
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -99,7 +106,7 @@ class CbrfDaily
      *
      * @param bool $seld
      *
-     * @return Currency[]
+     * @return CurrencyEnum[]
      *
      * @throws CbrfException
      */
@@ -112,16 +119,10 @@ class CbrfDaily
             ]
         );
 
-        $results = [];
+        $list = DataAccessor::array('ValuteData.EnumValutes', $soapResult);
+        $callback = fn (array $item): CurrencyEnum => new CurrencyEnum($item);
 
-        $enumValutes = $soapResult['ValuteData']['EnumValutes'] ?? [];
-        foreach ($enumValutes as $item) {
-            if (\is_array($item)) {
-                $results[] = new Currency($item);
-            }
-        }
-
-        return $results;
+        return array_map($callback, $list);
     }
 
     /**
@@ -137,7 +138,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDateTime');
 
-        return $this->createDateFromString($soapResult['GetLatestDateTimeResult'] ?? '');
+        return DataAccessor::dateTime('GetLatestDateTimeResult', $soapResult);
     }
 
     /**
@@ -153,7 +154,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDateTimeSeld');
 
-        return $this->createDateFromString($soapResult['GetLatestDateTimeSeldResult'] ?? '');
+        return DataAccessor::dateTime('GetLatestDateTimeSeldResult', $soapResult);
     }
 
     /**
@@ -169,7 +170,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDate');
 
-        return $this->createDateFromString($soapResult['GetLatestDateResult'] ?? '');
+        return DataAccessor::dateTime('GetLatestDateResult', $soapResult);
     }
 
     /**
@@ -185,7 +186,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDateSeld');
 
-        return $this->createDateFromString($soapResult['GetLatestDateSeldResult'] ?? '');
+        return DataAccessor::dateTime('GetLatestDateSeldResult', $soapResult);
     }
 
     /**
@@ -202,7 +203,7 @@ class CbrfDaily
         $enumSoapResults = $this->soapClient->query(
             'EnumReutersValutes',
             [
-                'On_date' => $date->format('Y-m-d\TH:i:s'),
+                'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
             ]
         );
 
@@ -214,7 +215,7 @@ class CbrfDaily
         $soapValutesResults = $this->soapClient->query(
             'GetReutersCursOnDate',
             [
-                'On_date' => $date->format('Y-m-d\TH:i:s'),
+                'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
             ]
         );
 
@@ -223,7 +224,7 @@ class CbrfDaily
         }
 
         $results = [];
-        $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
+        $immutableDate = DateTimeImmutable::createFromInterface($date);
 
         foreach ($enumCurrencies as $item) {
             if (\is_array($item)) {
@@ -232,23 +233,5 @@ class CbrfDaily
         }
 
         return $results;
-    }
-
-    /**
-     * Creates DateTimeInterface object from set string.
-     *
-     * @param string $date
-     *
-     * @return DateTimeInterface
-     *
-     * @throws CbrfException
-     */
-    private function createDateFromString(string $date): DateTimeInterface
-    {
-        try {
-            return new DateTimeImmutable($date);
-        } catch (Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
-        }
     }
 }

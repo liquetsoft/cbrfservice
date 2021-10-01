@@ -12,6 +12,8 @@ use Throwable;
  */
 class CbrfSoapService
 {
+    public const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
+
     private ?string $wsdl = null;
 
     private ?SoapClient $client = null;
