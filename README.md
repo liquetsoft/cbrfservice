@@ -28,14 +28,26 @@ composer req marvin255/cbrfservice
 //инициируем новый объект сервиса
 $cbrf = new \Marvin255\CbrfService\CbrfDaily();
 
-//курсы валют
-$rates = $cbrf->getCursOnDate(new \DateTime());
+//получаем курсы всех валют
+$rates = $cbrf->getCursOnDate(new \DateTimeImmutable());
+//получаем курс валюты по ее буквенному коду
+$rateEur = $cbrf->getCursOnDateByCharCode(new \DateTimeImmutable(), 'EUR');
+//получаем курс валюты по ее цифровому коду
+$rate978 = $cbrf->getCursOnDateByNumericCode(new \DateTimeImmutable(), 978);
 
-//курс конкретной валюты по ее коду
-$rateEur = $cbrf->getCursOnDateByCode(new \DateTime(), 'EUR');
-
-//список всех доступных валют
+//получаем словарь всех доступных валют
 $currencies = $cbrf->enumValutes();
+//получаем описание валюты из словаря по буквенному коду
+$enumEur = $cbrf->enumValuteByCharCode('EUR');
+//получаем описание валюты из словаря по цифровому коду
+$enum978 = $cbrf->enumValuteByNumericCode(978);
+
+//получаем динамику курса для указанной валюты за последний месяц
+$dynamic = $cbrf->getCursDynamic(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable(),
+    $enumEur
+);
 ```
 
 В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:

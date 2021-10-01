@@ -119,12 +119,60 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($currencies as $key => $currency) {
             $this->assertSame(strtoupper($currency['VcharCode']), $list[$key]->getCharCode());
             $this->assertSame($currency['Vname'], $list[$key]->getName());
-            $this->assertSame($currency['Vcode'], $list[$key]->getCode());
+            $this->assertSame($currency['Vcode'], $list[$key]->getInternalCode());
             $this->assertSame($currency['VEngname'], $list[$key]->getEngName());
             $this->assertSame($currency['Vnom'], $list[$key]->getNom());
             $this->assertSame($currency['VnumCode'], $list[$key]->getNumericCode());
             $this->assertSame($currency['VcommonCode'], $list[$key]->getCommonCode());
         }
+    }
+
+    /**
+     * @test
+     */
+    public function testEnumValuteByCharCode(): void
+    {
+        [$courses, $response] = $this->getEnumValutesFixture();
+        $charCode = $courses[0]['VcharCode'] ?? '';
+        $seld = false;
+
+        $soapClient = $this->createSoapCallMock(
+            'EnumValutes',
+            [
+                'Seld' => $seld,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $item = $service->enumValuteByCharCode($charCode, $seld);
+
+        $this->assertInstanceOf(CurrencyEnum::class, $item);
+        $this->assertSame(strtoupper($charCode), $item->getCharCode());
+    }
+
+    /**
+     * @test
+     */
+    public function testEnumValuteByNumericCode(): void
+    {
+        [$courses, $response] = $this->getEnumValutesFixture();
+        $numericCode = $courses[0]['VnumCode'] ?? 0;
+        $seld = false;
+
+        $soapClient = $this->createSoapCallMock(
+            'EnumValutes',
+            [
+                'Seld' => $seld,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $item = $service->enumValuteByNumericCode($numericCode, $seld);
+
+        $this->assertInstanceOf(CurrencyEnum::class, $item);
+        $this->assertSame($numericCode, $item->getNumericCode());
     }
 
     /**
