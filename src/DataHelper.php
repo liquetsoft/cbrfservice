@@ -24,14 +24,10 @@ class DataHelper
     {
         try {
             if ($date instanceof DateTimeInterface) {
-                if ($date->getTimezone() === false) {
-                    $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
-                } else {
-                    $immutableDate = new DateTimeImmutable(
-                        $date->format(\DATE_ATOM),
-                        $date->getTimezone()
-                    );
-                }
+                $immutableDate = new DateTimeImmutable(
+                    $date->format(\DATE_ATOM),
+                    $date->getTimezone()
+                );
             } else {
                 $immutableDate = new DateTimeImmutable($date);
             }
@@ -50,7 +46,7 @@ class DataHelper
      *
      * @return array
      */
-    public static function array(string $path, mixed $data): array
+    public static function array(string $path, $data): array
     {
         $item = self::get($path, $data);
 
