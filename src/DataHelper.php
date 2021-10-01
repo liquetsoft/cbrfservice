@@ -66,7 +66,7 @@ class DataHelper
      *
      * @return DateTimeInterface
      */
-    public static function dateTime(string $path, mixed $data): DateTimeInterface
+    public static function dateTime(string $path, $data): DateTimeInterface
     {
         $item = self::get($path, $data);
 
@@ -86,7 +86,7 @@ class DataHelper
      *
      * @return mixed
      */
-    private static function get(string $path, mixed $data)
+    private static function get(string $path, $data)
     {
         $arPath = explode('.', trim($path, " \n\r\t\v\0."));
 
