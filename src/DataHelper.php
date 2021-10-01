@@ -9,10 +9,39 @@ use DateTimeInterface;
 use Throwable;
 
 /**
- * Helper that allows to access hierarchical data via dot syntax.
+ * Helper that contains several operations for data access and converts.
  */
-class DataAccessor
+class DataHelper
 {
+    /**
+     * Creates DateTimeImmutable from string or DateTimeInterface.
+     *
+     * @param DateTimeInterface|string $date
+     *
+     * @return DateTimeImmutable
+     */
+    public static function createImmutableDateTime($date): DateTimeImmutable
+    {
+        try {
+            if ($date instanceof DateTimeInterface) {
+                if ($date->getTimezone() === false) {
+                    $immutableDate = new DateTimeImmutable($date->format(\DATE_ATOM));
+                } else {
+                    $immutableDate = new DateTimeImmutable(
+                        $date->format(\DATE_ATOM),
+                        $date->getTimezone()
+                    );
+                }
+            } else {
+                $immutableDate = new DateTimeImmutable($date);
+            }
+        } catch (Throwable $e) {
+            throw new CbrfException($e->getMessage(), 0, $e);
+        }
+
+        return $immutableDate;
+    }
+
     /**
      * Returns array from the set path.
      *
@@ -50,13 +79,7 @@ class DataAccessor
             throw new CbrfException($message);
         }
 
-        try {
-            $item = new DateTimeImmutable($item);
-        } catch (Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
-        }
-
-        return $item;
+        return self::createImmutableDateTime($item);
     }
 
     /**

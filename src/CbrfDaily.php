@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Marvin255\CbrfService;
 
-use DateTimeImmutable;
 use DateTimeInterface;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
@@ -44,8 +43,8 @@ class CbrfDaily
             ]
         );
 
-        $immutableDate = DateTimeImmutable::createFromInterface($date);
-        $list = DataAccessor::array('ValuteData.ValuteCursOnDate', $soapResult);
+        $immutableDate = DataHelper::createImmutableDateTime($date);
+        $list = DataHelper::array('ValuteData.ValuteCursOnDate', $soapResult);
         $callback = fn (array $item): CurrencyRate => new CurrencyRate($item, $immutableDate);
 
         return array_map($callback, $list);
@@ -119,7 +118,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataAccessor::array('ValuteData.EnumValutes', $soapResult);
+        $list = DataHelper::array('ValuteData.EnumValutes', $soapResult);
         $callback = fn (array $item): CurrencyEnum => new CurrencyEnum($item);
 
         return array_map($callback, $list);
@@ -138,7 +137,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDateTime');
 
-        return DataAccessor::dateTime('GetLatestDateTimeResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateTimeResult', $soapResult);
     }
 
     /**
@@ -154,7 +153,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDateTimeSeld');
 
-        return DataAccessor::dateTime('GetLatestDateTimeSeldResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateTimeSeldResult', $soapResult);
     }
 
     /**
@@ -170,7 +169,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDate');
 
-        return DataAccessor::dateTime('GetLatestDateResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateResult', $soapResult);
     }
 
     /**
@@ -186,7 +185,7 @@ class CbrfDaily
     {
         $soapResult = $this->soapClient->query('GetLatestDateSeld');
 
-        return DataAccessor::dateTime('GetLatestDateSeldResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateSeldResult', $soapResult);
     }
 
     /**
@@ -224,7 +223,7 @@ class CbrfDaily
         }
 
         $results = [];
-        $immutableDate = DateTimeImmutable::createFromInterface($date);
+        $immutableDate = DataHelper::createImmutableDateTime($date);
 
         foreach ($enumCurrencies as $item) {
             if (\is_array($item)) {
