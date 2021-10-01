@@ -9,33 +9,33 @@ use DateTimeInterface;
 /**
  * DTO that represents response item from GetCursOnDate method.
  */
-class CurrencyRate
+class CurrencyRate implements Currency
 {
-    private string $chCode = '';
+    private string $charCode;
 
-    private string $name = '';
+    private string $name;
 
-    private int $code = 0;
+    private int $numericCode;
 
-    private float $curs = .0;
+    private float $rate;
 
-    private int $nom = 0;
+    private int $nom;
 
     private DateTimeInterface $date;
 
     public function __construct(array $item, DateTimeInterface $date)
     {
-        $this->chCode = strtoupper(trim($item['VchCode'] ?? ''));
+        $this->charCode = strtoupper(trim($item['VchCode'] ?? ''));
         $this->name = trim($item['Vname'] ?? '');
-        $this->code = (int) ($item['Vcode'] ?? 0);
-        $this->curs = (float) ($item['Vcurs'] ?? .0);
+        $this->numericCode = (int) ($item['Vcode'] ?? 0);
+        $this->rate = (float) ($item['Vcurs'] ?? .0);
         $this->nom = (int) ($item['Vnom'] ?? 0);
         $this->date = $date;
     }
 
-    public function getChCode(): string
+    public function getCharCode(): string
     {
-        return $this->chCode;
+        return $this->charCode;
     }
 
     public function getName(): string
@@ -43,14 +43,14 @@ class CurrencyRate
         return $this->name;
     }
 
-    public function getCode(): int
+    public function getNumericCode(): int
     {
-        return $this->code;
+        return $this->numericCode;
     }
 
-    public function getCurs(): float
+    public function getRate(): float
     {
-        return $this->curs;
+        return $this->rate;
     }
 
     public function getNom(): int
