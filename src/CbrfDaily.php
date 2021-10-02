@@ -125,6 +125,56 @@ class CbrfDaily
     }
 
     /**
+     * Returns enum for currency with set char code.
+     *
+     * @param string $charCode
+     * @param bool   $seld
+     *
+     * @return CurrencyEnum|null
+     *
+     * @throws CbrfException
+     */
+    public function enumValuteByCharCode(string $charCode, bool $seld = false): ?CurrencyEnum
+    {
+        $list = $this->enumValutes($seld);
+
+        $return = null;
+        foreach ($list as $item) {
+            if (strcasecmp($charCode, $item->getCharCode()) === 0) {
+                $return = $item;
+                break;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Returns enum for currency with set numeric code.
+     *
+     * @param int  $numericCode
+     * @param bool $seld
+     *
+     * @return CurrencyEnum|null
+     *
+     * @throws CbrfException
+     */
+    public function enumValuteByNumericCode(int $numericCode, bool $seld = false): ?CurrencyEnum
+    {
+        $list = $this->enumValutes($seld);
+
+        $return = null;
+        foreach ($list as $item) {
+            if ($item->getNumericCode() === $numericCode) {
+                $return = $item;
+                break;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Latest per day date and time of publication.
      *
      * @param string $format
@@ -186,6 +236,39 @@ class CbrfDaily
         $soapResult = $this->soapClient->query('GetLatestDateSeld');
 
         return DataHelper::dateTime('GetLatestDateSeldResult', $soapResult);
+    }
+
+    /**
+     * Returns rate dynamic for set currency within set dates.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     * @param CurrencyEnum      $currency
+     *
+     * @return CurrencyRate[]
+     */
+    public function getCursDynamic(DateTimeInterface $from, DateTimeInterface $to, CurrencyEnum $currency): array
+    {
+        $soapResult = $this->soapClient->query(
+            'GetCursDynamic',
+            [
+                'FromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ValutaCode' => $currency->getInternalCode(),
+            ]
+        );
+
+        $result = [];
+        $list = DataHelper::array('ValuteData.ValuteCursDynamic', $soapResult);
+        foreach ($list as $item) {
+            $date = DataHelper::dateTime('CursDate', $item);
+            $item['Vname'] = $currency->getName();
+            $item['VchCode'] = $currency->getCharCode();
+            $item['Vcode'] = $currency->getNumericCode();
+            $result[] = new CurrencyRate($item, $date);
+        }
+
+        return $result;
     }
 
     /**

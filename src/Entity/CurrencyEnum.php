@@ -9,7 +9,7 @@ namespace Marvin255\CbrfService\Entity;
  */
 class CurrencyEnum implements Currency
 {
-    private string $code;
+    private string $internalCode;
 
     private string $name;
 
@@ -25,7 +25,7 @@ class CurrencyEnum implements Currency
 
     public function __construct(array $item)
     {
-        $this->code = trim($item['Vcode'] ?? '');
+        $this->internalCode = trim($item['Vcode'] ?? '');
         $this->name = trim($item['Vname'] ?? '');
         $this->engName = trim($item['VEngname'] ?? '');
         $this->nom = (int) ($item['Vnom'] ?? 0);
@@ -34,9 +34,9 @@ class CurrencyEnum implements Currency
         $this->charCode = strtoupper(trim($item['VcharCode'] ?? ''));
     }
 
-    public function getCode(): string
+    public function getInternalCode(): string
     {
-        return $this->code;
+        return $this->internalCode;
     }
 
     public function getName(): string
