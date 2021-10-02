@@ -260,6 +260,52 @@ class CbrfDailyTest extends BaseTestCase
     }
 
     /**
+     * @test
+     */
+    public function testGetCursDynamic(): void
+    {
+        [$currencies, $response] = $this->getGetCursDynamicFixture();
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+        $charCode = 'EUR';
+        $numericCode = 978;
+        $name = 'Euro';
+        $internalCode = 'test01';
+
+        $currencyEnum = $this->getMockBuilder(CurrencyEnum::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $currencyEnum->method('getInternalCode')->willReturn($internalCode);
+        $currencyEnum->method('getName')->willReturn($name);
+        $currencyEnum->method('getCharCode')->willReturn($charCode);
+        $currencyEnum->method('getNumericCode')->willReturn($numericCode);
+
+        $soapClient = $this->createSoapCallMock(
+            'GetCursDynamic',
+            [
+                'FromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ValutaCode' => $internalCode,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->getCursDynamic($from, $to, $currencyEnum);
+
+        $this->assertCount(4, $list);
+        $this->assertContainsOnlyInstancesOf(CurrencyRate::class, $list);
+        foreach ($currencies as $key => $currency) {
+            $this->assertSame($charCode, $list[$key]->getCharCode());
+            $this->assertSame($name, $list[$key]->getName());
+            $this->assertSame($numericCode, $list[$key]->getNumericCode());
+            $this->assertSame($currency['Vcurs'], $list[$key]->getRate());
+            $this->assertSame($currency['Vnom'], $list[$key]->getNom());
+            $this->assertSameDate(new DateTimeImmutable($currency['CursDate']), $list[$key]->getDate());
+        }
+    }
+
+    /**
      * Returns fixture for courses checking.
      *
      * @return array
@@ -331,6 +377,42 @@ class CbrfDailyTest extends BaseTestCase
         $soapResponse = new stdClass();
         $soapResponse->EnumValutesResult = new stdClass();
         $soapResponse->EnumValutesResult->any = $any;
+
+        return [$courses, $soapResponse];
+    }
+
+    /**
+     * Returns fixture for rates dynamic.
+     *
+     * @return array
+     */
+    private function getGetCursDynamicFixture(): array
+    {
+        $courses = [];
+        for ($i = 0; $i <= 3; ++$i) {
+            $courses[] = [
+                'CursDate' => "2010-10-1{$i}",
+                'Vcode' => "Vcode_{$i}",
+                'Vnom' => $i,
+                'Vcurs' => (float) (mt_rand()),
+            ];
+        }
+
+        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
+        $any .= '<ValuteData xmlns="">';
+        foreach ($courses as $course) {
+            $any .= '<ValuteCursDynamic xmlns="">';
+            foreach ($course as $key => $value) {
+                $any .= "<{$key}>{$value}</{$key}>";
+            }
+            $any .= '</ValuteCursDynamic>';
+        }
+        $any .= '</ValuteData>';
+        $any .= '</diffgr:diffgram>';
+
+        $soapResponse = new stdClass();
+        $soapResponse->GetCursDynamicResult = new stdClass();
+        $soapResponse->GetCursDynamicResult->any = $any;
 
         return [$courses, $soapResponse];
     }
