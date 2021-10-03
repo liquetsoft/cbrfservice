@@ -183,9 +183,32 @@ class DataHelperTest extends BaseTestCase
                 $objectMixed,
                 $result,
             ],
+            'serach by not trimmed path' => [
+                "  {$path}   ",
+                $objectMixed,
+                $result,
+            ],
             'not found exception' => [
                 $path,
                 [],
+                new CbrfException(),
+            ],
+            'empty string exception' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => '',
+                    ],
+                ],
+                new CbrfException(),
+            ],
+            'non-string exception' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => false,
+                    ],
+                ],
                 new CbrfException(),
             ],
         ];
