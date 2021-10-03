@@ -27,13 +27,13 @@ class CurrencyEnum implements Currency
 
     public function __construct(array $item)
     {
-        $this->internalCode = DataHelper::string('Vcode', $item);
-        $this->name = DataHelper::string('Vname', $item);
-        $this->engName = DataHelper::string('VEngname', $item);
-        $this->nom = DataHelper::int('Vnom', $item);
-        $this->commonCode = DataHelper::string('VcommonCode', $item);
+        $this->internalCode = DataHelper::string('Vcode', $item, '');
+        $this->name = DataHelper::string('Vname', $item, '');
+        $this->engName = DataHelper::string('VEngname', $item, '');
+        $this->nom = DataHelper::int('Vnom', $item, 0);
+        $this->commonCode = DataHelper::string('VcommonCode', $item, '');
         $this->numericCode = DataHelper::int('VnumCode', $item, 0);
-        $this->charCode = DataHelper::charCode('VcharCode', $item);
+        $this->charCode = DataHelper::charCode('VcharCode', $item, '');
     }
 
     public function getInternalCode(): string

@@ -26,11 +26,11 @@ class CurrencyRate implements Currency
 
     public function __construct(array $item, DateTimeInterface $date)
     {
-        $this->charCode = DataHelper::charCode('VchCode', $item);
-        $this->name = DataHelper::string('Vname', $item);
-        $this->numericCode = DataHelper::int('Vcode', $item);
-        $this->rate = DataHelper::float('Vcurs', $item);
-        $this->nom = DataHelper::int('Vnom', $item);
+        $this->charCode = DataHelper::charCode('VchCode', $item, '');
+        $this->name = DataHelper::string('Vname', $item, '');
+        $this->numericCode = DataHelper::int('Vcode', $item, 0);
+        $this->rate = DataHelper::float('Vcurs', $item, .0);
+        $this->nom = DataHelper::int('Vnom', $item, 0);
         $this->date = $date;
     }
 
