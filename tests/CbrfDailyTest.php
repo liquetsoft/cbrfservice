@@ -9,6 +9,7 @@ use Marvin255\CbrfService\CbrfDaily;
 use Marvin255\CbrfService\CbrfSoapService;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
+use Marvin255\CbrfService\Entity\KeyRate;
 use stdClass;
 
 /**
@@ -306,6 +307,35 @@ class CbrfDailyTest extends BaseTestCase
     }
 
     /**
+     * @test
+     */
+    public function testKeyRate(): void
+    {
+        [$rates, $response] = $this->getGetKeyRateFixture();
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'KeyRate',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->keyRate($from, $to);
+
+        $this->assertCount(4, $list);
+        $this->assertContainsOnlyInstancesOf(KeyRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSameDate(new DateTimeImmutable($rate['DT']), $list[$key]->getDate());
+            $this->assertSame($rate['Rate'], $list[$key]->getRate());
+        }
+    }
+
+    /**
      * Returns fixture for courses checking.
      *
      * @return array
@@ -413,6 +443,40 @@ class CbrfDailyTest extends BaseTestCase
         $soapResponse = new stdClass();
         $soapResponse->GetCursDynamicResult = new stdClass();
         $soapResponse->GetCursDynamicResult->any = $any;
+
+        return [$courses, $soapResponse];
+    }
+
+    /**
+     * Returns fixture for key rate dynamic.
+     *
+     * @return array
+     */
+    private function getGetKeyRateFixture(): array
+    {
+        $courses = [];
+        for ($i = 0; $i <= 3; ++$i) {
+            $courses[] = [
+                'DT' => "2010-10-1{$i}",
+                'Rate' => (float) (mt_rand()),
+            ];
+        }
+
+        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
+        $any .= '<KeyRate xmlns="">';
+        foreach ($courses as $course) {
+            $any .= '<KR xmlns="">';
+            foreach ($course as $key => $value) {
+                $any .= "<{$key}>{$value}</{$key}>";
+            }
+            $any .= '</KR>';
+        }
+        $any .= '</KeyRate>';
+        $any .= '</diffgr:diffgram>';
+
+        $soapResponse = new stdClass();
+        $soapResponse->KeyRateResult = new stdClass();
+        $soapResponse->KeyRateResult->any = $any;
 
         return [$courses, $soapResponse];
     }

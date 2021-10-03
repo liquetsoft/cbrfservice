@@ -79,6 +79,65 @@ class DataHelper
     }
 
     /**
+     * Returns string from the set path.
+     *
+     * @param string $path
+     * @param mixed  $data
+     *
+     * @return string
+     */
+    public static function string(string $path, $data): string
+    {
+        $item = self::get($path, $data);
+
+        if ($item === null) {
+            $message = sprintf("Can't find an item by '%s' path.", $path);
+            throw new CbrfException($message);
+        }
+
+        return trim((string) $item);
+    }
+
+    /**
+     * Returns float from the set path.
+     *
+     * @param string $path
+     * @param mixed  $data
+     *
+     * @return float
+     */
+    public static function float(string $path, $data): float
+    {
+        return (float) self::string($path, $data);
+    }
+
+    /**
+     * Returns int from the set path.
+     *
+     * @param string $path
+     * @param mixed  $data
+     *
+     * @return int
+     */
+    public static function int(string $path, $data): int
+    {
+        return (int) self::string($path, $data);
+    }
+
+    /**
+     * Returns char code from the set path.
+     *
+     * @param string $path
+     * @param mixed  $data
+     *
+     * @return string
+     */
+    public static function charCode(string $path, $data): string
+    {
+        return strtoupper(self::string($path, $data));
+    }
+
+    /**
      * Returns data from the set path.
      *
      * @param string $path
