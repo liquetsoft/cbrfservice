@@ -77,7 +77,7 @@ class CbrfDailyTest extends BaseTestCase
         $service = new CbrfDaily($soapClient);
         $list = $service->getCursOnDate($onDate);
 
-        $this->assertCount(4, $list);
+        $this->assertCount(\count($courses), $list);
         $this->assertContainsOnlyInstancesOf(CurrencyRate::class, $list);
         foreach ($courses as $key => $course) {
             $this->assertSame(strtoupper($course['VchCode']), $list[$key]->getCharCode());
@@ -156,7 +156,7 @@ class CbrfDailyTest extends BaseTestCase
         $service = new CbrfDaily($soapClient);
         $list = $service->enumValutes($seld);
 
-        $this->assertCount(4, $list);
+        $this->assertCount(\count($currencies), $list);
         $this->assertContainsOnlyInstancesOf(CurrencyEnum::class, $list);
         foreach ($currencies as $key => $currency) {
             $this->assertSame(strtoupper($currency['VcharCode']), $list[$key]->getCharCode());
@@ -335,7 +335,7 @@ class CbrfDailyTest extends BaseTestCase
         $service = new CbrfDaily($soapClient);
         $list = $service->getCursDynamic($from, $to, $currencyEnum);
 
-        $this->assertCount(4, $list);
+        $this->assertCount(\count($currencies), $list);
         $this->assertContainsOnlyInstancesOf(CurrencyRate::class, $list);
         foreach ($currencies as $key => $currency) {
             $this->assertSame($charCode, $list[$key]->getCharCode());
@@ -368,7 +368,7 @@ class CbrfDailyTest extends BaseTestCase
         $service = new CbrfDaily($soapClient);
         $list = $service->keyRate($from, $to);
 
-        $this->assertCount(4, $list);
+        $this->assertCount(\count($rates), $list);
         $this->assertContainsOnlyInstancesOf(KeyRate::class, $list);
         foreach ($rates as $key => $rate) {
             $this->assertSameDate(new DateTimeImmutable($rate['DT']), $list[$key]->getDate());
