@@ -10,6 +10,7 @@ use Marvin255\CbrfService\CbrfSoapService;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\KeyRate;
+use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use stdClass;
 
 /**
@@ -55,6 +56,14 @@ class CbrfDailyTest extends BaseTestCase
                 'Rate' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'KeyRateResult.any.KeyRate.KR',
+        ],
+        'DragMetDynamic' => [
+            'schema' => [
+                'DateMet' => self::FIXTURE_TYPE_DATE,
+                'price' => self::FIXTURE_TYPE_FLOAT,
+                'CodMet' => self::FIXTURE_TYPE_INT,
+            ],
+            'path' => 'DragMetDynamicResult.any.DragMetall.DrgMet',
         ],
     ];
 
@@ -373,6 +382,36 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($rates as $key => $rate) {
             $this->assertSameDate(new DateTimeImmutable($rate['DT']), $list[$key]->getDate());
             $this->assertSame($rate['Rate'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testDragMetDynamic(): void
+    {
+        [$metals, $response] = $this->createFixture(self::FIXTURES['DragMetDynamic']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'DragMetDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->dragMetDynamic($from, $to);
+
+        $this->assertCount(\count($metals), $list);
+        $this->assertContainsOnlyInstancesOf(PreciousMetalRate::class, $list);
+        foreach ($metals as $key => $metal) {
+            $this->assertSameDate(new DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
+            $this->assertSame($metal['CodMet'], $list[$key]->getCode());
+            $this->assertSame($metal['price'], $list[$key]->getPrice());
         }
     }
 }
