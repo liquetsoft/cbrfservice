@@ -10,6 +10,7 @@ use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\KeyRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
+use Marvin255\CbrfService\Entity\SwapRate;
 use SoapClient;
 
 /**
@@ -298,7 +299,7 @@ class CbrfDaily
     }
 
     /**
-     * Returns list of presious metals prices  within set dates.
+     * Returns list of presious metals prices within set dates.
      *
      * @param DateTimeInterface $from
      * @param DateTimeInterface $to
@@ -317,6 +318,30 @@ class CbrfDaily
 
         $list = DataHelper::array('DragMetall.DrgMet', $soapResult);
         $callback = fn (array $item): PreciousMetalRate => new PreciousMetalRate($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns list of swap rates within set dates.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return SwapRate[]
+     */
+    public function swapDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'SwapDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('SwapDynamic.Swap', $soapResult);
+        $callback = fn (array $item): SwapRate => new SwapRate($item);
 
         return array_map($callback, $list);
     }

@@ -11,6 +11,7 @@ use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\KeyRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
+use Marvin255\CbrfService\Entity\SwapRate;
 use stdClass;
 
 /**
@@ -64,6 +65,17 @@ class CbrfDailyTest extends BaseTestCase
                 'CodMet' => self::FIXTURE_TYPE_INT,
             ],
             'path' => 'DragMetDynamicResult.any.DragMetall.DrgMet',
+        ],
+        'SwapDynamic' => [
+            'schema' => [
+                'DateBuy' => self::FIXTURE_TYPE_DATE,
+                'DateSell' => self::FIXTURE_TYPE_DATE,
+                'BaseRate' => self::FIXTURE_TYPE_FLOAT,
+                'TIR' => self::FIXTURE_TYPE_FLOAT,
+                'Stavka' => self::FIXTURE_TYPE_FLOAT,
+                'Currency' => self::FIXTURE_TYPE_INT,
+            ],
+            'path' => 'SwapDynamicResult.any.SwapDynamic.Swap',
         ],
     ];
 
@@ -412,6 +424,39 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSameDate(new DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
             $this->assertSame($metal['CodMet'], $list[$key]->getCode());
             $this->assertSame($metal['price'], $list[$key]->getPrice());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapDynamic(): void
+    {
+        [$swaps, $response] = $this->createFixture(self::FIXTURES['SwapDynamic']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'SwapDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapDynamic($from, $to);
+
+        $this->assertCount(\count($swaps), $list);
+        $this->assertContainsOnlyInstancesOf(SwapRate::class, $list);
+        foreach ($swaps as $key => $swap) {
+            $this->assertSameDate(new DateTimeImmutable($swap['DateBuy']), $list[$key]->getDateBuy());
+            $this->assertSameDate(new DateTimeImmutable($swap['DateSell']), $list[$key]->getDateSell());
+            $this->assertSame($swap['BaseRate'], $list[$key]->getBaseRate());
+            $this->assertSame($swap['TIR'], $list[$key]->getTIR());
+            $this->assertSame($swap['Stavka'], $list[$key]->getRate());
+            $this->assertSame($swap['Currency'], $list[$key]->getCurrency());
         }
     }
 }
