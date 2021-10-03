@@ -64,6 +64,7 @@ $keyRate = $cbrf->keyRate(
     new \DateTimeImmutable('-1 month'),
     new \DateTimeImmutable()
 );
+```
 
 ```php
 //получаем динамику цен на драгоценные металлы за последний месяц
