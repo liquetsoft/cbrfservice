@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Marvin255\CbrfService\Entity;
 
 use DateTimeInterface;
+use Marvin255\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from GetCursOnDate method.
@@ -25,11 +26,11 @@ class CurrencyRate implements Currency
 
     public function __construct(array $item, DateTimeInterface $date)
     {
-        $this->charCode = strtoupper(trim($item['VchCode'] ?? ''));
-        $this->name = trim($item['Vname'] ?? '');
-        $this->numericCode = (int) ($item['Vcode'] ?? 0);
-        $this->rate = (float) ($item['Vcurs'] ?? .0);
-        $this->nom = (int) ($item['Vnom'] ?? 0);
+        $this->charCode = DataHelper::charCode('VchCode', $item, '');
+        $this->name = DataHelper::string('Vname', $item, '');
+        $this->numericCode = DataHelper::int('Vcode', $item, 0);
+        $this->rate = DataHelper::float('Vcurs', $item, .0);
+        $this->nom = DataHelper::int('Vnom', $item, 0);
         $this->date = $date;
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Marvin255\CbrfService\Entity;
 
+use Marvin255\CbrfService\DataHelper;
+
 /**
  * DTO that represents currency from currencies vocabulary.
  */
@@ -25,13 +27,13 @@ class CurrencyEnum implements Currency
 
     public function __construct(array $item)
     {
-        $this->internalCode = trim($item['Vcode'] ?? '');
-        $this->name = trim($item['Vname'] ?? '');
-        $this->engName = trim($item['VEngname'] ?? '');
-        $this->nom = (int) ($item['Vnom'] ?? 0);
-        $this->commonCode = trim($item['VcommonCode'] ?? '');
-        $this->numericCode = (int) ($item['VnumCode'] ?? 0);
-        $this->charCode = strtoupper(trim($item['VcharCode'] ?? ''));
+        $this->internalCode = DataHelper::string('Vcode', $item, '');
+        $this->name = DataHelper::string('Vname', $item, '');
+        $this->engName = DataHelper::string('VEngname', $item, '');
+        $this->nom = DataHelper::int('Vnom', $item, 0);
+        $this->commonCode = DataHelper::string('VcommonCode', $item, '');
+        $this->numericCode = DataHelper::int('VnumCode', $item, 0);
+        $this->charCode = DataHelper::charCode('VcharCode', $item, '');
     }
 
     public function getInternalCode(): string

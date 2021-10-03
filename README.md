@@ -48,6 +48,12 @@ $dynamic = $cbrf->getCursDynamic(
     new \DateTimeImmutable(),
     $enumEur
 );
+
+//получаем динамику ключевой ставки за последний месяц
+$keyRate = $cbrf->keyRate(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
 ```
 
 В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:

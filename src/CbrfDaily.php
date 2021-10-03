@@ -7,6 +7,7 @@ namespace Marvin255\CbrfService;
 use DateTimeInterface;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
+use Marvin255\CbrfService\Entity\KeyRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
 use SoapClient;
 
@@ -269,6 +270,30 @@ class CbrfDaily
         }
 
         return $result;
+    }
+
+    /**
+     * Returns key rate dynamic within set dates.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return KeyRate[]
+     */
+    public function keyRate(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'KeyRate',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('KeyRate.KR', $soapResult);
+        $callback = fn (array $item): KeyRate => new KeyRate($item);
+
+        return array_map($callback, $list);
     }
 
     /**

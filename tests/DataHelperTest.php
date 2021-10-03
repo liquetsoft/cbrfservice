@@ -213,4 +213,308 @@ class DataHelperTest extends BaseTestCase
             ],
         ];
     }
+
+    /**
+     * @param string           $path
+     * @param mixed            $input
+     * @param string|Throwable $result
+     * @param string|null      $default
+     *
+     * @test
+     * @dataProvider stringProvider
+     */
+    public function testString(string $path, $input, $result, ?string $default = null): void
+    {
+        if ($result instanceof Throwable) {
+            $this->expectException(\get_class($result));
+        }
+
+        $testString = DataHelper::string($path, $input, $default);
+
+        if (\is_string($result)) {
+            $this->assertSame($result, $testString);
+        }
+    }
+
+    public function stringProvider(): array
+    {
+        $path = 'test1.test2';
+        $string = '     test     ';
+        $result = 'test';
+
+        $object = new stdClass();
+        $object->test1 = new stdClass();
+        $object->test1->test2 = $string;
+
+        $objectMixed = new stdClass();
+        $objectMixed->test1 = [
+            'test2' => $string,
+        ];
+
+        return [
+            'search inside array' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => $string,
+                    ],
+                ],
+                $result,
+            ],
+            'search inside object' => [
+                $path,
+                $object,
+                $result,
+            ],
+            'mixed search in array and object' => [
+                $path,
+                $objectMixed,
+                $result,
+            ],
+            'serach by not trimmed path' => [
+                "  {$path}   ",
+                $objectMixed,
+                $result,
+            ],
+            'not found exception' => [
+                $path,
+                [],
+                new CbrfException(),
+            ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
+        ];
+    }
+
+    /**
+     * @param string          $path
+     * @param mixed           $input
+     * @param float|Throwable $result
+     * @param float|null      $default
+     *
+     * @test
+     * @dataProvider floatProvider
+     */
+    public function testFloat(string $path, $input, $result, ?float $default = null): void
+    {
+        if ($result instanceof Throwable) {
+            $this->expectException(\get_class($result));
+        }
+
+        $testFloat = DataHelper::float($path, $input, $default);
+
+        if (\is_float($result)) {
+            $this->assertSame($result, $testFloat);
+        }
+    }
+
+    public function floatProvider(): array
+    {
+        $path = 'test1.test2';
+        $result = 12.3;
+        $float = '12.3';
+
+        $object = new stdClass();
+        $object->test1 = new stdClass();
+        $object->test1->test2 = $float;
+
+        $objectMixed = new stdClass();
+        $objectMixed->test1 = [
+            'test2' => $float,
+        ];
+
+        return [
+            'search inside array' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => $float,
+                    ],
+                ],
+                $result,
+            ],
+            'search inside object' => [
+                $path,
+                $object,
+                $result,
+            ],
+            'mixed search in array and object' => [
+                $path,
+                $objectMixed,
+                $result,
+            ],
+            'serach by not trimmed path' => [
+                "  {$path}   ",
+                $objectMixed,
+                $result,
+            ],
+            'not found exception' => [
+                $path,
+                [],
+                new CbrfException(),
+            ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
+        ];
+    }
+
+    /**
+     * @param string        $path
+     * @param mixed         $input
+     * @param int|Throwable $result
+     * @param int|null      $default
+     *
+     * @test
+     * @dataProvider intProvider
+     */
+    public function testInt(string $path, $input, $result, ?int $default = null): void
+    {
+        if ($result instanceof Throwable) {
+            $this->expectException(\get_class($result));
+        }
+
+        $testInt = DataHelper::int($path, $input, $default);
+
+        if (\is_int($result)) {
+            $this->assertSame($result, $testInt);
+        }
+    }
+
+    public function intProvider(): array
+    {
+        $path = 'test1.test2';
+        $result = 12;
+        $int = '12';
+
+        $object = new stdClass();
+        $object->test1 = new stdClass();
+        $object->test1->test2 = $int;
+
+        $objectMixed = new stdClass();
+        $objectMixed->test1 = [
+            'test2' => $int,
+        ];
+
+        return [
+            'search inside array' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => $int,
+                    ],
+                ],
+                $result,
+            ],
+            'search inside object' => [
+                $path,
+                $object,
+                $result,
+            ],
+            'mixed search in array and object' => [
+                $path,
+                $objectMixed,
+                $result,
+            ],
+            'serach by not trimmed path' => [
+                "  {$path}   ",
+                $objectMixed,
+                $result,
+            ],
+            'not found exception' => [
+                $path,
+                [],
+                new CbrfException(),
+            ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
+        ];
+    }
+
+    /**
+     * @param string           $path
+     * @param mixed            $input
+     * @param string|Throwable $result
+     * @param string|null      $default
+     *
+     * @test
+     * @dataProvider charCodeProvider
+     */
+    public function testCharCode(string $path, $input, $result, ?string $default = null): void
+    {
+        if ($result instanceof Throwable) {
+            $this->expectException(\get_class($result));
+        }
+
+        $testString = DataHelper::charCode($path, $input, $default);
+
+        if (\is_string($result)) {
+            $this->assertSame($result, $testString);
+        }
+    }
+
+    public function charCodeProvider(): array
+    {
+        $path = 'test1.test2';
+        $string = '     TeSt     ';
+        $result = 'TEST';
+
+        $object = new stdClass();
+        $object->test1 = new stdClass();
+        $object->test1->test2 = $string;
+
+        $objectMixed = new stdClass();
+        $objectMixed->test1 = [
+            'test2' => $string,
+        ];
+
+        return [
+            'search inside array' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => $string,
+                    ],
+                ],
+                $result,
+            ],
+            'search inside object' => [
+                $path,
+                $object,
+                $result,
+            ],
+            'mixed search in array and object' => [
+                $path,
+                $objectMixed,
+                $result,
+            ],
+            'serach by not trimmed path' => [
+                "  {$path}   ",
+                $objectMixed,
+                $result,
+            ],
+            'not found exception' => [
+                $path,
+                [],
+                new CbrfException(),
+            ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
+        ];
+    }
 }
