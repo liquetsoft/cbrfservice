@@ -17,12 +17,53 @@ use stdClass;
  */
 class CbrfDailyTest extends BaseTestCase
 {
+    public const FIXTURES = [
+        'CurrencyRate' => [
+            'schema' => [
+                'VchCode' => self::FIXTURE_TYPE_STRING,
+                'Vname' => self::FIXTURE_TYPE_STRING,
+                'Vcode' => self::FIXTURE_TYPE_INT,
+                'Vcurs' => self::FIXTURE_TYPE_FLOAT,
+                'Vnom' => self::FIXTURE_TYPE_INT,
+            ],
+            'path' => 'GetCursOnDateResult.any.ValuteData.ValuteCursOnDate',
+        ],
+        'EnumValutes' => [
+            'schema' => [
+                'Vcode' => self::FIXTURE_TYPE_STRING,
+                'Vname' => self::FIXTURE_TYPE_STRING,
+                'VEngname' => self::FIXTURE_TYPE_STRING,
+                'Vnom' => self::FIXTURE_TYPE_INT,
+                'VcommonCode' => self::FIXTURE_TYPE_STRING,
+                'VnumCode' => self::FIXTURE_TYPE_INT,
+                'VcharCode' => self::FIXTURE_TYPE_STRING,
+            ],
+            'path' => 'EnumValutesResult.any.ValuteData.EnumValutes',
+        ],
+        'CursDynamic' => [
+            'schema' => [
+                'CursDate' => self::FIXTURE_TYPE_DATE,
+                'Vcurs' => self::FIXTURE_TYPE_FLOAT,
+                'Vcode' => self::FIXTURE_TYPE_STRING,
+                'Vnom' => self::FIXTURE_TYPE_INT,
+            ],
+            'path' => 'GetCursDynamicResult.any.ValuteData.ValuteCursDynamic',
+        ],
+        'KeyRate' => [
+            'schema' => [
+                'DT' => self::FIXTURE_TYPE_DATE,
+                'Rate' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'KeyRateResult.any.KeyRate.KR',
+        ],
+    ];
+
     /**
      * @test
      */
     public function testGetCursOnDate(): void
     {
-        [$courses, $response] = $this->getCoursesFixture();
+        [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
         $onDate = new DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
@@ -53,7 +94,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetCursOnDateByCharCode(): void
     {
-        [$courses, $response] = $this->getCoursesFixture();
+        [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
         $charCode = $courses[0]['VchCode'] ?? '';
         $onDate = new DateTimeImmutable();
 
@@ -77,7 +118,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetCursOnDateByNumericCode(): void
     {
-        [$courses, $response] = $this->getCoursesFixture();
+        [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
         $numericCode = $courses[0]['Vcode'] ?? 0;
         $onDate = new DateTimeImmutable();
 
@@ -101,7 +142,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testEnumValutes(): void
     {
-        [$currencies, $response] = $this->getEnumValutesFixture();
+        [$currencies, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
         $seld = false;
 
         $soapClient = $this->createSoapCallMock(
@@ -133,7 +174,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testEnumValuteByCharCode(): void
     {
-        [$courses, $response] = $this->getEnumValutesFixture();
+        [$courses, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
         $charCode = $courses[0]['VcharCode'] ?? '';
         $seld = false;
 
@@ -157,7 +198,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testEnumValuteByNumericCode(): void
     {
-        [$courses, $response] = $this->getEnumValutesFixture();
+        [$courses, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
         $numericCode = $courses[0]['VnumCode'] ?? 0;
         $seld = false;
 
@@ -265,7 +306,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetCursDynamic(): void
     {
-        [$currencies, $response] = $this->getGetCursDynamicFixture();
+        [$currencies, $response] = $this->createFixture(self::FIXTURES['CursDynamic']);
         $from = new DateTimeImmutable('-1 month');
         $to = new DateTimeImmutable();
         $charCode = 'EUR';
@@ -311,7 +352,7 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testKeyRate(): void
     {
-        [$rates, $response] = $this->getGetKeyRateFixture();
+        [$rates, $response] = $this->createFixture(self::FIXTURES['KeyRate']);
         $from = new DateTimeImmutable('-1 month');
         $to = new DateTimeImmutable();
 
@@ -333,151 +374,5 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSameDate(new DateTimeImmutable($rate['DT']), $list[$key]->getDate());
             $this->assertSame($rate['Rate'], $list[$key]->getRate());
         }
-    }
-
-    /**
-     * Returns fixture for courses checking.
-     *
-     * @return array
-     */
-    private function getCoursesFixture(): array
-    {
-        $courses = [];
-        for ($i = 0; $i <= 3; ++$i) {
-            $courses[] = [
-                'VchCode' => "VchCode_{$i}",
-                'Vname' => "Vname_{$i}",
-                'Vcode' => mt_rand(),
-                'Vcurs' => (float) (mt_rand()),
-                'Vnom' => mt_rand(),
-            ];
-        }
-
-        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-        $any .= '<ValuteData xmlns="">';
-        foreach ($courses as $course) {
-            $any .= '<ValuteCursOnDate xmlns="">';
-            foreach ($course as $key => $value) {
-                $any .= "<{$key}>{$value}</{$key}>";
-            }
-            $any .= '</ValuteCursOnDate>';
-        }
-        $any .= '</ValuteData>';
-        $any .= '</diffgr:diffgram>';
-
-        $soapResponse = new stdClass();
-        $soapResponse->GetCursOnDateResult = new stdClass();
-        $soapResponse->GetCursOnDateResult->any = $any;
-
-        return [$courses, $soapResponse];
-    }
-
-    /**
-     * Returns fixture for currencies checking.
-     *
-     * @return array
-     */
-    private function getEnumValutesFixture(): array
-    {
-        $courses = [];
-        for ($i = 0; $i <= 3; ++$i) {
-            $courses[] = [
-                'Vcode' => "Vcode_{$i}",
-                'Vname' => "Vname_{$i}",
-                'VEngname' => "VEngname_{$i}",
-                'Vnom' => $i,
-                'VcommonCode' => "VcommonCode_{$i}",
-                'VnumCode' => $i,
-                'VcharCode' => "VcharCode_{$i}",
-            ];
-        }
-
-        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-        $any .= '<ValuteData xmlns="">';
-        foreach ($courses as $course) {
-            $any .= '<EnumValutes xmlns="">';
-            foreach ($course as $key => $value) {
-                $any .= "<{$key}>{$value}</{$key}>";
-            }
-            $any .= '</EnumValutes>';
-        }
-        $any .= '</ValuteData>';
-        $any .= '</diffgr:diffgram>';
-
-        $soapResponse = new stdClass();
-        $soapResponse->EnumValutesResult = new stdClass();
-        $soapResponse->EnumValutesResult->any = $any;
-
-        return [$courses, $soapResponse];
-    }
-
-    /**
-     * Returns fixture for rates dynamic.
-     *
-     * @return array
-     */
-    private function getGetCursDynamicFixture(): array
-    {
-        $courses = [];
-        for ($i = 0; $i <= 3; ++$i) {
-            $courses[] = [
-                'CursDate' => "2010-10-1{$i}",
-                'Vcode' => "Vcode_{$i}",
-                'Vnom' => $i,
-                'Vcurs' => (float) (mt_rand()),
-            ];
-        }
-
-        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-        $any .= '<ValuteData xmlns="">';
-        foreach ($courses as $course) {
-            $any .= '<ValuteCursDynamic xmlns="">';
-            foreach ($course as $key => $value) {
-                $any .= "<{$key}>{$value}</{$key}>";
-            }
-            $any .= '</ValuteCursDynamic>';
-        }
-        $any .= '</ValuteData>';
-        $any .= '</diffgr:diffgram>';
-
-        $soapResponse = new stdClass();
-        $soapResponse->GetCursDynamicResult = new stdClass();
-        $soapResponse->GetCursDynamicResult->any = $any;
-
-        return [$courses, $soapResponse];
-    }
-
-    /**
-     * Returns fixture for key rate dynamic.
-     *
-     * @return array
-     */
-    private function getGetKeyRateFixture(): array
-    {
-        $courses = [];
-        for ($i = 0; $i <= 3; ++$i) {
-            $courses[] = [
-                'DT' => "2010-10-1{$i}",
-                'Rate' => (float) (mt_rand()),
-            ];
-        }
-
-        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-        $any .= '<KeyRate xmlns="">';
-        foreach ($courses as $course) {
-            $any .= '<KR xmlns="">';
-            foreach ($course as $key => $value) {
-                $any .= "<{$key}>{$value}</{$key}>";
-            }
-            $any .= '</KR>';
-        }
-        $any .= '</KeyRate>';
-        $any .= '</diffgr:diffgram>';
-
-        $soapResponse = new stdClass();
-        $soapResponse->KeyRateResult = new stdClass();
-        $soapResponse->KeyRateResult->any = $any;
-
-        return [$courses, $soapResponse];
     }
 }
