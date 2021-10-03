@@ -27,18 +27,26 @@ composer req marvin255/cbrfservice
 ```php
 //инициируем новый объект сервиса
 $cbrf = new \Marvin255\CbrfService\CbrfDaily();
+```
 
+```php
 //получаем курсы всех валют
 $rates = $cbrf->getCursOnDate(new \DateTimeImmutable());
+
 //получаем курс валюты по ее буквенному коду
 $rateEur = $cbrf->getCursOnDateByCharCode(new \DateTimeImmutable(), 'EUR');
+
 //получаем курс валюты по ее цифровому коду
 $rate978 = $cbrf->getCursOnDateByNumericCode(new \DateTimeImmutable(), 978);
+```
 
+```php
 //получаем словарь всех доступных валют
 $currencies = $cbrf->enumValutes();
+
 //получаем описание валюты из словаря по буквенному коду
 $enumEur = $cbrf->enumValuteByCharCode('EUR');
+
 //получаем описание валюты из словаря по цифровому коду
 $enum978 = $cbrf->enumValuteByNumericCode(978);
 
@@ -48,9 +56,18 @@ $dynamic = $cbrf->getCursDynamic(
     new \DateTimeImmutable(),
     $enumEur
 );
+```
 
+```php
 //получаем динамику ключевой ставки за последний месяц
 $keyRate = $cbrf->keyRate(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+
+```php
+//получаем динамику цен на драгоценные металлы за последний месяц
+$metalsPrices = $cbrf->dragMetDynamic(
     new \DateTimeImmutable('-1 month'),
     new \DateTimeImmutable()
 );

@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\KeyRate;
+use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
 use SoapClient;
 
@@ -292,6 +293,30 @@ class CbrfDaily
 
         $list = DataHelper::array('KeyRate.KR', $soapResult);
         $callback = fn (array $item): KeyRate => new KeyRate($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns list of presious metals prices  within set dates.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return PreciousMetalRate[]
+     */
+    public function dragMetDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'DragMetDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('DragMetall.DrgMet', $soapResult);
+        $callback = fn (array $item): PreciousMetalRate => new PreciousMetalRate($item);
 
         return array_map($callback, $list);
     }
