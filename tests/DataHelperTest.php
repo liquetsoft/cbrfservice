@@ -218,17 +218,18 @@ class DataHelperTest extends BaseTestCase
      * @param string           $path
      * @param mixed            $input
      * @param string|Throwable $result
+     * @param string|null      $default
      *
      * @test
      * @dataProvider stringProvider
      */
-    public function testString(string $path, $input, $result): void
+    public function testString(string $path, $input, $result, ?string $default = null): void
     {
         if ($result instanceof Throwable) {
             $this->expectException(\get_class($result));
         }
 
-        $testString = DataHelper::string($path, $input);
+        $testString = DataHelper::string($path, $input, $default);
 
         if (\is_string($result)) {
             $this->assertSame($result, $testString);
@@ -280,6 +281,12 @@ class DataHelperTest extends BaseTestCase
                 [],
                 new CbrfException(),
             ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
         ];
     }
 
@@ -287,17 +294,18 @@ class DataHelperTest extends BaseTestCase
      * @param string          $path
      * @param mixed           $input
      * @param float|Throwable $result
+     * @param float|null      $default
      *
      * @test
      * @dataProvider floatProvider
      */
-    public function testFloat(string $path, $input, $result): void
+    public function testFloat(string $path, $input, $result, ?float $default = null): void
     {
         if ($result instanceof Throwable) {
             $this->expectException(\get_class($result));
         }
 
-        $testFloat = DataHelper::float($path, $input);
+        $testFloat = DataHelper::float($path, $input, $default);
 
         if (\is_float($result)) {
             $this->assertSame($result, $testFloat);
@@ -349,6 +357,12 @@ class DataHelperTest extends BaseTestCase
                 [],
                 new CbrfException(),
             ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
         ];
     }
 
@@ -356,17 +370,18 @@ class DataHelperTest extends BaseTestCase
      * @param string        $path
      * @param mixed         $input
      * @param int|Throwable $result
+     * @param int|null      $default
      *
      * @test
      * @dataProvider intProvider
      */
-    public function testInt(string $path, $input, $result): void
+    public function testInt(string $path, $input, $result, ?int $default = null): void
     {
         if ($result instanceof Throwable) {
             $this->expectException(\get_class($result));
         }
 
-        $testInt = DataHelper::int($path, $input);
+        $testInt = DataHelper::int($path, $input, $default);
 
         if (\is_int($result)) {
             $this->assertSame($result, $testInt);
@@ -418,6 +433,12 @@ class DataHelperTest extends BaseTestCase
                 [],
                 new CbrfException(),
             ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
+            ],
         ];
     }
 
@@ -425,17 +446,18 @@ class DataHelperTest extends BaseTestCase
      * @param string           $path
      * @param mixed            $input
      * @param string|Throwable $result
+     * @param string|null      $default
      *
      * @test
      * @dataProvider charCodeProvider
      */
-    public function testCharCode(string $path, $input, $result): void
+    public function testCharCode(string $path, $input, $result, ?string $default = null): void
     {
         if ($result instanceof Throwable) {
             $this->expectException(\get_class($result));
         }
 
-        $testString = DataHelper::charCode($path, $input);
+        $testString = DataHelper::charCode($path, $input, $default);
 
         if (\is_string($result)) {
             $this->assertSame($result, $testString);
@@ -486,6 +508,12 @@ class DataHelperTest extends BaseTestCase
                 $path,
                 [],
                 new CbrfException(),
+            ],
+            'test default' => [
+                $path,
+                [],
+                $result,
+                $result,
             ],
         ];
     }

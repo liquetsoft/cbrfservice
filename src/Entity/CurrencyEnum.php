@@ -32,7 +32,7 @@ class CurrencyEnum implements Currency
         $this->engName = DataHelper::string('VEngname', $item);
         $this->nom = DataHelper::int('Vnom', $item);
         $this->commonCode = DataHelper::string('VcommonCode', $item);
-        $this->numericCode = DataHelper::int('VnumCode', $item);
+        $this->numericCode = DataHelper::int('VnumCode', $item, 0);
         $this->charCode = DataHelper::charCode('VcharCode', $item);
     }
 

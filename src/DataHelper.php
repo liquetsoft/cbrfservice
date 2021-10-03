@@ -81,60 +81,109 @@ class DataHelper
     /**
      * Returns string from the set path.
      *
-     * @param string $path
-     * @param mixed  $data
+     * @param string      $path
+     * @param mixed       $data
+     * @param string|null $default
      *
      * @return string
      */
-    public static function string(string $path, $data): string
+    public static function string(string $path, $data, ?string $default = null): string
     {
         $item = self::get($path, $data);
 
         if ($item === null) {
-            $message = sprintf("Can't find an item by '%s' path.", $path);
-            throw new CbrfException($message);
+            if ($default !== null) {
+                $return = $default;
+            } else {
+                $message = sprintf("Can't find a string by '%s' path.", $path);
+                throw new CbrfException($message);
+            }
+        } else {
+            $return = trim((string) $item);
         }
 
-        return trim((string) $item);
+        return $return;
     }
 
     /**
      * Returns float from the set path.
      *
-     * @param string $path
-     * @param mixed  $data
+     * @param string     $path
+     * @param mixed      $data
+     * @param float|null $default
      *
      * @return float
      */
-    public static function float(string $path, $data): float
+    public static function float(string $path, $data, ?float $default = null): float
     {
-        return (float) self::string($path, $data);
+        $item = self::get($path, $data);
+
+        if ($item === null) {
+            if ($default !== null) {
+                $return = $default;
+            } else {
+                $message = sprintf("Can't find a float by '%s' path.", $path);
+                throw new CbrfException($message);
+            }
+        } else {
+            $return = (float) trim((string) $item);
+        }
+
+        return $return;
     }
 
     /**
      * Returns int from the set path.
      *
-     * @param string $path
-     * @param mixed  $data
+     * @param string   $path
+     * @param mixed    $data
+     * @param int|null $default
      *
      * @return int
      */
-    public static function int(string $path, $data): int
+    public static function int(string $path, $data, ?int $default = null): int
     {
-        return (int) self::string($path, $data);
+        $item = self::get($path, $data);
+
+        if ($item === null) {
+            if ($default !== null) {
+                $return = $default;
+            } else {
+                $message = sprintf("Can't find an int by '%s' path.", $path);
+                throw new CbrfException($message);
+            }
+        } else {
+            $return = (int) trim((string) $item);
+        }
+
+        return $return;
     }
 
     /**
      * Returns char code from the set path.
      *
-     * @param string $path
-     * @param mixed  $data
+     * @param string      $path
+     * @param mixed       $data
+     * @param string|null $default
      *
      * @return string
      */
-    public static function charCode(string $path, $data): string
+    public static function charCode(string $path, $data, ?string $default = null): string
     {
-        return strtoupper(self::string($path, $data));
+        $item = self::get($path, $data);
+
+        if ($item === null) {
+            if ($default !== null) {
+                $return = $default;
+            } else {
+                $message = sprintf("Can't find a char code by '%s' path.", $path);
+                throw new CbrfException($message);
+            }
+        } else {
+            $return = trim((string) $item);
+        }
+
+        return strtoupper($return);
     }
 
     /**
