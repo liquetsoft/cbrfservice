@@ -74,6 +74,14 @@ $metalsPrices = $cbrf->dragMetDynamic(
 );
 ```
 
+```php
+//получаем валютный своп
+$swap = $cbrf->swapDynamic(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+```
+
 В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:
 
 ```php
