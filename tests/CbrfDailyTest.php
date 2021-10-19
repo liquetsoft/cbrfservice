@@ -11,6 +11,7 @@ use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\DepoRate;
 use Marvin255\CbrfService\Entity\KeyRate;
+use Marvin255\CbrfService\Entity\OstatRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\SwapRate;
 use stdClass;
@@ -84,6 +85,14 @@ class CbrfDailyTest extends BaseTestCase
                 'DateDepo' => self::FIXTURE_TYPE_DATE,
             ],
             'path' => 'DepoDynamicResult.any.DepoDynamic.Depo',
+        ],
+        'OstatDynamic' => [
+            'schema' => [
+                'DateOst' => self::FIXTURE_TYPE_DATE,
+                'InMoscow' => self::FIXTURE_TYPE_FLOAT,
+                'InRuss' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'OstatDynamicResult.any.OstatDynamic.Ostat',
         ],
     ];
 
@@ -494,6 +503,36 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($depos as $key => $depo) {
             $this->assertSameDate(new DateTimeImmutable($depo['DateDepo']), $list[$key]->getDate());
             $this->assertSame($depo['Overnight'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testOstatDynamic(): void
+    {
+        [$depos, $response] = $this->createFixture(self::FIXTURES['OstatDynamic']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'OstatDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->ostatDynamic($from, $to);
+
+        $this->assertCount(\count($depos), $list);
+        $this->assertContainsOnlyInstancesOf(OstatRate::class, $list);
+        foreach ($depos as $key => $ostat) {
+            $this->assertSameDate(new DateTimeImmutable($ostat['DateOst']), $list[$key]->getDate());
+            $this->assertSame($ostat['InMoscow'], $list[$key]->getMoscow());
+            $this->assertSame($ostat['InRuss'], $list[$key]->getRussia());
         }
     }
 }

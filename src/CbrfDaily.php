@@ -9,6 +9,7 @@ use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\DepoRate;
 use Marvin255\CbrfService\Entity\KeyRate;
+use Marvin255\CbrfService\Entity\OstatRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
 use Marvin255\CbrfService\Entity\SwapRate;
@@ -367,6 +368,30 @@ class CbrfDaily
 
         $list = DataHelper::array('DepoDynamic.Depo', $soapResult);
         $callback = fn (array $item): DepoRate => new DepoRate($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns the dynamic of balances of funds items within set dates.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return OstatRate[]
+     */
+    public function ostatDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'OstatDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('OstatDynamic.Ostat', $soapResult);
+        $callback = fn (array $item): OstatRate => new OstatRate($item);
 
         return array_map($callback, $list);
     }
