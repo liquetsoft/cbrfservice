@@ -9,6 +9,7 @@ use Marvin255\CbrfService\CbrfDaily;
 use Marvin255\CbrfService\CbrfSoapService;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
+use Marvin255\CbrfService\Entity\DepoRate;
 use Marvin255\CbrfService\Entity\KeyRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\SwapRate;
@@ -76,6 +77,13 @@ class CbrfDailyTest extends BaseTestCase
                 'Currency' => self::FIXTURE_TYPE_INT,
             ],
             'path' => 'SwapDynamicResult.any.SwapDynamic.Swap',
+        ],
+        'DepoDynamic' => [
+            'schema' => [
+                'Overnight' => self::FIXTURE_TYPE_FLOAT,
+                'DateDepo' => self::FIXTURE_TYPE_DATE,
+            ],
+            'path' => 'DepoDynamicResult.any.DepoDynamic.Depo',
         ],
     ];
 
@@ -457,6 +465,35 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($swap['TIR'], $list[$key]->getTIR());
             $this->assertSame($swap['Stavka'], $list[$key]->getRate());
             $this->assertSame($swap['Currency'], $list[$key]->getCurrency());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testDepoDynamic(): void
+    {
+        [$depos, $response] = $this->createFixture(self::FIXTURES['DepoDynamic']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'DepoDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->depoDynamic($from, $to);
+
+        $this->assertCount(\count($depos), $list);
+        $this->assertContainsOnlyInstancesOf(DepoRate::class, $list);
+        foreach ($depos as $key => $depo) {
+            $this->assertSameDate(new DateTimeImmutable($depo['DateDepo']), $list[$key]->getDate());
+            $this->assertSame($depo['Overnight'], $list[$key]->getRate());
         }
     }
 }
