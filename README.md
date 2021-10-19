@@ -75,8 +75,16 @@ $metalsPrices = $cbrf->dragMetDynamic(
 ```
 
 ```php
-//получаем валютный своп
+//получаем валютный своп за последний месяц
 $swap = $cbrf->swapDynamic(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+```
+
+```php
+//получаем динамику ставок привлечения средств по депозитным операциям за последний месяц
+$depo = $cbrf->depoDynamic(
     new \DateTimeImmutable('-1 month'),
     new \DateTimeImmutable()
 );

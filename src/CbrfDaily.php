@@ -7,6 +7,7 @@ namespace Marvin255\CbrfService;
 use DateTimeInterface;
 use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
+use Marvin255\CbrfService\Entity\DepoRate;
 use Marvin255\CbrfService\Entity\KeyRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
@@ -342,6 +343,30 @@ class CbrfDaily
 
         $list = DataHelper::array('SwapDynamic.Swap', $soapResult);
         $callback = fn (array $item): SwapRate => new SwapRate($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns list depo dynamic items within set dates.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return DepoRate[]
+     */
+    public function depoDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'DepoDynamic',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('DepoDynamic.Depo', $soapResult);
+        $callback = fn (array $item): DepoRate => new DepoRate($item);
 
         return array_map($callback, $list);
     }
