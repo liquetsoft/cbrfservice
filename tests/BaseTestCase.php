@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Marvin255\CbrfService\Tests;
 
 use DateTimeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use SoapClient;
@@ -38,6 +39,7 @@ abstract class BaseTestCase extends TestCase
      */
     protected function createSoapCallMock(string $method, ?array $params, $result = null): SoapClient
     {
+        /** @var MockObject&SoapClient */
         $soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();

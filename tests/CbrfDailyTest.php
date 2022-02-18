@@ -11,9 +11,11 @@ use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\DepoRate;
 use Marvin255\CbrfService\Entity\KeyRate;
+use Marvin255\CbrfService\Entity\OstatDepoRate;
 use Marvin255\CbrfService\Entity\OstatRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\SwapRate;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 
 /**
@@ -93,6 +95,14 @@ class CbrfDailyTest extends BaseTestCase
                 'InRuss' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'OstatDynamicResult.any.OstatDynamic.Ostat',
+        ],
+        'OstatDepo' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'D1_7' => self::FIXTURE_TYPE_FLOAT,
+                'total' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'OstatDepoResult.any.OD.odr',
         ],
     ];
 
@@ -352,6 +362,7 @@ class CbrfDailyTest extends BaseTestCase
         $name = 'Euro';
         $internalCode = 'test01';
 
+        /** @var MockObject&CurrencyEnum */
         $currencyEnum = $this->getMockBuilder(CurrencyEnum::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -533,6 +544,36 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSameDate(new DateTimeImmutable($ostat['DateOst']), $list[$key]->getDate());
             $this->assertSame($ostat['InMoscow'], $list[$key]->getMoscow());
             $this->assertSame($ostat['InRuss'], $list[$key]->getRussia());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testOstatDepo(): void
+    {
+        [$depos, $response] = $this->createFixture(self::FIXTURES['OstatDepo']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'OstatDepo',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->ostatDepo($from, $to);
+
+        $this->assertCount(\count($depos), $list);
+        $this->assertContainsOnlyInstancesOf(OstatDepoRate::class, $list);
+        foreach ($depos as $key => $ostat) {
+            $this->assertSameDate(new DateTimeImmutable($ostat['D0']), $list[$key]->getDate());
+            $this->assertSame($ostat['D1_7'], $list[$key]->getDays1to7());
+            $this->assertSame($ostat['total'], $list[$key]->getTotal());
         }
     }
 }
