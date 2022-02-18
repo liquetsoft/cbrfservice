@@ -9,6 +9,7 @@ use Marvin255\CbrfService\Entity\CurrencyEnum;
 use Marvin255\CbrfService\Entity\CurrencyRate;
 use Marvin255\CbrfService\Entity\DepoRate;
 use Marvin255\CbrfService\Entity\KeyRate;
+use Marvin255\CbrfService\Entity\OstatDepoRate;
 use Marvin255\CbrfService\Entity\OstatRate;
 use Marvin255\CbrfService\Entity\PreciousMetalRate;
 use Marvin255\CbrfService\Entity\ReutersCurrencyRate;
@@ -392,6 +393,30 @@ class CbrfDaily
 
         $list = DataHelper::array('OstatDynamic.Ostat', $soapResult);
         $callback = fn (array $item): OstatRate => new OstatRate($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns the banks deposites at bank of Russia.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return OstatDepoRate[]
+     */
+    public function ostatDepo(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'OstatDepo',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('OD.odr', $soapResult);
+        $callback = fn (array $item): OstatDepoRate => new OstatDepoRate($item);
 
         return array_map($callback, $list);
     }
