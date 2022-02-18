@@ -98,6 +98,14 @@ $leftovers = $cbrf->ostatDynamic(
 );
 ```
 
+```php
+//получаем депозиты банков в Банке России
+$leftovers = $cbrf->ostatDepo(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+```
+
 В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:
 
 ```php
