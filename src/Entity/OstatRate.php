@@ -8,7 +8,11 @@ use DateTimeInterface;
 use Marvin255\CbrfService\DataHelper;
 
 /**
+<<<<<<< HEAD
  * DTO that represents response item from OstatDynamic method.
+=======
+ * DTO that represents response item from GetCursOnDate method.
+>>>>>>> origin/master
  */
 class OstatRate
 {
