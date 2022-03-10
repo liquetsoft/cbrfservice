@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService;
+namespace Liquetsoft\CbrfService;
 
 use SoapClient;
 use Throwable;

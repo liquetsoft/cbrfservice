@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Entity;
+namespace Liquetsoft\CbrfService\Entity;
 
 use DateTimeInterface;
-use Marvin255\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\DataHelper;
 
 /**
 <<<<<<< HEAD

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests;
 
 use Exception;
-use Marvin255\CbrfService\CbrfException;
-use Marvin255\CbrfService\CbrfSoapService;
+use Liquetsoft\CbrfService\CbrfException;
+use Liquetsoft\CbrfService\CbrfSoapService;
 use SoapClient;
 use stdClass;
 

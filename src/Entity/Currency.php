@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Entity;
+namespace Liquetsoft\CbrfService\Entity;
 
 /**
  * Interface for DTO that contains currency.

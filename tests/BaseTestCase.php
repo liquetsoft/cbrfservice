@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests;
 
 use DateTimeInterface;
 use PHPUnit\Framework\MockObject\MockObject;

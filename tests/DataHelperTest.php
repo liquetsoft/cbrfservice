@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests;
 
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use Marvin255\CbrfService\CbrfException;
-use Marvin255\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\CbrfException;
+use Liquetsoft\CbrfService\DataHelper;
 use stdClass;
 use Throwable;
 
