@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService;
+namespace Liquetsoft\CbrfService;
 
 /**
  * Class for a lib exception.

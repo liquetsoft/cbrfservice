@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Entity;
+namespace Liquetsoft\CbrfService\Entity;
 
-use Marvin255\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents currency from currencies vocabulary.

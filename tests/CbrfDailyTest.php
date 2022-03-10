@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Marvin255\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests;
 
 use DateTimeImmutable;
-use Marvin255\CbrfService\CbrfDaily;
-use Marvin255\CbrfService\CbrfSoapService;
-use Marvin255\CbrfService\Entity\CurrencyEnum;
-use Marvin255\CbrfService\Entity\CurrencyRate;
-use Marvin255\CbrfService\Entity\DepoRate;
-use Marvin255\CbrfService\Entity\KeyRate;
-use Marvin255\CbrfService\Entity\OstatDepoRate;
-use Marvin255\CbrfService\Entity\OstatRate;
-use Marvin255\CbrfService\Entity\PreciousMetalRate;
-use Marvin255\CbrfService\Entity\SwapRate;
+use Liquetsoft\CbrfService\CbrfDaily;
+use Liquetsoft\CbrfService\CbrfSoapService;
+use Liquetsoft\CbrfService\Entity\CurrencyEnum;
+use Liquetsoft\CbrfService\Entity\CurrencyRate;
+use Liquetsoft\CbrfService\Entity\DepoRate;
+use Liquetsoft\CbrfService\Entity\KeyRate;
+use Liquetsoft\CbrfService\Entity\OstatDepoRate;
+use Liquetsoft\CbrfService\Entity\OstatRate;
+use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
+use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
 

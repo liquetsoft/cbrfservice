@@ -1,5 +1,5 @@
 {
-    "name": "marvin255/cbrfservice",
+    "name": "liquetsoft/cbrfservice",
     "description": "Component for bank of Russia daily web service",
     "type": "library",
     "keywords": ["php", "banks", "currency rate", "soap", "service"],
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Marvin255\\CbrfService\\": "src/"
+            "Liquetsoft\\CbrfService\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Marvin255\\CbrfService\\Tests\\": "tests/"
+            "Liquetsoft\\CbrfService\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -39,7 +39,7 @@
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/marvin255/cbrfservice"
+            "url": "https://github.com/liquetsoft/cbrfservice"
         }
     ]
 }

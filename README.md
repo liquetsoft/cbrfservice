@@ -1,10 +1,10 @@
 Php курсы валют
 ===============
 
-[![Latest Stable Version](https://poser.pugx.org/marvin255/cbrfservice/v/stable.png)](https://packagist.org/packages/marvin255/cbrfservice)
-[![Total Downloads](https://poser.pugx.org/marvin255/cbrfservice/downloads.png)](https://packagist.org/packages/marvin255/cbrfservice)
-[![License](https://poser.pugx.org/marvin255/cbrfservice/license.svg)](https://packagist.org/packages/marvin255/cbrfservice)
-[![Build Status](https://github.com/marvin255/cbrfservice/workflows/cbrf_service/badge.svg)](https://github.com/marvin255/cbrfservice/actions?query=workflow%3A%22cbrf_service%22)
+[![Latest Stable Version](https://poser.pugx.org/liquetsoft/cbrfservice/v/stable.png)](https://packagist.org/packages/liquetsoft/cbrfservice)
+[![Total Downloads](https://poser.pugx.org/liquetsoft/cbrfservice/downloads.png)](https://packagist.org/packages/liquetsoft/cbrfservice)
+[![License](https://poser.pugx.org/liquetsoft/cbrfservice/license.svg)](https://packagist.org/packages/liquetsoft/cbrfservice)
+[![Build Status](https://github.com/liquetsoft/cbrfservice/workflows/cbrf_service/badge.svg)](https://github.com/liquetsoft/cbrfservice/actions?query=workflow%3A%22cbrf_service%22)
 
 Php обертка для [сервиса Центробанка РФ](https://www.cbr.ru/development/DWS/).
 
@@ -16,7 +16,7 @@ Php обертка для [сервиса Центробанка РФ](https://w
 Добавьте библиотеку в проект с помощью [Composer](https://getcomposer.org/doc/00-intro.md):
 
 ```bash
-composer req marvin255/cbrfservice
+composer req liquetsoft/cbrfservice
 ```
 
 
@@ -26,7 +26,7 @@ composer req marvin255/cbrfservice
 
 ```php
 //инициируем новый объект сервиса
-$cbrf = new \Marvin255\CbrfService\CbrfDaily();
+$cbrf = new \Liquetsoft\CbrfService\CbrfDaily();
 ```
 
 ```php
@@ -119,7 +119,7 @@ $client = new SoapClient(
 );
 
 //инициируем новый объект сервиса
-$cbrf = new \Marvin255\CbrfService\CbrfDaily($client);
+$cbrf = new \Liquetsoft\CbrfService\CbrfDaily($client);
 ```
 
 
@@ -127,7 +127,7 @@ $cbrf = new \Marvin255\CbrfService\CbrfDaily($client);
 Обработка ошибок
 ----------------
 
-Все ошибки, которые будут перехвачены при запросах, будут выброшены как исключение `\Marvin255\CbrfService\CbrfException`. Если `\SoapClient` будет сконфигурирован с отключенными исключениями, то обработка ошибок остается на стороне клиентского скрипта.
+Все ошибки, которые будут перехвачены при запросах, будут выброшены как исключение `\Liquetsoft\CbrfService\CbrfException`. Если `\SoapClient` будет сконфигурирован с отключенными исключениями, то обработка ошибок остается на стороне клиентского скрипта.
 
 
 
