@@ -118,9 +118,14 @@ class DataHelperTest extends BaseTestCase
                 $objectMixed,
                 $result,
             ],
-            'not found exception' => [
+            'nothing found' => [
                 $path,
                 [],
+                [],
+            ],
+            'wrong type exception' => [
+                $path,
+                ['test1' => ['test2' => 'wqe']],
                 new CbrfException(),
             ],
         ];

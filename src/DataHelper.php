@@ -50,7 +50,9 @@ class DataHelper
     {
         $item = self::get($path, $data);
 
-        if (!\is_array($item)) {
+        if ($item === null) {
+            $item = [];
+        } elseif (!\is_array($item)) {
             $message = sprintf("Can't find an array by '%s' path.", $path);
             throw new CbrfException($message);
         }
