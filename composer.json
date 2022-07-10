@@ -33,7 +33,7 @@
         "linter": [
             "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -vv --allow-risky=yes --dry-run --stop-on-violation",
             "vendor/bin/phpcpd ./ --exclude vendor --exclude tests",
-            "vendor/bin/psalm --show-info=true"
+            "vendor/bin/psalm --show-info=true --php-version=$(php -r \"echo phpversion();\")"
         ]
     },
     "repositories": [
