@@ -15,6 +15,7 @@ use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
+use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use SoapClient;
 
@@ -467,6 +468,30 @@ class CbrfDaily
 
         $list = DataHelper::array('mmrf7d.mr', $soapResult);
         $callback = fn (array $item): InternationalReserveWeek => new InternationalReserveWeek($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns operations saldo.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return Saldo[]
+     */
+    public function saldo(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'Saldo',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('Saldo.So', $soapResult);
+        $callback = fn (array $item): Saldo => new Saldo($item);
 
         return array_map($callback, $list);
     }
