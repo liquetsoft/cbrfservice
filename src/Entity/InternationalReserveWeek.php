@@ -8,9 +8,9 @@ use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
- * DTO that represents response item from mrrf method.
+ * DTO that represents response item from mrrf7d method.
  */
-class InternationalReserve
+class InternationalReserveWeek
 {
     private DateTimeInterface $date;
 
@@ -19,7 +19,7 @@ class InternationalReserve
     public function __construct(array $item)
     {
         $this->date = DataHelper::dateTime('D0', $item);
-        $this->value = DataHelper::float('p1', $item, .0);
+        $this->value = DataHelper::float('val', $item, .0);
     }
 
     public function getValue(): float
