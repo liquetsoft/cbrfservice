@@ -8,6 +8,8 @@ use DateTimeInterface;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
+use Liquetsoft\CbrfService\Entity\InternationalReserve;
+use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
@@ -417,6 +419,54 @@ class CbrfDaily
 
         $list = DataHelper::array('OD.odr', $soapResult);
         $callback = fn (array $item): OstatDepoRate => new OstatDepoRate($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns international valute reseves of Russia for month.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return InternationalReserve[]
+     */
+    public function mrrf(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'mrrf',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('mmrf.mr', $soapResult);
+        $callback = fn (array $item): InternationalReserve => new InternationalReserve($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns international valute reseves of Russia for week.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return InternationalReserveWeek[]
+     */
+    public function mrrf7d(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'mrrf7D',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('mmrf7d.mr', $soapResult);
+        $callback = fn (array $item): InternationalReserveWeek => new InternationalReserveWeek($item);
 
         return array_map($callback, $list);
     }

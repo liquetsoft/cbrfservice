@@ -106,6 +106,22 @@ $leftovers = $cbrf->ostatDepo(
 );
 ```
 
+```php
+//получаем международные резервы Российской Федерации, ежемесячные значения
+$mrrf = $cbrf->mrrf(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+```
+
+```php
+//получаем международные резервы Российской Федерации, еженедельные значения
+$mrrf = $cbrf->mrrf7d(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+```
+
 В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:
 
 ```php

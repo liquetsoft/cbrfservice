@@ -10,6 +10,8 @@ use Liquetsoft\CbrfService\CbrfSoapService;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
+use Liquetsoft\CbrfService\Entity\InternationalReserve;
+use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
@@ -103,6 +105,20 @@ class CbrfDailyTest extends BaseTestCase
                 'total' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'OstatDepoResult.any.OD.odr',
+        ],
+        'Mrrf' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'p1' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'mrrfResult.any.mmrf.mr',
+        ],
+        'Mrrf7D' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'val' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'mrrf7DResult.any.mmrf7d.mr',
         ],
     ];
 
@@ -574,6 +590,64 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSameDate(new DateTimeImmutable($ostat['D0']), $list[$key]->getDate());
             $this->assertSame($ostat['D1_7'], $list[$key]->getDays1to7());
             $this->assertSame($ostat['total'], $list[$key]->getTotal());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testMrrf(): void
+    {
+        [$mrrfs, $response] = $this->createFixture(self::FIXTURES['Mrrf']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'mrrf',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->mrrf($from, $to);
+
+        $this->assertCount(\count($mrrfs), $list);
+        $this->assertContainsOnlyInstancesOf(InternationalReserve::class, $list);
+        foreach ($mrrfs as $key => $mrrf) {
+            $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
+            $this->assertSame($mrrf['p1'], $list[$key]->getValue());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testMrrf7d(): void
+    {
+        [$mrrfs, $response] = $this->createFixture(self::FIXTURES['Mrrf7D']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'mrrf7D',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->mrrf7d($from, $to);
+
+        $this->assertCount(\count($mrrfs), $list);
+        $this->assertContainsOnlyInstancesOf(InternationalReserveWeek::class, $list);
+        foreach ($mrrfs as $key => $mrrf) {
+            $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
+            $this->assertSame($mrrf['val'], $list[$key]->getValue());
         }
     }
 }
