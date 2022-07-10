@@ -16,6 +16,7 @@ use Liquetsoft\CbrfService\Entity\KeyRate;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
+use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
@@ -119,6 +120,13 @@ class CbrfDailyTest extends BaseTestCase
                 'val' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'mrrf7DResult.any.mmrf7d.mr',
+        ],
+        'Saldo' => [
+            'schema' => [
+                'Dt' => self::FIXTURE_TYPE_DATE,
+                'DEADLINEBS' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'SaldoResult.any.Saldo.So',
         ],
     ];
 
@@ -648,6 +656,35 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($mrrfs as $key => $mrrf) {
             $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
             $this->assertSame($mrrf['val'], $list[$key]->getValue());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSaldo(): void
+    {
+        [$saldos, $response] = $this->createFixture(self::FIXTURES['Saldo']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'Saldo',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->saldo($from, $to);
+
+        $this->assertCount(\count($saldos), $list);
+        $this->assertContainsOnlyInstancesOf(Saldo::class, $list);
+        foreach ($saldos as $key => $saldo) {
+            $this->assertSameDate(new DateTimeImmutable($saldo['Dt']), $list[$key]->getDate());
+            $this->assertSame($saldo['DEADLINEBS'], $list[$key]->getValue());
         }
     }
 }
