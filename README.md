@@ -130,6 +130,14 @@ $saldo = $cbrf->saldo(
 );
 ```
 
+```php
+//получаем индекс и срочную версию RUONIA
+$saldo = $cbrf->ruoniaSV(
+    new \DateTimeImmutable('-1 month'),
+    new \DateTimeImmutable()
+);
+```
+
 В случае, если необходимо передать сконфигурированный заранее транспорт, например для использования proxy:
 
 ```php
