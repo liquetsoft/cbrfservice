@@ -15,6 +15,8 @@ use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
+use Liquetsoft\CbrfService\Entity\RuoniaBid;
+use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use SoapClient;
@@ -492,6 +494,54 @@ class CbrfDaily
 
         $list = DataHelper::array('Saldo.So', $soapResult);
         $callback = fn (array $item): Saldo => new Saldo($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns Ruonia index.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return RuoniaIndex[]
+     */
+    public function ruoniaSV(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'RuoniaSV',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('RuoniaSV.ra', $soapResult);
+        $callback = fn (array $item): RuoniaIndex => new RuoniaIndex($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns Ruonia bid.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return RuoniaBid[]
+     */
+    public function ruonia(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'Ruonia',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('Ruonia.ro', $soapResult);
+        $callback = fn (array $item): RuoniaBid => new RuoniaBid($item);
 
         return array_map($callback, $list);
     }
