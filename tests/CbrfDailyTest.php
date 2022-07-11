@@ -16,6 +16,7 @@ use Liquetsoft\CbrfService\Entity\KeyRate;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
+use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
@@ -138,6 +139,15 @@ class CbrfDailyTest extends BaseTestCase
                 'RUONIA_AVG_6M' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'RuoniaSVResult.any.RuoniaSV.ra',
+        ],
+        'Ruonia' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'ruo' => self::FIXTURE_TYPE_FLOAT,
+                'vol' => self::FIXTURE_TYPE_FLOAT,
+                'DateUpdate' => self::FIXTURE_TYPE_DATE,
+            ],
+            'path' => 'RuoniaResult.any.Ruonia.ro',
         ],
     ];
 
@@ -728,6 +738,37 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($ruoniaIndex['RUONIA_AVG_1M'], $list[$key]->getAverage1Month());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_3M'], $list[$key]->getAverage3Month());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_6M'], $list[$key]->getAverage6Month());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testRuonia(): void
+    {
+        [$ruoniaBids, $response] = $this->createFixture(self::FIXTURES['Ruonia']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'Ruonia',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->ruonia($from, $to);
+
+        $this->assertCount(\count($ruoniaBids), $list);
+        $this->assertContainsOnlyInstancesOf(RuoniaBid::class, $list);
+        foreach ($ruoniaBids as $key => $ruoniaBid) {
+            $this->assertSameDate(new DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
+            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getBid());
+            $this->assertSame($ruoniaBid['vol'], $list[$key]->getDealsVolume());
+            $this->assertSameDate(new DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
         }
     }
 }
