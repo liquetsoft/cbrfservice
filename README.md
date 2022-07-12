@@ -151,7 +151,7 @@ $saldo = $cbrf->ruonia(
 ```php
 //инициируем новый объект SoapClient
 $client = new SoapClient(
-    'some.wsdl',
+    \Liquetsoft\CbrfService\CbrfSoapService::DEFAULT_WSDL,
     [
         'proxy_host' => 'localhost',
         'proxy_port' => 8080
