@@ -135,6 +135,27 @@ class DataHelper
     }
 
     /**
+     * Returns float from the set path or null is there is no data.
+     *
+     * @param string $path
+     * @param mixed  $data
+     *
+     * @return float|null
+     */
+    public static function floatOrNull(string $path, $data): ?float
+    {
+        $item = self::get($path, $data);
+
+        if ($item === null) {
+            $return = null;
+        } else {
+            $return = (float) trim((string) $item);
+        }
+
+        return $return;
+    }
+
+    /**
      * Returns int from the set path.
      *
      * @param string   $path

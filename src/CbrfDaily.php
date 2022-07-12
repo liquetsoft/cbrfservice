@@ -11,6 +11,7 @@ use Liquetsoft\CbrfService\Entity\DepoRate;
 use Liquetsoft\CbrfService\Entity\InternationalReserve;
 use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
+use Liquetsoft\CbrfService\Entity\Mkr;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
@@ -542,6 +543,30 @@ class CbrfDaily
 
         $list = DataHelper::array('Ruonia.ro', $soapResult);
         $callback = fn (array $item): RuoniaBid => new RuoniaBid($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns inter banks credit market bids.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return Mkr[]
+     */
+    public function mkr(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'MKR',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('mkr_base.MKR', $soapResult);
+        $callback = fn (array $item): Mkr => new Mkr($item);
 
         return array_map($callback, $list);
     }

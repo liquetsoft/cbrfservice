@@ -372,6 +372,69 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
+     * @param string     $path
+     * @param mixed      $input
+     * @param float|null $result
+     *
+     * @test
+     * @dataProvider floatOrNullProvider
+     */
+    public function testFloatOrNull(string $path, $input, $result): void
+    {
+        $testFloat = DataHelper::floatOrNull($path, $input);
+
+        $this->assertSame($result, $testFloat);
+    }
+
+    public function floatOrNullProvider(): array
+    {
+        $path = 'test1.test2';
+        $result = 12.3;
+        $float = '12.3';
+
+        $object = new stdClass();
+        $object->test1 = new stdClass();
+        $object->test1->test2 = $float;
+
+        $objectMixed = new stdClass();
+        $objectMixed->test1 = [
+            'test2' => $float,
+        ];
+
+        return [
+            'search inside array' => [
+                $path,
+                [
+                    'test1' => [
+                        'test2' => $float,
+                    ],
+                ],
+                $result,
+            ],
+            'search inside object' => [
+                $path,
+                $object,
+                $result,
+            ],
+            'mixed search in array and object' => [
+                $path,
+                $objectMixed,
+                $result,
+            ],
+            'serach by not trimmed path' => [
+                "  {$path}   ",
+                $objectMixed,
+                $result,
+            ],
+            'not found' => [
+                $path,
+                [],
+                null,
+            ],
+        ];
+    }
+
+    /**
      * @param string        $path
      * @param mixed         $input
      * @param int|Throwable $result

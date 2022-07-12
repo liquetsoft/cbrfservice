@@ -13,6 +13,7 @@ use Liquetsoft\CbrfService\Entity\DepoRate;
 use Liquetsoft\CbrfService\Entity\InternationalReserve;
 use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
+use Liquetsoft\CbrfService\Entity\Mkr;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
@@ -148,6 +149,19 @@ class CbrfDailyTest extends BaseTestCase
                 'DateUpdate' => self::FIXTURE_TYPE_DATE,
             ],
             'path' => 'RuoniaResult.any.Ruonia.ro',
+        ],
+        'MKR' => [
+            'schema' => [
+                'CDate' => self::FIXTURE_TYPE_DATE,
+                'p1' => self::FIXTURE_TYPE_INT,
+                'd1' => self::FIXTURE_TYPE_FLOAT,
+                'd7' => self::FIXTURE_TYPE_FLOAT,
+                'd30' => self::FIXTURE_TYPE_FLOAT,
+                'd90' => self::FIXTURE_TYPE_FLOAT,
+                'd180' => self::FIXTURE_TYPE_FLOAT,
+                'd360' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'MKRResult.any.mkr_base.MKR',
         ],
     ];
 
@@ -738,6 +752,40 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($ruoniaIndex['RUONIA_AVG_1M'], $list[$key]->getAverage1Month());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_3M'], $list[$key]->getAverage3Month());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_6M'], $list[$key]->getAverage6Month());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testMKR(): void
+    {
+        [$mkrs, $response] = $this->createFixture(self::FIXTURES['MKR']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'MKR',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->mkr($from, $to);
+
+        $this->assertCount(\count($mkrs), $list);
+        $this->assertContainsOnlyInstancesOf(Mkr::class, $list);
+        foreach ($mkrs as $key => $mkr) {
+            $this->assertSameDate(new DateTimeImmutable($mkr['CDate']), $list[$key]->getDate());
+            $this->assertSame($mkr['p1'], $list[$key]->getP1());
+            $this->assertSame($mkr['d1'], $list[$key]->getD1());
+            $this->assertSame($mkr['d7'], $list[$key]->getD7());
+            $this->assertSame($mkr['d30'], $list[$key]->getD30());
+            $this->assertSame($mkr['d180'], $list[$key]->getD180());
+            $this->assertSame($mkr['d360'], $list[$key]->getD360());
         }
     }
 
