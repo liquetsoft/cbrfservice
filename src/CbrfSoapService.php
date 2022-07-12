@@ -12,6 +12,7 @@ use Throwable;
  */
 class CbrfSoapService
 {
+    public const DEFAULT_WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
     public const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
 
     private ?string $wsdl = null;

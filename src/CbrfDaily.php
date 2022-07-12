@@ -31,7 +31,7 @@ class CbrfDaily
     /**
      * @param SoapClient|string $client
      */
-    public function __construct($client = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL')
+    public function __construct($client = CbrfSoapService::DEFAULT_WSDL)
     {
         $this->soapClient = new CbrfSoapService($client);
     }
