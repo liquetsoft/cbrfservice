@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<psalm
+    cacheDirectory="/tmp"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config file:///var/www/vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="./src" />
+        <directory name="./tests" />
+        <ignoreFiles>
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <MixedArrayAssignment errorLevel="suppress"/>
+        <MixedAssignment errorLevel="suppress"/>
+        <MixedArgument errorLevel="suppress"/>
+        <MixedArrayAccess errorLevel="suppress"/>
+        <MixedArrayOffset errorLevel="suppress"/>
+        <MixedInferredReturnType errorLevel="suppress"/>
+        <MixedPropertyFetch errorLevel="suppress"/>
+        <MixedReturnTypeCoercion errorLevel="suppress"/>
+        <PropertyNotSetInConstructor errorLevel="suppress"/>
+    </issueHandlers>
+
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
+</psalm>
