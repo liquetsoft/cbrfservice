@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService;
 
 use SoapClient;
-use Throwable;
 
 /**
  * Class for cbrf SOAP service.
@@ -17,14 +16,14 @@ class CbrfSoapService
 
     private ?string $wsdl = null;
 
-    private ?SoapClient $client = null;
+    private ?\SoapClient $client = null;
 
     /**
-     * @param SoapClient|string $client
+     * @param \SoapClient|string $client
      */
     public function __construct($client)
     {
-        if ($client instanceof SoapClient) {
+        if ($client instanceof \SoapClient) {
             $this->client = $client;
         } else {
             $this->wsdl = $client;
@@ -45,7 +44,7 @@ class CbrfSoapService
     {
         try {
             return $this->queryInternal($method, $params);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $message = sprintf("Fail on '%s': '%s'.", $method, $e->getMessage());
             throw new CbrfException($message, 0, $e);
         }
@@ -109,7 +108,7 @@ class CbrfSoapService
     /**
      * Returns a SoapClient instance for soap requests.
      *
-     * @return SoapClient
+     * @return \SoapClient
      */
     private function getSoapClient()
     {
@@ -117,7 +116,7 @@ class CbrfSoapService
             return $this->client;
         }
 
-        $this->client = new SoapClient(
+        $this->client = new \SoapClient(
             $this->wsdl,
             [
                 'exception' => true,

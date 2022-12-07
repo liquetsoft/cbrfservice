@@ -4,31 +4,30 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from saldo method.
  */
-class Saldo
+class Saldo implements Rate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
-    private float $value;
+    private float $rate;
 
     public function __construct(array $item)
     {
         $this->date = DataHelper::dateTime('Dt', $item);
-        $this->value = DataHelper::float('DEADLINEBS', $item, .0);
+        $this->rate = DataHelper::float('DEADLINEBS', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
-    public function getValue(): float
+    public function getRate(): float
     {
-        return $this->value;
+        return $this->rate;
     }
 }

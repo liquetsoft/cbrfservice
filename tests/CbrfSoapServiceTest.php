@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
-use Exception;
 use Liquetsoft\CbrfService\CbrfException;
 use Liquetsoft\CbrfService\CbrfSoapService;
-use SoapClient;
-use stdClass;
 
 /**
  * @internal
@@ -17,11 +14,12 @@ class CbrfSoapServiceTest extends BaseTestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryProvider
      */
     public function testQueryXmlResult(string $method, array $params, object $responseXml, array $response): void
     {
-        $soapClient = $this->getMockBuilder(SoapClient::class)
+        $soapClient = $this->getMockBuilder(\SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
@@ -39,13 +37,13 @@ class CbrfSoapServiceTest extends BaseTestCase
 
     public function queryProvider(): array
     {
-        $responseXml = new stdClass();
-        $responseXml->TestSoapAnyXmlResult = new stdClass();
+        $responseXml = new \stdClass();
+        $responseXml->TestSoapAnyXmlResult = new \stdClass();
         $responseXml->TestSoapAnyXmlResult->any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
         $responseXml->TestSoapAnyXmlResult->any .= '<test><nested>value</nested></test>';
         $responseXml->TestSoapAnyXmlResult->any .= '</diffgr:diffgram>';
 
-        $regularResponse = new stdClass();
+        $regularResponse = new \stdClass();
         $regularResponse->test = 'value';
 
         return [
@@ -79,12 +77,12 @@ class CbrfSoapServiceTest extends BaseTestCase
      */
     public function testQueryException(): void
     {
-        $soapClient = $this->getMockBuilder(SoapClient::class)
+        $soapClient = $this->getMockBuilder(\SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
         $soapClient->method('__soapCall')
             ->with($this->equalTo('EnumValutes'))
-            ->will($this->throwException(new Exception()));
+            ->will($this->throwException(new \Exception()));
 
         $service = new CbrfSoapService($soapClient);
 

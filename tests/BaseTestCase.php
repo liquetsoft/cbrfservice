@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
-use DateTimeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
-use SoapClient;
-use stdClass;
 
 /**
  * @internal
@@ -21,7 +17,7 @@ abstract class BaseTestCase extends TestCase
     public const FIXTURE_TYPE_FLOAT = 'float';
     public const FIXTURE_TYPE_DATE = 'date';
 
-    protected function assertSameDate(DateTimeInterface $date1, DateTimeInterface $date2): void
+    protected function assertSameDate(\DateTimeInterface $date1, \DateTimeInterface $date2): void
     {
         $this->assertSame(
             $date1->getTimestamp(),
@@ -35,12 +31,12 @@ abstract class BaseTestCase extends TestCase
      * @param array|null $params
      * @param mixed      $result
      *
-     * @return SoapClient
+     * @return \SoapClient
      */
-    protected function createSoapCallMock(string $method, ?array $params, $result = null): SoapClient
+    protected function createSoapCallMock(string $method, ?array $params, $result = null): \SoapClient
     {
-        /** @var MockObject&SoapClient */
-        $soapClient = $this->getMockBuilder(SoapClient::class)
+        /** @var MockObject&\SoapClient */
+        $soapClient = $this->getMockBuilder(\SoapClient::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -110,7 +106,7 @@ abstract class BaseTestCase extends TestCase
                         break;
                     default:
                         $message = sprintf("Can't recognize field type '%s'.", $type);
-                        throw new RuntimeException($message);
+                        throw new \RuntimeException($message);
                 }
                 $datum[$name] = $value;
             }
@@ -133,7 +129,7 @@ abstract class BaseTestCase extends TestCase
         $arPath = explode('.any.', $xmlPath);
         if (\count($arPath) !== 2 || empty($arPath[0]) || empty($arPath[1])) {
             $message = sprintf("Incorrect XML path '%s'.", $xmlPath);
-            throw new RuntimeException($message);
+            throw new \RuntimeException($message);
         }
         [$beforeAny, $afterAny] = $arPath;
 
@@ -156,9 +152,9 @@ abstract class BaseTestCase extends TestCase
         $any .= '</diffgr:diffgram>';
 
         $arBeforeAny = explode('.', $beforeAny);
-        $latest = $soapResponse = new stdClass();
+        $latest = $soapResponse = new \stdClass();
         foreach ($arBeforeAny as $objectNode) {
-            $newNode = new stdClass();
+            $newNode = new \stdClass();
             $latest->{$objectNode} = $newNode;
             $latest = $newNode;
         }

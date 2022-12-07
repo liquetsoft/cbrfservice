@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,9 +11,9 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 class SwapRate
 {
-    private DateTimeInterface $dateBuy;
+    private \DateTimeInterface $dateBuy;
 
-    private DateTimeInterface $dateSell;
+    private \DateTimeInterface $dateSell;
 
     private float $baseRate;
 
@@ -34,12 +33,12 @@ class SwapRate
         $this->currency = DataHelper::int('Currency', $item, 0);
     }
 
-    public function getDateBuy(): DateTimeInterface
+    public function getDateBuy(): \DateTimeInterface
     {
         return $this->dateBuy;
     }
 
-    public function getDateSell(): DateTimeInterface
+    public function getDateSell(): \DateTimeInterface
     {
         return $this->dateSell;
     }

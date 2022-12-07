@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from mkr method.
  */
-class Mkr
+class Mkr implements ItemWithDate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private int $p1;
 
@@ -40,7 +39,7 @@ class Mkr
         $this->d360 = DataHelper::floatOrNull('d360', $item);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

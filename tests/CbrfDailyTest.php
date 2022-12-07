@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
-use DateTimeImmutable;
 use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfSoapService;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
+use Liquetsoft\CbrfService\Entity\Dv;
 use Liquetsoft\CbrfService\Entity\InternationalReserve;
 use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
@@ -22,7 +22,6 @@ use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
-use stdClass;
 
 /**
  * @internal
@@ -163,6 +162,18 @@ class CbrfDailyTest extends BaseTestCase
             ],
             'path' => 'MKRResult.any.mkr_base.MKR',
         ],
+        'DV' => [
+            'schema' => [
+                'Date' => self::FIXTURE_TYPE_DATE,
+                'VIDate' => self::FIXTURE_TYPE_DATE,
+                'VOvern' => self::FIXTURE_TYPE_FLOAT,
+                'VLomb' => self::FIXTURE_TYPE_FLOAT,
+                'VIDay' => self::FIXTURE_TYPE_FLOAT,
+                'VOther' => self::FIXTURE_TYPE_FLOAT,
+                'Vol_Gold' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'DVResult.any.DV_base.DV',
+        ],
     ];
 
     /**
@@ -171,7 +182,7 @@ class CbrfDailyTest extends BaseTestCase
     public function testGetCursOnDate(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
-        $onDate = new DateTimeImmutable();
+        $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'GetCursOnDate',
@@ -203,7 +214,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
         $charCode = $courses[0]['VchCode'] ?? '';
-        $onDate = new DateTimeImmutable();
+        $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'GetCursOnDate',
@@ -227,7 +238,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
         $numericCode = $courses[0]['Vcode'] ?? 0;
-        $onDate = new DateTimeImmutable();
+        $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'GetCursOnDate',
@@ -329,8 +340,8 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetLatestDateTime(): void
     {
-        $date = new DateTimeImmutable();
-        $response = new stdClass();
+        $date = new \DateTimeImmutable();
+        $response = new \stdClass();
         $response->GetLatestDateTimeResult = $date->format(CbrfSoapService::DATE_TIME_FORMAT);
 
         $soapClient = $this->createSoapCallMock(
@@ -350,8 +361,8 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetLatestDateTimeSeld(): void
     {
-        $date = new DateTimeImmutable();
-        $response = new stdClass();
+        $date = new \DateTimeImmutable();
+        $response = new \stdClass();
         $response->GetLatestDateTimeSeldResult = $date->format(CbrfSoapService::DATE_TIME_FORMAT);
 
         $soapClient = $this->createSoapCallMock(
@@ -371,8 +382,8 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetLatestDate(): void
     {
-        $date = new DateTimeImmutable();
-        $response = new stdClass();
+        $date = new \DateTimeImmutable();
+        $response = new \stdClass();
         $response->GetLatestDateResult = $date->format(CbrfSoapService::DATE_TIME_FORMAT);
 
         $soapClient = $this->createSoapCallMock(
@@ -392,8 +403,8 @@ class CbrfDailyTest extends BaseTestCase
      */
     public function testGetLatestDateSeld(): void
     {
-        $date = new DateTimeImmutable();
-        $response = new stdClass();
+        $date = new \DateTimeImmutable();
+        $response = new \stdClass();
         $response->GetLatestDateSeldResult = $date->format(CbrfSoapService::DATE_TIME_FORMAT);
 
         $soapClient = $this->createSoapCallMock(
@@ -414,8 +425,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testGetCursDynamic(): void
     {
         [$currencies, $response] = $this->createFixture(self::FIXTURES['CursDynamic']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
         $charCode = 'EUR';
         $numericCode = 978;
         $name = 'Euro';
@@ -451,7 +462,7 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($numericCode, $list[$key]->getNumericCode());
             $this->assertSame($currency['Vcurs'], $list[$key]->getRate());
             $this->assertSame($currency['Vnom'], $list[$key]->getNom());
-            $this->assertSameDate(new DateTimeImmutable($currency['CursDate']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($currency['CursDate']), $list[$key]->getDate());
         }
     }
 
@@ -461,8 +472,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testKeyRate(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['KeyRate']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'KeyRate',
@@ -479,7 +490,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($rates), $list);
         $this->assertContainsOnlyInstancesOf(KeyRate::class, $list);
         foreach ($rates as $key => $rate) {
-            $this->assertSameDate(new DateTimeImmutable($rate['DT']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($rate['DT']), $list[$key]->getDate());
             $this->assertSame($rate['Rate'], $list[$key]->getRate());
         }
     }
@@ -490,8 +501,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testDragMetDynamic(): void
     {
         [$metals, $response] = $this->createFixture(self::FIXTURES['DragMetDynamic']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'DragMetDynamic',
@@ -508,9 +519,9 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($metals), $list);
         $this->assertContainsOnlyInstancesOf(PreciousMetalRate::class, $list);
         foreach ($metals as $key => $metal) {
-            $this->assertSameDate(new DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
             $this->assertSame($metal['CodMet'], $list[$key]->getCode());
-            $this->assertSame($metal['price'], $list[$key]->getPrice());
+            $this->assertSame($metal['price'], $list[$key]->getRate());
         }
     }
 
@@ -520,8 +531,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testSwapDynamic(): void
     {
         [$swaps, $response] = $this->createFixture(self::FIXTURES['SwapDynamic']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'SwapDynamic',
@@ -538,8 +549,8 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($swaps), $list);
         $this->assertContainsOnlyInstancesOf(SwapRate::class, $list);
         foreach ($swaps as $key => $swap) {
-            $this->assertSameDate(new DateTimeImmutable($swap['DateBuy']), $list[$key]->getDateBuy());
-            $this->assertSameDate(new DateTimeImmutable($swap['DateSell']), $list[$key]->getDateSell());
+            $this->assertSameDate(new \DateTimeImmutable($swap['DateBuy']), $list[$key]->getDateBuy());
+            $this->assertSameDate(new \DateTimeImmutable($swap['DateSell']), $list[$key]->getDateSell());
             $this->assertSame($swap['BaseRate'], $list[$key]->getBaseRate());
             $this->assertSame($swap['TIR'], $list[$key]->getTIR());
             $this->assertSame($swap['Stavka'], $list[$key]->getRate());
@@ -553,8 +564,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testDepoDynamic(): void
     {
         [$depos, $response] = $this->createFixture(self::FIXTURES['DepoDynamic']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'DepoDynamic',
@@ -571,7 +582,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($depos), $list);
         $this->assertContainsOnlyInstancesOf(DepoRate::class, $list);
         foreach ($depos as $key => $depo) {
-            $this->assertSameDate(new DateTimeImmutable($depo['DateDepo']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($depo['DateDepo']), $list[$key]->getDate());
             $this->assertSame($depo['Overnight'], $list[$key]->getRate());
         }
     }
@@ -582,8 +593,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testOstatDynamic(): void
     {
         [$depos, $response] = $this->createFixture(self::FIXTURES['OstatDynamic']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'OstatDynamic',
@@ -600,7 +611,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($depos), $list);
         $this->assertContainsOnlyInstancesOf(OstatRate::class, $list);
         foreach ($depos as $key => $ostat) {
-            $this->assertSameDate(new DateTimeImmutable($ostat['DateOst']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($ostat['DateOst']), $list[$key]->getDate());
             $this->assertSame($ostat['InMoscow'], $list[$key]->getMoscow());
             $this->assertSame($ostat['InRuss'], $list[$key]->getRussia());
         }
@@ -612,8 +623,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testOstatDepo(): void
     {
         [$depos, $response] = $this->createFixture(self::FIXTURES['OstatDepo']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'OstatDepo',
@@ -630,7 +641,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($depos), $list);
         $this->assertContainsOnlyInstancesOf(OstatDepoRate::class, $list);
         foreach ($depos as $key => $ostat) {
-            $this->assertSameDate(new DateTimeImmutable($ostat['D0']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($ostat['D0']), $list[$key]->getDate());
             $this->assertSame($ostat['D1_7'], $list[$key]->getDays1to7());
             $this->assertSame($ostat['total'], $list[$key]->getTotal());
         }
@@ -642,8 +653,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testMrrf(): void
     {
         [$mrrfs, $response] = $this->createFixture(self::FIXTURES['Mrrf']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'mrrf',
@@ -660,8 +671,8 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($mrrfs), $list);
         $this->assertContainsOnlyInstancesOf(InternationalReserve::class, $list);
         foreach ($mrrfs as $key => $mrrf) {
-            $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
-            $this->assertSame($mrrf['p1'], $list[$key]->getValue());
+            $this->assertSameDate(new \DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
+            $this->assertSame($mrrf['p1'], $list[$key]->getRate());
         }
     }
 
@@ -671,8 +682,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testMrrf7d(): void
     {
         [$mrrfs, $response] = $this->createFixture(self::FIXTURES['Mrrf7D']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'mrrf7D',
@@ -689,8 +700,8 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($mrrfs), $list);
         $this->assertContainsOnlyInstancesOf(InternationalReserveWeek::class, $list);
         foreach ($mrrfs as $key => $mrrf) {
-            $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
-            $this->assertSame($mrrf['val'], $list[$key]->getValue());
+            $this->assertSameDate(new \DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
+            $this->assertSame($mrrf['val'], $list[$key]->getRate());
         }
     }
 
@@ -700,8 +711,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testSaldo(): void
     {
         [$saldos, $response] = $this->createFixture(self::FIXTURES['Saldo']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'Saldo',
@@ -718,8 +729,8 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($saldos), $list);
         $this->assertContainsOnlyInstancesOf(Saldo::class, $list);
         foreach ($saldos as $key => $saldo) {
-            $this->assertSameDate(new DateTimeImmutable($saldo['Dt']), $list[$key]->getDate());
-            $this->assertSame($saldo['DEADLINEBS'], $list[$key]->getValue());
+            $this->assertSameDate(new \DateTimeImmutable($saldo['Dt']), $list[$key]->getDate());
+            $this->assertSame($saldo['DEADLINEBS'], $list[$key]->getRate());
         }
     }
 
@@ -729,8 +740,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testRuoniaSV(): void
     {
         [$ruoniaIndexes, $response] = $this->createFixture(self::FIXTURES['RuoniaSV']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'RuoniaSV',
@@ -747,7 +758,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($ruoniaIndexes), $list);
         $this->assertContainsOnlyInstancesOf(RuoniaIndex::class, $list);
         foreach ($ruoniaIndexes as $key => $ruoniaIndex) {
-            $this->assertSameDate(new DateTimeImmutable($ruoniaIndex['DT']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($ruoniaIndex['DT']), $list[$key]->getDate());
             $this->assertSame($ruoniaIndex['RUONIA_Index'], $list[$key]->getIndex());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_1M'], $list[$key]->getAverage1Month());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_3M'], $list[$key]->getAverage3Month());
@@ -761,8 +772,8 @@ class CbrfDailyTest extends BaseTestCase
     public function testMKR(): void
     {
         [$mkrs, $response] = $this->createFixture(self::FIXTURES['MKR']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'MKR',
@@ -779,7 +790,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($mkrs), $list);
         $this->assertContainsOnlyInstancesOf(Mkr::class, $list);
         foreach ($mkrs as $key => $mkr) {
-            $this->assertSameDate(new DateTimeImmutable($mkr['CDate']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($mkr['CDate']), $list[$key]->getDate());
             $this->assertSame($mkr['p1'], $list[$key]->getP1());
             $this->assertSame($mkr['d1'], $list[$key]->getD1());
             $this->assertSame($mkr['d7'], $list[$key]->getD7());
@@ -792,11 +803,45 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
+    public function testDV(): void
+    {
+        [$dvs, $response] = $this->createFixture(self::FIXTURES['DV']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'DV',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->dv($from, $to);
+
+        $this->assertCount(\count($dvs), $list);
+        $this->assertContainsOnlyInstancesOf(Dv::class, $list);
+        foreach ($dvs as $key => $dv) {
+            $this->assertSameDate(new \DateTimeImmutable($dv['Date']), $list[$key]->getDate());
+            $this->assertSameDate(new \DateTimeImmutable($dv['VIDate']), $list[$key]->getVIDate());
+            $this->assertSame($dv['VOvern'], $list[$key]->getVOvern());
+            $this->assertSame($dv['VLomb'], $list[$key]->getVLomb());
+            $this->assertSame($dv['VIDay'], $list[$key]->getVIDay());
+            $this->assertSame($dv['VOther'], $list[$key]->getVOther());
+            $this->assertSame($dv['Vol_Gold'], $list[$key]->getVGold());
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testRuonia(): void
     {
         [$ruoniaBids, $response] = $this->createFixture(self::FIXTURES['Ruonia']);
-        $from = new DateTimeImmutable('-1 month');
-        $to = new DateTimeImmutable();
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
             'Ruonia',
@@ -813,10 +858,10 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($ruoniaBids), $list);
         $this->assertContainsOnlyInstancesOf(RuoniaBid::class, $list);
         foreach ($ruoniaBids as $key => $ruoniaBid) {
-            $this->assertSameDate(new DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
-            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getBid());
+            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
+            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getRate());
             $this->assertSame($ruoniaBid['vol'], $list[$key]->getDealsVolume());
-            $this->assertSameDate(new DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
+            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
         }
     }
 }

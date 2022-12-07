@@ -4,38 +4,37 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from ruonia method.
  */
-class RuoniaBid
+class RuoniaBid implements Rate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
-    private float $bid;
+    private float $rate;
 
     private float $dealsVolume;
 
-    private DateTimeInterface $dateUpdate;
+    private \DateTimeInterface $dateUpdate;
 
     public function __construct(array $item)
     {
         $this->date = DataHelper::dateTime('D0', $item);
-        $this->bid = DataHelper::float('ruo', $item, .0);
+        $this->rate = DataHelper::float('ruo', $item, .0);
         $this->dealsVolume = DataHelper::float('vol', $item, .0);
         $this->dateUpdate = DataHelper::dateTime('DateUpdate', $item);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
-    public function getBid(): float
+    public function getRate(): float
     {
-        return $this->bid;
+        return $this->rate;
     }
 
     public function getDealsVolume(): float
@@ -43,7 +42,7 @@ class RuoniaBid
         return $this->dealsVolume;
     }
 
-    public function getDateUpdate(): DateTimeInterface
+    public function getDateUpdate(): \DateTimeInterface
     {
         return $this->dateUpdate;
     }

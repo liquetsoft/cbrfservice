@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from KeyRate method.
  */
-class KeyRate
+class KeyRate implements Rate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private float $rate;
 
@@ -27,7 +26,7 @@ class KeyRate
         return $this->rate;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

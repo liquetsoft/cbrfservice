@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from GetCursOnDate method.
  */
-class CurrencyRate implements Currency
+class CurrencyRate implements Currency, Rate
 {
     private string $charCode;
 
@@ -22,9 +21,9 @@ class CurrencyRate implements Currency
 
     private int $nom;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
-    public function __construct(array $item, DateTimeInterface $date)
+    public function __construct(array $item, \DateTimeInterface $date)
     {
         $this->charCode = DataHelper::charCode('VchCode', $item, '');
         $this->name = DataHelper::string('Vname', $item, '');
@@ -59,7 +58,7 @@ class CurrencyRate implements Currency
         return $this->nom;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

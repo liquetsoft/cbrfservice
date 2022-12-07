@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
-use DateTimeImmutable;
-use DateTimeInterface;
-use DateTimeZone;
 use Liquetsoft\CbrfService\CbrfException;
 use Liquetsoft\CbrfService\DataHelper;
-use stdClass;
-use Throwable;
 
 /**
  * @internal
@@ -18,30 +13,31 @@ use Throwable;
 class DataHelperTest extends BaseTestCase
 {
     /**
-     * @param string|DateTimeInterface    $input
-     * @param DateTimeInterface|Throwable $result
+     * @param string|\DateTimeInterface     $input
+     * @param \DateTimeInterface|\Throwable $result
      *
      * @test
+     *
      * @dataProvider createImmutableDateTimeProvider
      */
     public function testCreateImmutableDateTime($input, $result): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
         $testDateTime = DataHelper::createImmutableDateTime($input);
 
-        if ($result instanceof DateTimeInterface) {
-            $this->assertInstanceOf(DateTimeImmutable::class, $testDateTime);
+        if ($result instanceof \DateTimeInterface) {
+            $this->assertInstanceOf(\DateTimeImmutable::class, $testDateTime);
             $this->assertSameDate($result, $testDateTime);
         }
     }
 
     public function createImmutableDateTimeProvider(): array
     {
-        $dateTime = new DateTimeImmutable('-1 hour');
-        $dateTimeTz = new DateTimeImmutable('+1 hour', new DateTimeZone('Asia/ShangHai'));
+        $dateTime = new \DateTimeImmutable('-1 hour');
+        $dateTimeTz = new \DateTimeImmutable('+1 hour', new \DateTimeZone('Asia/ShangHai'));
 
         return [
             'dateTime instance' => [
@@ -64,16 +60,17 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string          $path
-     * @param mixed           $input
-     * @param array|Throwable $result
+     * @param string           $path
+     * @param mixed            $input
+     * @param array|\Throwable $result
      *
      * @test
+     *
      * @dataProvider arrayProvider
      */
     public function testArray(string $path, $input, $result): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
@@ -89,11 +86,11 @@ class DataHelperTest extends BaseTestCase
         $path = 'test1.test2';
         $result = ['key' => 'value'];
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $result;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $result,
         ];
@@ -132,23 +129,24 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string                      $path
-     * @param mixed                       $input
-     * @param DateTimeInterface|Throwable $result
+     * @param string                        $path
+     * @param mixed                         $input
+     * @param \DateTimeInterface|\Throwable $result
      *
      * @test
+     *
      * @dataProvider dateTimeProvider
      */
     public function testDateTime(string $path, $input, $result): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
         $testDateTime = DataHelper::dateTime($path, $input);
 
-        if ($result instanceof DateTimeInterface) {
-            $this->assertInstanceOf(DateTimeImmutable::class, $testDateTime);
+        if ($result instanceof \DateTimeInterface) {
+            $this->assertInstanceOf(\DateTimeImmutable::class, $testDateTime);
             $this->assertSameDate($result, $testDateTime);
         }
     }
@@ -156,14 +154,14 @@ class DataHelperTest extends BaseTestCase
     public function dateTimeProvider(): array
     {
         $path = 'test1.test2';
-        $result = new DateTimeImmutable();
+        $result = new \DateTimeImmutable();
         $date = $result->format(\DATE_ATOM);
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $date;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $date,
         ];
@@ -220,17 +218,18 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string           $path
-     * @param mixed            $input
-     * @param string|Throwable $result
-     * @param string|null      $default
+     * @param string            $path
+     * @param mixed             $input
+     * @param string|\Throwable $result
+     * @param string|null       $default
      *
      * @test
+     *
      * @dataProvider stringProvider
      */
     public function testString(string $path, $input, $result, ?string $default = null): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
@@ -247,11 +246,11 @@ class DataHelperTest extends BaseTestCase
         $string = '     test     ';
         $result = 'test';
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $string;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $string,
         ];
@@ -296,17 +295,18 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string          $path
-     * @param mixed           $input
-     * @param float|Throwable $result
-     * @param float|null      $default
+     * @param string           $path
+     * @param mixed            $input
+     * @param float|\Throwable $result
+     * @param float|null       $default
      *
      * @test
+     *
      * @dataProvider floatProvider
      */
     public function testFloat(string $path, $input, $result, ?float $default = null): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
@@ -323,11 +323,11 @@ class DataHelperTest extends BaseTestCase
         $result = 12.3;
         $float = '12.3';
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $float;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $float,
         ];
@@ -377,6 +377,7 @@ class DataHelperTest extends BaseTestCase
      * @param float|null $result
      *
      * @test
+     *
      * @dataProvider floatOrNullProvider
      */
     public function testFloatOrNull(string $path, $input, $result): void
@@ -392,11 +393,11 @@ class DataHelperTest extends BaseTestCase
         $result = 12.3;
         $float = '12.3';
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $float;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $float,
         ];
@@ -435,17 +436,18 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string        $path
-     * @param mixed         $input
-     * @param int|Throwable $result
-     * @param int|null      $default
+     * @param string         $path
+     * @param mixed          $input
+     * @param int|\Throwable $result
+     * @param int|null       $default
      *
      * @test
+     *
      * @dataProvider intProvider
      */
     public function testInt(string $path, $input, $result, ?int $default = null): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
@@ -462,11 +464,11 @@ class DataHelperTest extends BaseTestCase
         $result = 12;
         $int = '12';
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $int;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $int,
         ];
@@ -511,17 +513,18 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string           $path
-     * @param mixed            $input
-     * @param string|Throwable $result
-     * @param string|null      $default
+     * @param string            $path
+     * @param mixed             $input
+     * @param string|\Throwable $result
+     * @param string|null       $default
      *
      * @test
+     *
      * @dataProvider charCodeProvider
      */
     public function testCharCode(string $path, $input, $result, ?string $default = null): void
     {
-        if ($result instanceof Throwable) {
+        if ($result instanceof \Throwable) {
             $this->expectException(\get_class($result));
         }
 
@@ -538,11 +541,11 @@ class DataHelperTest extends BaseTestCase
         $string = '     TeSt     ';
         $result = 'TEST';
 
-        $object = new stdClass();
-        $object->test1 = new stdClass();
+        $object = new \stdClass();
+        $object->test1 = new \stdClass();
         $object->test1->test2 = $string;
 
-        $objectMixed = new stdClass();
+        $objectMixed = new \stdClass();
         $objectMixed->test1 = [
             'test2' => $string,
         ];

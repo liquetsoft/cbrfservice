@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from OstatDepo method.
  */
-class OstatDepoRate
+class OstatDepoRate implements ItemWithDate
 {
     private float $days1to7 = .0;
 
     private float $total = .0;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     public function __construct(array $item)
     {
@@ -25,7 +24,7 @@ class OstatDepoRate
         $this->total = DataHelper::float('total', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

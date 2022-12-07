@@ -24,7 +24,7 @@ RUN docker-php-ext-install zip soap \
     && echo 'xdebug.mode=coverage' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer  --version=2.3.7 \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer  --version=2.4.4 \
     && mkdir -p /.composer && chmod -Rf 777 /.composer
 
 

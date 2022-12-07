@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
-<<<<<<< HEAD
  * DTO that represents response item from OstatDynamic method.
-=======
- * DTO that represents response item from GetCursOnDate method.
->>>>>>> origin/master
  */
-class OstatRate
+class OstatRate implements ItemWithDate
 {
     private float $moscow = .0;
 
     private float $russia = .0;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     public function __construct(array $item)
     {
@@ -29,7 +24,7 @@ class OstatRate
         $this->russia = DataHelper::float('InRuss', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

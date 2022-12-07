@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
-
 /**
  * DTO that represents response item from GetCursOnDate method.
  */
-class ReutersCurrencyRate
+class ReutersCurrencyRate implements ItemWithDate
 {
     private string $chCode = '';
 
@@ -23,9 +21,9 @@ class ReutersCurrencyRate
 
     private int $dir = 0;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
-    public function __construct(array $item, DateTimeInterface $date)
+    public function __construct(array $item, \DateTimeInterface $date)
     {
         $this->chCode = strtoupper(trim($item['char_code'] ?? ''));
         $this->nameRu = trim($item['Title_ru'] ?? '');
@@ -66,7 +64,7 @@ class ReutersCurrencyRate
         return $this->dir;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
