@@ -10,6 +10,7 @@ use Liquetsoft\CbrfService\CbrfSoapService;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
+use Liquetsoft\CbrfService\Entity\Dv;
 use Liquetsoft\CbrfService\Entity\InternationalReserve;
 use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
@@ -162,6 +163,18 @@ class CbrfDailyTest extends BaseTestCase
                 'd360' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'MKRResult.any.mkr_base.MKR',
+        ],
+        'DV' => [
+            'schema' => [
+                'Date' => self::FIXTURE_TYPE_DATE,
+                'VIDate' => self::FIXTURE_TYPE_DATE,
+                'VOvern' => self::FIXTURE_TYPE_FLOAT,
+                'VLomb' => self::FIXTURE_TYPE_FLOAT,
+                'VIDay' => self::FIXTURE_TYPE_FLOAT,
+                'VOther' => self::FIXTURE_TYPE_FLOAT,
+                'Vol_Gold' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'DVResult.any.DV_base.DV',
         ],
     ];
 
@@ -786,6 +799,40 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($mkr['d30'], $list[$key]->getD30());
             $this->assertSame($mkr['d180'], $list[$key]->getD180());
             $this->assertSame($mkr['d360'], $list[$key]->getD360());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testDV(): void
+    {
+        [$dvs, $response] = $this->createFixture(self::FIXTURES['DV']);
+        $from = new DateTimeImmutable('-1 month');
+        $to = new DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'DV',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->dv($from, $to);
+
+        $this->assertCount(\count($dvs), $list);
+        $this->assertContainsOnlyInstancesOf(Dv::class, $list);
+        foreach ($dvs as $key => $dv) {
+            $this->assertSameDate(new DateTimeImmutable($dv['Date']), $list[$key]->getDate());
+            $this->assertSameDate(new DateTimeImmutable($dv['VIDate']), $list[$key]->getVIDate());
+            $this->assertSame($dv['VOvern'], $list[$key]->getVOvern());
+            $this->assertSame($dv['VLomb'], $list[$key]->getVLomb());
+            $this->assertSame($dv['VIDay'], $list[$key]->getVIDay());
+            $this->assertSame($dv['VOther'], $list[$key]->getVOther());
+            $this->assertSame($dv['Vol_Gold'], $list[$key]->getVGold());
         }
     }
 

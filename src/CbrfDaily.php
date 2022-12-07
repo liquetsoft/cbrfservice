@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
+use Liquetsoft\CbrfService\Entity\Dv;
 use Liquetsoft\CbrfService\Entity\InternationalReserve;
 use Liquetsoft\CbrfService\Entity\InternationalReserveWeek;
 use Liquetsoft\CbrfService\Entity\KeyRate;
@@ -567,6 +568,30 @@ class CbrfDaily
 
         $list = DataHelper::array('mkr_base.MKR', $soapResult);
         $callback = fn (array $item): Mkr => new Mkr($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns requirements for credit organisations.
+     *
+     * @param DateTimeInterface $from
+     * @param DateTimeInterface $to
+     *
+     * @return Dv[]
+     */
+    public function dv(DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'DV',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('DV_base.DV', $soapResult);
+        $callback = fn (array $item): Dv => new Dv($item);
 
         return array_map($callback, $list);
     }
