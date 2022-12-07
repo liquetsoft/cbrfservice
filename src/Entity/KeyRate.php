@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,7 +11,7 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 class KeyRate implements Rate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private float $rate;
 
@@ -27,7 +26,7 @@ class KeyRate implements Rate
         return $this->rate;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

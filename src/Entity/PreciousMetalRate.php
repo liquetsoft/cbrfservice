@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -17,7 +16,7 @@ class PreciousMetalRate implements Rate
     public const CODE_PLATINUM = 3;
     public const CODE_PALLADIUM = 4;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private int $code;
 
@@ -30,7 +29,7 @@ class PreciousMetalRate implements Rate
         $this->rate = DataHelper::float('price', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

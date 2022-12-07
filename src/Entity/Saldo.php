@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,7 +11,7 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 class Saldo implements Rate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private float $rate;
 
@@ -22,7 +21,7 @@ class Saldo implements Rate
         $this->rate = DataHelper::float('DEADLINEBS', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

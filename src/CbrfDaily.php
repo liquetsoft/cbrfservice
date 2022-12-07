@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -21,7 +20,6 @@ use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
-use SoapClient;
 
 /**
  * Class for a daily cb RF service.
@@ -31,7 +29,7 @@ class CbrfDaily
     private CbrfSoapService $soapClient;
 
     /**
-     * @param SoapClient|string $client
+     * @param \SoapClient|string $client
      */
     public function __construct($client = CbrfSoapService::DEFAULT_WSDL)
     {
@@ -41,13 +39,13 @@ class CbrfDaily
     /**
      * Returns list of rates for all currencies for set date.
      *
-     * @param DateTimeInterface $onDate
+     * @param \DateTimeInterface $onDate
      *
      * @return CurrencyRate[]
      *
      * @throws CbrfException
      */
-    public function getCursOnDate(DateTimeInterface $date): array
+    public function getCursOnDate(\DateTimeInterface $date): array
     {
         $soapResult = $this->soapClient->query(
             'GetCursOnDate',
@@ -66,14 +64,14 @@ class CbrfDaily
     /**
      * Returns rate for currency with set char code.
      *
-     * @param DateTimeInterface $onDate
-     * @param string            $charCode
+     * @param \DateTimeInterface $onDate
+     * @param string             $charCode
      *
      * @return CurrencyRate|null
      *
      * @throws CbrfException
      */
-    public function getCursOnDateByCharCode(DateTimeInterface $date, string $charCode): ?CurrencyRate
+    public function getCursOnDateByCharCode(\DateTimeInterface $date, string $charCode): ?CurrencyRate
     {
         $list = $this->getCursOnDate($date);
 
@@ -91,14 +89,14 @@ class CbrfDaily
     /**
      * Returns rate for currency with set numeric code.
      *
-     * @param DateTimeInterface $onDate
-     * @param int               $numericCode
+     * @param \DateTimeInterface $onDate
+     * @param int                $numericCode
      *
      * @return CurrencyRate|null
      *
      * @throws CbrfException
      */
-    public function getCursOnDateByNumericCode(DateTimeInterface $date, int $numericCode): ?CurrencyRate
+    public function getCursOnDateByNumericCode(\DateTimeInterface $date, int $numericCode): ?CurrencyRate
     {
         $list = $this->getCursOnDate($date);
 
@@ -192,11 +190,11 @@ class CbrfDaily
      *
      * @param string $format
      *
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      *
      * @throws CbrfException
      */
-    public function getLatestDateTime(): DateTimeInterface
+    public function getLatestDateTime(): \DateTimeInterface
     {
         $soapResult = $this->soapClient->query('GetLatestDateTime');
 
@@ -208,11 +206,11 @@ class CbrfDaily
      *
      * @param string $format
      *
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      *
      * @throws CbrfException
      */
-    public function getLatestDateTimeSeld(): DateTimeInterface
+    public function getLatestDateTimeSeld(): \DateTimeInterface
     {
         $soapResult = $this->soapClient->query('GetLatestDateTimeSeld');
 
@@ -224,11 +222,11 @@ class CbrfDaily
      *
      * @param string $format
      *
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      *
      * @throws CbrfException
      */
-    public function getLatestDate(): DateTimeInterface
+    public function getLatestDate(): \DateTimeInterface
     {
         $soapResult = $this->soapClient->query('GetLatestDate');
 
@@ -240,11 +238,11 @@ class CbrfDaily
      *
      * @param string $format
      *
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      *
      * @throws CbrfException
      */
-    public function getLatestDateSeld(): DateTimeInterface
+    public function getLatestDateSeld(): \DateTimeInterface
     {
         $soapResult = $this->soapClient->query('GetLatestDateSeld');
 
@@ -254,13 +252,13 @@ class CbrfDaily
     /**
      * Returns rate dynamic for set currency within set dates.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
-     * @param CurrencyEnum      $currency
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     * @param CurrencyEnum       $currency
      *
      * @return CurrencyRate[]
      */
-    public function getCursDynamic(DateTimeInterface $from, DateTimeInterface $to, CurrencyEnum $currency): array
+    public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CurrencyEnum $currency): array
     {
         $soapResult = $this->soapClient->query(
             'GetCursDynamic',
@@ -287,12 +285,12 @@ class CbrfDaily
     /**
      * Returns key rate dynamic within set dates.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return KeyRate[]
      */
-    public function keyRate(DateTimeInterface $from, DateTimeInterface $to): array
+    public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'KeyRate',
@@ -311,12 +309,12 @@ class CbrfDaily
     /**
      * Returns list of presious metals prices within set dates.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return PreciousMetalRate[]
      */
-    public function dragMetDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'DragMetDynamic',
@@ -335,12 +333,12 @@ class CbrfDaily
     /**
      * Returns list of swap rates within set dates.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return SwapRate[]
      */
-    public function swapDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'SwapDynamic',
@@ -359,12 +357,12 @@ class CbrfDaily
     /**
      * Returns list depo dynamic items within set dates.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return DepoRate[]
      */
-    public function depoDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'DepoDynamic',
@@ -383,12 +381,12 @@ class CbrfDaily
     /**
      * Returns the dynamic of balances of funds items within set dates.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return OstatRate[]
      */
-    public function ostatDynamic(DateTimeInterface $from, DateTimeInterface $to): array
+    public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'OstatDynamic',
@@ -407,12 +405,12 @@ class CbrfDaily
     /**
      * Returns the banks deposites at bank of Russia.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return OstatDepoRate[]
      */
-    public function ostatDepo(DateTimeInterface $from, DateTimeInterface $to): array
+    public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'OstatDepo',
@@ -431,12 +429,12 @@ class CbrfDaily
     /**
      * Returns international valute reseves of Russia for month.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return InternationalReserve[]
      */
-    public function mrrf(DateTimeInterface $from, DateTimeInterface $to): array
+    public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'mrrf',
@@ -455,12 +453,12 @@ class CbrfDaily
     /**
      * Returns international valute reseves of Russia for week.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return InternationalReserveWeek[]
      */
-    public function mrrf7d(DateTimeInterface $from, DateTimeInterface $to): array
+    public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'mrrf7D',
@@ -479,12 +477,12 @@ class CbrfDaily
     /**
      * Returns operations saldo.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return Saldo[]
      */
-    public function saldo(DateTimeInterface $from, DateTimeInterface $to): array
+    public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'Saldo',
@@ -503,12 +501,12 @@ class CbrfDaily
     /**
      * Returns Ruonia index.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return RuoniaIndex[]
      */
-    public function ruoniaSV(DateTimeInterface $from, DateTimeInterface $to): array
+    public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'RuoniaSV',
@@ -527,12 +525,12 @@ class CbrfDaily
     /**
      * Returns Ruonia bid.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return RuoniaBid[]
      */
-    public function ruonia(DateTimeInterface $from, DateTimeInterface $to): array
+    public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'Ruonia',
@@ -551,12 +549,12 @@ class CbrfDaily
     /**
      * Returns inter banks credit market bids.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return Mkr[]
      */
-    public function mkr(DateTimeInterface $from, DateTimeInterface $to): array
+    public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'MKR',
@@ -575,12 +573,12 @@ class CbrfDaily
     /**
      * Returns requirements for credit organisations.
      *
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
      *
      * @return Dv[]
      */
-    public function dv(DateTimeInterface $from, DateTimeInterface $to): array
+    public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $soapResult = $this->soapClient->query(
             'DV',
@@ -599,13 +597,13 @@ class CbrfDaily
     /**
      * Returns list of Reuters rates for all currencies for set date.
      *
-     * @param DateTimeInterface $onDate
+     * @param \DateTimeInterface $onDate
      *
      * @return ReutersCurrencyRate[]
      *
      * @throws CbrfException
      */
-    public function getReutersCursOnDate(DateTimeInterface $date): array
+    public function getReutersCursOnDate(\DateTimeInterface $date): array
     {
         $enumSoapResults = $this->soapClient->query(
             'EnumReutersValutes',

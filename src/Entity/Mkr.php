@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,7 +11,7 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 class Mkr implements ItemWithDate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private int $p1;
 
@@ -40,7 +39,7 @@ class Mkr implements ItemWithDate
         $this->d360 = DataHelper::floatOrNull('d360', $item);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

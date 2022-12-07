@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,13 +11,13 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 class RuoniaBid implements Rate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private float $rate;
 
     private float $dealsVolume;
 
-    private DateTimeInterface $dateUpdate;
+    private \DateTimeInterface $dateUpdate;
 
     public function __construct(array $item)
     {
@@ -28,7 +27,7 @@ class RuoniaBid implements Rate
         $this->dateUpdate = DataHelper::dateTime('DateUpdate', $item);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
@@ -43,7 +42,7 @@ class RuoniaBid implements Rate
         return $this->dealsVolume;
     }
 
-    public function getDateUpdate(): DateTimeInterface
+    public function getDateUpdate(): \DateTimeInterface
     {
         return $this->dateUpdate;
     }

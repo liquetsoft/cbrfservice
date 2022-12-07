@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -16,7 +15,7 @@ class OstatRate implements ItemWithDate
 
     private float $russia = .0;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     public function __construct(array $item)
     {
@@ -25,7 +24,7 @@ class OstatRate implements ItemWithDate
         $this->russia = DataHelper::float('InRuss', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

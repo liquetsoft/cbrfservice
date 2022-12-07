@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -14,7 +13,7 @@ class DepoRate implements Rate
 {
     private float $rate;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     public function __construct(array $item)
     {
@@ -27,7 +26,7 @@ class DepoRate implements Rate
         return $this->rate;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

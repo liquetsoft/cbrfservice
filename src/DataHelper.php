@@ -6,7 +6,6 @@ namespace Liquetsoft\CbrfService;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use Throwable;
 
 /**
  * Helper that contains several operations for data access and converts.
@@ -16,22 +15,22 @@ class DataHelper
     /**
      * Creates DateTimeImmutable from string or DateTimeInterface.
      *
-     * @param DateTimeInterface|string $date
+     * @param \DateTimeInterface|string $date
      *
-     * @return DateTimeImmutable
+     * @return \DateTimeImmutable
      */
-    public static function createImmutableDateTime($date): DateTimeImmutable
+    public static function createImmutableDateTime($date): \DateTimeImmutable
     {
         try {
-            if ($date instanceof DateTimeInterface) {
-                $immutableDate = new DateTimeImmutable(
+            if ($date instanceof \DateTimeInterface) {
+                $immutableDate = new \DateTimeImmutable(
                     $date->format(\DATE_ATOM),
                     $date->getTimezone()
                 );
             } else {
-                $immutableDate = new DateTimeImmutable($date);
+                $immutableDate = new \DateTimeImmutable($date);
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             throw new CbrfException($e->getMessage(), 0, $e);
         }
 
@@ -66,9 +65,9 @@ class DataHelper
      * @param string $path
      * @param mixed  $data
      *
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      */
-    public static function dateTime(string $path, $data): DateTimeInterface
+    public static function dateTime(string $path, $data): \DateTimeInterface
     {
         $item = self::get($path, $data);
 

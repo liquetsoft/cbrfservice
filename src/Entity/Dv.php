@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -22,9 +21,9 @@ class Dv implements ItemWithDate
 
     private float $vGold;
 
-    private DateTimeInterface $vIDate;
+    private \DateTimeInterface $vIDate;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     public function __construct(array $item)
     {
@@ -62,12 +61,12 @@ class Dv implements ItemWithDate
         return $this->vGold;
     }
 
-    public function getVIDate(): DateTimeInterface
+    public function getVIDate(): \DateTimeInterface
     {
         return $this->vIDate;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

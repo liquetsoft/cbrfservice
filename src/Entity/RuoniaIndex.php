@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,7 +11,7 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 class RuoniaIndex implements ItemWithDate
 {
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
     private float $index;
 
@@ -31,7 +30,7 @@ class RuoniaIndex implements ItemWithDate
         $this->average6Month = DataHelper::float('RUONIA_AVG_6M', $item, .0);
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }

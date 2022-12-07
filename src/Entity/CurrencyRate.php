@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use DateTimeInterface;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -22,9 +21,9 @@ class CurrencyRate implements Currency, Rate
 
     private int $nom;
 
-    private DateTimeInterface $date;
+    private \DateTimeInterface $date;
 
-    public function __construct(array $item, DateTimeInterface $date)
+    public function __construct(array $item, \DateTimeInterface $date)
     {
         $this->charCode = DataHelper::charCode('VchCode', $item, '');
         $this->name = DataHelper::string('Vname', $item, '');
@@ -59,7 +58,7 @@ class CurrencyRate implements Currency, Rate
         return $this->nom;
     }
 
-    public function getDate(): DateTimeInterface
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
