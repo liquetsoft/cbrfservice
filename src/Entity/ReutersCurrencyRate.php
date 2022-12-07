@@ -9,7 +9,7 @@ use DateTimeInterface;
 /**
  * DTO that represents response item from GetCursOnDate method.
  */
-class ReutersCurrencyRate
+class ReutersCurrencyRate implements ItemWithDate
 {
     private string $chCode = '';
 

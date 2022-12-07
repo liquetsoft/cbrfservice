@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from DepoDynamic method.
  */
-class DepoRate
+class DepoRate implements Rate
 {
     private float $rate;
 

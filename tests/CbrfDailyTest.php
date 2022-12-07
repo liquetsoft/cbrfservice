@@ -510,7 +510,7 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($metals as $key => $metal) {
             $this->assertSameDate(new DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
             $this->assertSame($metal['CodMet'], $list[$key]->getCode());
-            $this->assertSame($metal['price'], $list[$key]->getPrice());
+            $this->assertSame($metal['price'], $list[$key]->getRate());
         }
     }
 
@@ -661,7 +661,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertContainsOnlyInstancesOf(InternationalReserve::class, $list);
         foreach ($mrrfs as $key => $mrrf) {
             $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
-            $this->assertSame($mrrf['p1'], $list[$key]->getValue());
+            $this->assertSame($mrrf['p1'], $list[$key]->getRate());
         }
     }
 
@@ -690,7 +690,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertContainsOnlyInstancesOf(InternationalReserveWeek::class, $list);
         foreach ($mrrfs as $key => $mrrf) {
             $this->assertSameDate(new DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
-            $this->assertSame($mrrf['val'], $list[$key]->getValue());
+            $this->assertSame($mrrf['val'], $list[$key]->getRate());
         }
     }
 
@@ -719,7 +719,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertContainsOnlyInstancesOf(Saldo::class, $list);
         foreach ($saldos as $key => $saldo) {
             $this->assertSameDate(new DateTimeImmutable($saldo['Dt']), $list[$key]->getDate());
-            $this->assertSame($saldo['DEADLINEBS'], $list[$key]->getValue());
+            $this->assertSame($saldo['DEADLINEBS'], $list[$key]->getRate());
         }
     }
 
@@ -814,7 +814,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertContainsOnlyInstancesOf(RuoniaBid::class, $list);
         foreach ($ruoniaBids as $key => $ruoniaBid) {
             $this->assertSameDate(new DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
-            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getBid());
+            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getRate());
             $this->assertSame($ruoniaBid['vol'], $list[$key]->getDealsVolume());
             $this->assertSameDate(new DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
         }

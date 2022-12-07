@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from ruoniaSV method.
  */
-class RuoniaIndex
+class RuoniaIndex implements ItemWithDate
 {
     private DateTimeInterface $date;
 

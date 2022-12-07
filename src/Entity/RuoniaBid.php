@@ -10,11 +10,11 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from ruonia method.
  */
-class RuoniaBid
+class RuoniaBid implements Rate
 {
     private DateTimeInterface $date;
 
-    private float $bid;
+    private float $rate;
 
     private float $dealsVolume;
 
@@ -23,7 +23,7 @@ class RuoniaBid
     public function __construct(array $item)
     {
         $this->date = DataHelper::dateTime('D0', $item);
-        $this->bid = DataHelper::float('ruo', $item, .0);
+        $this->rate = DataHelper::float('ruo', $item, .0);
         $this->dealsVolume = DataHelper::float('vol', $item, .0);
         $this->dateUpdate = DataHelper::dateTime('DateUpdate', $item);
     }
@@ -33,9 +33,9 @@ class RuoniaBid
         return $this->date;
     }
 
-    public function getBid(): float
+    public function getRate(): float
     {
-        return $this->bid;
+        return $this->rate;
     }
 
     public function getDealsVolume(): float

@@ -10,21 +10,21 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from mrrf method.
  */
-class InternationalReserve
+class InternationalReserve implements Rate
 {
     private DateTimeInterface $date;
 
-    private float $value;
+    private float $rate;
 
     public function __construct(array $item)
     {
         $this->date = DataHelper::dateTime('D0', $item);
-        $this->value = DataHelper::float('p1', $item, .0);
+        $this->rate = DataHelper::float('p1', $item, .0);
     }
 
-    public function getValue(): float
+    public function getRate(): float
     {
-        return $this->value;
+        return $this->rate;
     }
 
     public function getDate(): DateTimeInterface

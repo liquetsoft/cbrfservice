@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from GetCursOnDate method.
  */
-class CurrencyRate implements Currency
+class CurrencyRate implements Currency, Rate
 {
     private string $charCode;
 

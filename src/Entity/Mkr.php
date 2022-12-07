@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from mkr method.
  */
-class Mkr
+class Mkr implements ItemWithDate
 {
     private DateTimeInterface $date;
 

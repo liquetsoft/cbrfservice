@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from OstatDepo method.
  */
-class OstatDepoRate
+class OstatDepoRate implements ItemWithDate
 {
     private float $days1to7 = .0;
 

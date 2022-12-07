@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\DataHelper;
 /**
  * DTO that represents response item from KeyRate method.
  */
-class KeyRate
+class KeyRate implements Rate
 {
     private DateTimeInterface $date;
 
