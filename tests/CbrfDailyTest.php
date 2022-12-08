@@ -836,6 +836,7 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($mkr['d1'], $list[$key]->getD1());
             $this->assertSame($mkr['d7'], $list[$key]->getD7());
             $this->assertSame($mkr['d30'], $list[$key]->getD30());
+            $this->assertSame($mkr['d90'], $list[$key]->getD90());
             $this->assertSame($mkr['d180'], $list[$key]->getD180());
             $this->assertSame($mkr['d360'], $list[$key]->getD360());
         }
