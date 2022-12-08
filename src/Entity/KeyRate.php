@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from KeyRate method.
+ *
+ * @psalm-immutable
  */
 class KeyRate implements Rate
 {

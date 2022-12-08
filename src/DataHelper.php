@@ -38,6 +38,31 @@ class DataHelper
     }
 
     /**
+     * Returns array of items from the set path.
+     *
+     * @param string $path
+     * @param mixed  $data
+     * @param string $itemClass
+     *
+     * @return array
+     *
+     * @psalm-template T
+     *
+     * @psalm-param class-string<T> $itemClass
+     *
+     * @psalm-return T[]
+     *
+     * @psalm-suppress MixedMethodCall
+     */
+    public static function arrayOfItems(string $path, $data, string $itemClass): array
+    {
+        $callback = fn (array $item): object => new $itemClass($item);
+        $list = self::array($path, $data);
+
+        return array_map($callback, $list);
+    }
+
+    /**
      * Returns array from the set path.
      *
      * @param string $path

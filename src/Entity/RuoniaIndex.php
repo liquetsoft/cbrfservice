@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from ruoniaSV method.
+ *
+ * @psalm-immutable
  */
 class RuoniaIndex implements ItemWithDate
 {
