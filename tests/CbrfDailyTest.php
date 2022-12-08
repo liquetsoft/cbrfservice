@@ -17,6 +17,7 @@ use Liquetsoft\CbrfService\Entity\Mkr;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
+use Liquetsoft\CbrfService\Entity\RepoDebt;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
@@ -173,6 +174,15 @@ class CbrfDailyTest extends BaseTestCase
                 'Vol_Gold' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'DVResult.any.DV_base.DV',
+        ],
+        'RepoDebt' => [
+            'schema' => [
+                'Date' => self::FIXTURE_TYPE_DATE,
+                'debt' => self::FIXTURE_TYPE_FLOAT,
+                'debt_auc' => self::FIXTURE_TYPE_FLOAT,
+                'debt_fix' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'Repo_debtResult.any.Repo_debt.RD',
         ],
     ];
 
@@ -769,6 +779,37 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
+    public function testRuonia(): void
+    {
+        [$ruoniaBids, $response] = $this->createFixture(self::FIXTURES['Ruonia']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createSoapCallMock(
+            'Ruonia',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->ruonia($from, $to);
+
+        $this->assertCount(\count($ruoniaBids), $list);
+        $this->assertContainsOnlyInstancesOf(RuoniaBid::class, $list);
+        foreach ($ruoniaBids as $key => $ruoniaBid) {
+            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
+            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getRate());
+            $this->assertSame($ruoniaBid['vol'], $list[$key]->getDealsVolume());
+            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testMKR(): void
     {
         [$mkrs, $response] = $this->createFixture(self::FIXTURES['MKR']);
@@ -837,14 +878,14 @@ class CbrfDailyTest extends BaseTestCase
     /**
      * @test
      */
-    public function testRuonia(): void
+    public function testRepoDebt(): void
     {
-        [$ruoniaBids, $response] = $this->createFixture(self::FIXTURES['Ruonia']);
+        [$debts, $response] = $this->createFixture(self::FIXTURES['RepoDebt']);
         $from = new \DateTimeImmutable('-1 month');
         $to = new \DateTimeImmutable();
 
         $soapClient = $this->createSoapCallMock(
-            'Ruonia',
+            'Repo_debt',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
                 'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -853,15 +894,15 @@ class CbrfDailyTest extends BaseTestCase
         );
 
         $service = new CbrfDaily($soapClient);
-        $list = $service->ruonia($from, $to);
+        $list = $service->repoDebt($from, $to);
 
-        $this->assertCount(\count($ruoniaBids), $list);
-        $this->assertContainsOnlyInstancesOf(RuoniaBid::class, $list);
-        foreach ($ruoniaBids as $key => $ruoniaBid) {
-            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
-            $this->assertSame($ruoniaBid['ruo'], $list[$key]->getRate());
-            $this->assertSame($ruoniaBid['vol'], $list[$key]->getDealsVolume());
-            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
+        $this->assertCount(\count($debts), $list);
+        $this->assertContainsOnlyInstancesOf(RepoDebt::class, $list);
+        foreach ($debts as $key => $debt) {
+            $this->assertSameDate(new \DateTimeImmutable($debt['Date']), $list[$key]->getDate());
+            $this->assertSame($debt['debt'], $list[$key]->getRate());
+            $this->assertSame($debt['debt_auc'], $list[$key]->getDebtAuc());
+            $this->assertSame($debt['debt_fix'], $list[$key]->getDebtFix());
         }
     }
 }
