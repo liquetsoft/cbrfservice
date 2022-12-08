@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents currency from currencies vocabulary.
+ *
+ * @psalm-immutable
  */
 class CurrencyEnum implements Currency
 {

@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from mrrf method.
+ *
+ * @psalm-immutable
  */
 class InternationalReserve implements Rate
 {

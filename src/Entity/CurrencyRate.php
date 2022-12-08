@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from GetCursOnDate method.
+ *
+ * @psalm-immutable
  */
 class CurrencyRate implements Currency, Rate
 {

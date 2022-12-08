@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from SwapDynamic method.
+ *
+ * @psalm-immutable
  */
 class SwapRate
 {

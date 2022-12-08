@@ -40,15 +40,13 @@ class CbrfDaily
     /**
      * Returns list of rates for all currencies for set date.
      *
-     * @param \DateTimeInterface $onDate
-     *
      * @return CurrencyRate[]
      *
      * @throws CbrfException
      */
     public function getCursOnDate(\DateTimeInterface $date): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'GetCursOnDate',
             [
                 'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -56,7 +54,7 @@ class CbrfDaily
         );
 
         $immutableDate = DataHelper::createImmutableDateTime($date);
-        $list = DataHelper::array('ValuteData.ValuteCursOnDate', $soapResult);
+        $list = DataHelper::array('ValuteData.ValuteCursOnDate', $res);
         $callback = fn (array $item): CurrencyRate => new CurrencyRate($item, $immutableDate);
 
         return array_map($callback, $list);
@@ -64,9 +62,6 @@ class CbrfDaily
 
     /**
      * Returns rate for currency with set char code.
-     *
-     * @param \DateTimeInterface $onDate
-     * @param string             $charCode
      *
      * @return CurrencyRate|null
      *
@@ -90,9 +85,6 @@ class CbrfDaily
     /**
      * Returns rate for currency with set numeric code.
      *
-     * @param \DateTimeInterface $onDate
-     * @param int                $numericCode
-     *
      * @return CurrencyRate|null
      *
      * @throws CbrfException
@@ -115,32 +107,24 @@ class CbrfDaily
     /**
      * List of all currencies that allowed on cbrf service.
      *
-     * @param bool $seld
-     *
      * @return CurrencyEnum[]
      *
      * @throws CbrfException
      */
     public function enumValutes(bool $seld = false): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'EnumValutes',
             [
                 'Seld' => $seld,
             ]
         );
 
-        $list = DataHelper::array('ValuteData.EnumValutes', $soapResult);
-        $callback = fn (array $item): CurrencyEnum => new CurrencyEnum($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('ValuteData.EnumValutes', $res, CurrencyEnum::class);
     }
 
     /**
      * Returns enum for currency with set char code.
-     *
-     * @param string $charCode
-     * @param bool   $seld
      *
      * @return CurrencyEnum|null
      *
@@ -197,9 +181,9 @@ class CbrfDaily
      */
     public function getLatestDateTime(): \DateTimeInterface
     {
-        $soapResult = $this->soapClient->query('GetLatestDateTime');
+        $res = $this->soapClient->query('GetLatestDateTime');
 
-        return DataHelper::dateTime('GetLatestDateTimeResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateTimeResult', $res);
     }
 
     /**
@@ -213,9 +197,9 @@ class CbrfDaily
      */
     public function getLatestDateTimeSeld(): \DateTimeInterface
     {
-        $soapResult = $this->soapClient->query('GetLatestDateTimeSeld');
+        $res = $this->soapClient->query('GetLatestDateTimeSeld');
 
-        return DataHelper::dateTime('GetLatestDateTimeSeldResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateTimeSeldResult', $res);
     }
 
     /**
@@ -229,9 +213,9 @@ class CbrfDaily
      */
     public function getLatestDate(): \DateTimeInterface
     {
-        $soapResult = $this->soapClient->query('GetLatestDate');
+        $res = $this->soapClient->query('GetLatestDate');
 
-        return DataHelper::dateTime('GetLatestDateResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateResult', $res);
     }
 
     /**
@@ -245,9 +229,9 @@ class CbrfDaily
      */
     public function getLatestDateSeld(): \DateTimeInterface
     {
-        $soapResult = $this->soapClient->query('GetLatestDateSeld');
+        $res = $this->soapClient->query('GetLatestDateSeld');
 
-        return DataHelper::dateTime('GetLatestDateSeldResult', $soapResult);
+        return DataHelper::dateTime('GetLatestDateSeldResult', $res);
     }
 
     /**
@@ -261,7 +245,7 @@ class CbrfDaily
      */
     public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CurrencyEnum $currency): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'GetCursDynamic',
             [
                 'FromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -271,7 +255,7 @@ class CbrfDaily
         );
 
         $result = [];
-        $list = DataHelper::array('ValuteData.ValuteCursDynamic', $soapResult);
+        $list = DataHelper::array('ValuteData.ValuteCursDynamic', $res);
         foreach ($list as $item) {
             $date = DataHelper::dateTime('CursDate', $item);
             $item['Vname'] = $currency->getName();
@@ -293,7 +277,7 @@ class CbrfDaily
      */
     public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'KeyRate',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -301,10 +285,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('KeyRate.KR', $soapResult);
-        $callback = fn (array $item): KeyRate => new KeyRate($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('KeyRate.KR', $res, KeyRate::class);
     }
 
     /**
@@ -317,7 +298,7 @@ class CbrfDaily
      */
     public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'DragMetDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -325,10 +306,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('DragMetall.DrgMet', $soapResult);
-        $callback = fn (array $item): PreciousMetalRate => new PreciousMetalRate($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('DragMetall.DrgMet', $res, PreciousMetalRate::class);
     }
 
     /**
@@ -341,7 +319,7 @@ class CbrfDaily
      */
     public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'SwapDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -349,10 +327,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('SwapDynamic.Swap', $soapResult);
-        $callback = fn (array $item): SwapRate => new SwapRate($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('SwapDynamic.Swap', $res, SwapRate::class);
     }
 
     /**
@@ -365,7 +340,7 @@ class CbrfDaily
      */
     public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'DepoDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -373,10 +348,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('DepoDynamic.Depo', $soapResult);
-        $callback = fn (array $item): DepoRate => new DepoRate($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('DepoDynamic.Depo', $res, DepoRate::class);
     }
 
     /**
@@ -389,7 +361,7 @@ class CbrfDaily
      */
     public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'OstatDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -397,10 +369,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('OstatDynamic.Ostat', $soapResult);
-        $callback = fn (array $item): OstatRate => new OstatRate($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('OstatDynamic.Ostat', $res, OstatRate::class);
     }
 
     /**
@@ -413,7 +382,7 @@ class CbrfDaily
      */
     public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'OstatDepo',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -421,10 +390,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('OD.odr', $soapResult);
-        $callback = fn (array $item): OstatDepoRate => new OstatDepoRate($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('OD.odr', $res, OstatDepoRate::class);
     }
 
     /**
@@ -437,7 +403,7 @@ class CbrfDaily
      */
     public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'mrrf',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -445,10 +411,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('mmrf.mr', $soapResult);
-        $callback = fn (array $item): InternationalReserve => new InternationalReserve($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('mmrf.mr', $res, InternationalReserve::class);
     }
 
     /**
@@ -461,7 +424,7 @@ class CbrfDaily
      */
     public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'mrrf7D',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -469,10 +432,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('mmrf7d.mr', $soapResult);
-        $callback = fn (array $item): InternationalReserveWeek => new InternationalReserveWeek($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('mmrf7d.mr', $res, InternationalReserveWeek::class);
     }
 
     /**
@@ -485,7 +445,7 @@ class CbrfDaily
      */
     public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'Saldo',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -493,10 +453,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('Saldo.So', $soapResult);
-        $callback = fn (array $item): Saldo => new Saldo($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('Saldo.So', $res, Saldo::class);
     }
 
     /**
@@ -509,7 +466,7 @@ class CbrfDaily
      */
     public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'RuoniaSV',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -517,10 +474,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('RuoniaSV.ra', $soapResult);
-        $callback = fn (array $item): RuoniaIndex => new RuoniaIndex($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('RuoniaSV.ra', $res, RuoniaIndex::class);
     }
 
     /**
@@ -533,7 +487,7 @@ class CbrfDaily
      */
     public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'Ruonia',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -541,10 +495,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('Ruonia.ro', $soapResult);
-        $callback = fn (array $item): RuoniaBid => new RuoniaBid($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('Ruonia.ro', $res, RuoniaBid::class);
     }
 
     /**
@@ -557,7 +508,7 @@ class CbrfDaily
      */
     public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'MKR',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -565,10 +516,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('mkr_base.MKR', $soapResult);
-        $callback = fn (array $item): Mkr => new Mkr($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('mkr_base.MKR', $res, Mkr::class);
     }
 
     /**
@@ -581,7 +529,7 @@ class CbrfDaily
      */
     public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'DV',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -589,10 +537,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('DV_base.DV', $soapResult);
-        $callback = fn (array $item): Dv => new Dv($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('DV_base.DV', $res, Dv::class);
     }
 
     /**
@@ -605,7 +550,7 @@ class CbrfDaily
      */
     public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $soapResult = $this->soapClient->query(
+        $res = $this->soapClient->query(
             'Repo_debt',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -613,10 +558,7 @@ class CbrfDaily
             ]
         );
 
-        $list = DataHelper::array('Repo_debt.RD', $soapResult);
-        $callback = fn (array $item): RepoDebt => new RepoDebt($item);
-
-        return array_map($callback, $list);
+        return DataHelper::arrayOfItems('Repo_debt.RD', $res, RepoDebt::class);
     }
 
     /**

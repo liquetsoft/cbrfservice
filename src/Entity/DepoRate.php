@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from DepoDynamic method.
+ *
+ * @psalm-immutable
  */
 class DepoRate implements Rate
 {

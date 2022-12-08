@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from OstatDynamic method.
+ *
+ * @psalm-immutable
  */
 class OstatRate implements ItemWithDate
 {

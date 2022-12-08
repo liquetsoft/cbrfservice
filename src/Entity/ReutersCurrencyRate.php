@@ -6,6 +6,8 @@ namespace Liquetsoft\CbrfService\Entity;
 
 /**
  * DTO that represents response item from GetCursOnDate method.
+ *
+ * @psalm-immutable
  */
 class ReutersCurrencyRate implements ItemWithDate
 {

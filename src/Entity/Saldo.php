@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from saldo method.
+ *
+ * @psalm-immutable
  */
 class Saldo implements Rate
 {

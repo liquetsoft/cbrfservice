@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from mkr method.
+ *
+ * @psalm-immutable
  */
 class Mkr implements ItemWithDate
 {

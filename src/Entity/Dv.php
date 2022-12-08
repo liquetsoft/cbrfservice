@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from DV method.
+ *
+ * @psalm-immutable
  */
 class Dv implements ItemWithDate
 {

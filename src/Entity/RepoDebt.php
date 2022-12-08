@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from Repo_debt method.
+ *
+ * @psalm-immutable
  */
 class RepoDebt implements Rate
 {

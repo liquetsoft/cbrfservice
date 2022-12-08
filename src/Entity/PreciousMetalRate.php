@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from DragMetDynamic method.
+ *
+ * @psalm-immutable
  */
 class PreciousMetalRate implements Rate
 {

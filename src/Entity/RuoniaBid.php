@@ -8,6 +8,8 @@ use Liquetsoft\CbrfService\DataHelper;
 
 /**
  * DTO that represents response item from ruonia method.
+ *
+ * @psalm-immutable
  */
 class RuoniaBid implements Rate
 {
