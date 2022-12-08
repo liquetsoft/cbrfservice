@@ -15,6 +15,7 @@ use Liquetsoft\CbrfService\Entity\Mkr;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
+use Liquetsoft\CbrfService\Entity\RepoDebt;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
@@ -590,6 +591,30 @@ class CbrfDaily
 
         $list = DataHelper::array('DV_base.DV', $soapResult);
         $callback = fn (array $item): Dv => new Dv($item);
+
+        return array_map($callback, $list);
+    }
+
+    /**
+     * Returns debts of credit organisations.
+     *
+     * @param \DateTimeInterface $from
+     * @param \DateTimeInterface $to
+     *
+     * @return RepoDebt[]
+     */
+    public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $soapResult = $this->soapClient->query(
+            'Repo_debt',
+            [
+                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+            ]
+        );
+
+        $list = DataHelper::array('Repo_debt.RD', $soapResult);
+        $callback = fn (array $item): RepoDebt => new RepoDebt($item);
 
         return array_map($callback, $list);
     }
