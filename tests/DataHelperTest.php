@@ -7,6 +7,8 @@ namespace Liquetsoft\CbrfService\Tests;
 use Liquetsoft\CbrfService\DataHelper;
 use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
 use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
+use Liquetsoft\CbrfService\Tests\Mock\EntityEnumIntMock;
+use Liquetsoft\CbrfService\Tests\Mock\EntityMock;
 
 /**
  * @internal
@@ -14,14 +16,11 @@ use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
 class DataHelperTest extends BaseTestCase
 {
     /**
-     * @param string|\DateTimeInterface     $input
-     * @param \DateTimeInterface|\Exception $result
-     *
      * @test
      *
      * @dataProvider createImmutableDateTimeProvider
      */
-    public function testCreateImmutableDateTime($input, $result): void
+    public function testCreateImmutableDateTime(string|\DateTimeInterface $input, \DateTimeInterface|\Exception $result): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -61,15 +60,133 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string           $path
-     * @param mixed            $input
-     * @param array|\Exception $result
+     * @test
      *
+     * @psalm-param class-string $itemClass
+     * @psalm-param object[]|\Exception $result
+     *
+     * @dataProvider arrayOfItemsProvider
+     */
+    public function testArrayOfItems(string $path, array $data, string $itemClass, array|\Exception $result): void
+    {
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
+        }
+
+        $items = DataHelper::arrayOfItems($path, $data, $itemClass);
+
+        if (\is_array($result)) {
+            $this->assertCount(\count($result), $items);
+            $this->assertContainsOnlyInstancesOf($itemClass, $items);
+            foreach ($result as $key => $resultValue) {
+                $valueToTest = isset($items[$key]) && method_exists($items[$key], 'getTest') ? $items[$key]->getTest() : null;
+                $this->assertSame($resultValue, $valueToTest);
+            }
+        }
+    }
+
+    public function arrayOfItemsProvider(): array
+    {
+        return [
+            'correct list' => [
+                'test1.test2',
+                [
+                    'test1' => [
+                        'test2' => [
+                            ['test' => 'test value 1'],
+                            ['test' => 'test value 2'],
+                        ],
+                    ],
+                ],
+                EntityMock::class,
+                [
+                    'test value 1',
+                    'test value 2',
+                ],
+            ],
+            'empty list' => [
+                'test1',
+                [
+                    'test1' => [],
+                ],
+                EntityMock::class,
+                [],
+            ],
+            'not an array' => [
+                'test1',
+                [
+                    'test1' => 'test',
+                ],
+                EntityMock::class,
+                new CbrfDataAccessException('test1', 'array'),
+            ],
+            'convert exception' => [
+                'test1',
+                [
+                    'test1' => [[], []],
+                ],
+                EntityMock::class,
+                new CbrfDataConvertException('array', EntityMock::class . '[]'),
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @psalm-param class-string $enumClass
+     *
+     * @dataProvider enumIntProvider
+     */
+    public function testEnumInt(string $path, array $data, string $enumClass, object $result): void
+    {
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
+        }
+
+        $enum = DataHelper::enumInt($path, $data, $enumClass);
+
+        if (!($result instanceof \Exception)) {
+            $this->assertSame($result, $enum);
+        }
+    }
+
+    public function enumIntProvider(): array
+    {
+        return [
+            'correct enum' => [
+                'test1.test2',
+                [
+                    'test1' => [
+                        'test2' => 1,
+                    ],
+                ],
+                EntityEnumIntMock::class,
+                EntityEnumIntMock::GOLD,
+            ],
+            'value not found' => [
+                'test1',
+                [],
+                EntityEnumIntMock::class,
+                new CbrfDataAccessException('test1', 'int'),
+            ],
+            'value not in enum' => [
+                'test1',
+                [
+                    'test1' => 'test',
+                ],
+                EntityEnumIntMock::class,
+                new CbrfDataConvertException('int', EntityEnumIntMock::class),
+            ],
+        ];
+    }
+
+    /**
      * @test
      *
      * @dataProvider arrayProvider
      */
-    public function testArray(string $path, $input, $result): void
+    public function testArray(string $path, mixed $input, array|\Exception $result): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -123,15 +240,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string                        $path
-     * @param mixed                         $input
-     * @param \DateTimeInterface|\Exception $result
-     *
      * @test
      *
      * @dataProvider dateTimeProvider
      */
-    public function testDateTime(string $path, $input, $result): void
+    public function testDateTime(string $path, mixed $input, \DateTimeInterface|\Exception $result): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -205,16 +318,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string            $path
-     * @param mixed             $input
-     * @param string|\Exception $result
-     * @param string|null       $default
-     *
      * @test
      *
      * @dataProvider stringProvider
      */
-    public function testString(string $path, $input, $result, ?string $default = null): void
+    public function testString(string $path, mixed $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -275,16 +383,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string           $path
-     * @param mixed            $input
-     * @param float|\Exception $result
-     * @param float|null       $default
-     *
      * @test
      *
      * @dataProvider floatProvider
      */
-    public function testFloat(string $path, $input, $result, ?float $default = null): void
+    public function testFloat(string $path, mixed $input, float|\Exception $result, ?float $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -345,15 +448,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string     $path
-     * @param mixed      $input
-     * @param float|null $result
-     *
      * @test
      *
      * @dataProvider floatOrNullProvider
      */
-    public function testFloatOrNull(string $path, $input, $result): void
+    public function testFloatOrNull(string $path, mixed $input, ?float $result): void
     {
         $testFloat = DataHelper::floatOrNull($path, $input);
 
@@ -402,16 +501,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string         $path
-     * @param mixed          $input
-     * @param int|\Exception $result
-     * @param int|null       $default
-     *
      * @test
      *
      * @dataProvider intProvider
      */
-    public function testInt(string $path, $input, $result, ?int $default = null): void
+    public function testInt(string $path, mixed $input, int|\Exception $result, ?int $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -472,16 +566,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string            $path
-     * @param mixed             $input
-     * @param string|\Exception $result
-     * @param string|null       $default
-     *
      * @test
      *
      * @dataProvider charCodeProvider
      */
-    public function testCharCode(string $path, $input, $result, ?string $default = null): void
+    public function testCharCode(string $path, mixed $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);

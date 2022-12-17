@@ -40,6 +40,8 @@ final class DataHelper
     /**
      * Returns array of items from the set path.
      *
+     * @return object[]
+     *
      * @psalm-template T
      *
      * @psalm-param class-string<T> $itemClass
@@ -53,7 +55,13 @@ final class DataHelper
         $callback = fn (array $item): object => new $itemClass($item);
         $list = self::array($path, $data);
 
-        return array_map($callback, $list);
+        try {
+            $result = array_map($callback, $list);
+        } catch (\Throwable $e) {
+            throw new CbrfDataConvertException('array', "{$itemClass}[]", $e);
+        }
+
+        return $result;
     }
 
     /**
@@ -99,8 +107,14 @@ final class DataHelper
      */
     public static function enumInt(string $path, array $data, string $enumClass): object
     {
-        /** @psalm-var T */
-        $value = $enumClass::from(self::int($path, $data));
+        $int = self::int($path, $data);
+
+        try {
+            /** @psalm-var T */
+            $value = $enumClass::from($int);
+        } catch (\Throwable $e) {
+            throw new CbrfDataConvertException('int', $enumClass, $e);
+        }
 
         return $value;
     }
