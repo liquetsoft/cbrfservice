@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfDaily;
+use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -445,10 +446,8 @@ class CbrfDailyTest extends BaseTestCase
         $name = 'Euro';
         $internalCode = 'test01';
 
-        /** @var MockObject&CurrencyEnum */
-        $currencyEnum = $this->getMockBuilder(CurrencyEnum::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var MockObject&CbrfEntityCurrencyInternal */
+        $currencyEnum = $this->getMockBuilder(CbrfEntityCurrencyInternal::class)->getMock();
         $currencyEnum->method('getInternalCode')->willReturn($internalCode);
         $currencyEnum->method('getName')->willReturn($name);
         $currencyEnum->method('getCharCode')->willReturn($charCode);

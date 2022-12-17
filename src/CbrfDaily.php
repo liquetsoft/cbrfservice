@@ -212,7 +212,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CurrencyEnum $currency): array
+    public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CbrfEntityCurrencyInternal $currency): array
     {
         $res = $this->transport->query(
             'GetCursDynamic',

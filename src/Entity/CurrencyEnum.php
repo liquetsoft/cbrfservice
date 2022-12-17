@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
-use Liquetsoft\CbrfService\CbrfEntityCurrency;
+use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -12,7 +12,7 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class CurrencyEnum implements CbrfEntityCurrency
+final class CurrencyEnum implements CbrfEntityCurrencyInternal
 {
     private readonly string $internalCode;
 
