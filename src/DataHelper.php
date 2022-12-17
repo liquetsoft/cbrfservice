@@ -14,6 +14,10 @@ use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
  */
 final class DataHelper
 {
+    private function __construct()
+    {
+    }
+
     /**
      * Creates DateTimeImmutable from string or DateTimeInterface.
      */
