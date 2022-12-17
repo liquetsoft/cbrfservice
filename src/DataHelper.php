@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
-use DateTimeImmutable;
-use DateTimeInterface;
+use Liquetsoft\CbrfService\Exception\CbrfException;
 
 /**
- * Helper that contains several operations for data access and converts.
+ * Helper that contains several operations for data accessing and converting.
  */
-class DataHelper
+final class DataHelper
 {
     /**
      * Creates DateTimeImmutable from string or DateTimeInterface.
-     *
-     * @param \DateTimeInterface|string $date
-     *
-     * @return \DateTimeImmutable
      */
-    public static function createImmutableDateTime($date): \DateTimeImmutable
+    public static function createImmutableDateTime(\DateTimeInterface|string $date): \DateTimeImmutable
     {
         try {
             if ($date instanceof \DateTimeInterface) {
@@ -40,12 +35,6 @@ class DataHelper
     /**
      * Returns array of items from the set path.
      *
-     * @param string $path
-     * @param mixed  $data
-     * @param string $itemClass
-     *
-     * @return array
-     *
      * @psalm-template T
      *
      * @psalm-param class-string<T> $itemClass
@@ -54,7 +43,7 @@ class DataHelper
      *
      * @psalm-suppress MixedMethodCall
      */
-    public static function arrayOfItems(string $path, $data, string $itemClass): array
+    public static function arrayOfItems(string $path, array $data, string $itemClass): array
     {
         $callback = fn (array $item): object => new $itemClass($item);
         $list = self::array($path, $data);
@@ -64,13 +53,8 @@ class DataHelper
 
     /**
      * Returns array from the set path.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return array
      */
-    public static function array(string $path, $data): array
+    public static function array(string $path, array $data): array
     {
         $item = self::get($path, $data);
 
@@ -86,13 +70,8 @@ class DataHelper
 
     /**
      * Returns DateTimeInterface from the set path.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return \DateTimeInterface
      */
-    public static function dateTime(string $path, $data): \DateTimeInterface
+    public static function dateTime(string $path, array $data): \DateTimeInterface
     {
         $item = self::get($path, $data);
 
@@ -107,12 +86,6 @@ class DataHelper
     /**
      * Returns enum for value on the set path.
      *
-     * @param string $path
-     * @param mixed  $data
-     * @param string $enumClass
-     *
-     * @return object
-     *
      * @psalm-template T
      *
      * @psalm-param class-string<T> $enumClass
@@ -121,7 +94,7 @@ class DataHelper
      *
      * @psalm-suppress MixedMethodCall
      */
-    public static function enumInt(string $path, $data, string $enumClass): object
+    public static function enumInt(string $path, array $data, string $enumClass): object
     {
         /** @psalm-var T */
         $value = $enumClass::from(self::int($path, $data));
@@ -131,14 +104,8 @@ class DataHelper
 
     /**
      * Returns string from the set path.
-     *
-     * @param string      $path
-     * @param mixed       $data
-     * @param string|null $default
-     *
-     * @return string
      */
-    public static function string(string $path, $data, ?string $default = null): string
+    public static function string(string $path, array $data, ?string $default = null): string
     {
         $item = self::get($path, $data);
 
@@ -158,14 +125,8 @@ class DataHelper
 
     /**
      * Returns float from the set path.
-     *
-     * @param string     $path
-     * @param mixed      $data
-     * @param float|null $default
-     *
-     * @return float
      */
-    public static function float(string $path, $data, ?float $default = null): float
+    public static function float(string $path, array $data, ?float $default = null): float
     {
         $item = self::get($path, $data);
 
@@ -185,13 +146,8 @@ class DataHelper
 
     /**
      * Returns float from the set path or null is there is no data.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return float|null
      */
-    public static function floatOrNull(string $path, $data): ?float
+    public static function floatOrNull(string $path, array $data): ?float
     {
         $item = self::get($path, $data);
 
@@ -206,14 +162,8 @@ class DataHelper
 
     /**
      * Returns int from the set path.
-     *
-     * @param string   $path
-     * @param mixed    $data
-     * @param int|null $default
-     *
-     * @return int
      */
-    public static function int(string $path, $data, ?int $default = null): int
+    public static function int(string $path, array $data, ?int $default = null): int
     {
         $item = self::get($path, $data);
 
@@ -233,14 +183,8 @@ class DataHelper
 
     /**
      * Returns char code from the set path.
-     *
-     * @param string      $path
-     * @param mixed       $data
-     * @param string|null $default
-     *
-     * @return string
      */
-    public static function charCode(string $path, $data, ?string $default = null): string
+    public static function charCode(string $path, array $data, ?string $default = null): string
     {
         $item = self::get($path, $data);
 
@@ -260,13 +204,8 @@ class DataHelper
 
     /**
      * Returns data from the set path.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return mixed
      */
-    private static function get(string $path, $data)
+    private static function get(string $path, array $data): mixed
     {
         $arPath = explode('.', trim($path, " \n\r\t\v\0."));
 

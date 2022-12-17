@@ -21,6 +21,7 @@ use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapRate;
+use Liquetsoft\CbrfService\Exception\CbrfException;
 
 /**
  * Class for a daily cb RF service.
@@ -60,8 +61,6 @@ final class CbrfDaily
     /**
      * Returns rate for currency with set char code.
      *
-     * @return CurrencyRate|null
-     *
      * @throws CbrfException
      */
     public function getCursOnDateByCharCode(\DateTimeInterface $date, string $charCode): ?CurrencyRate
@@ -81,8 +80,6 @@ final class CbrfDaily
 
     /**
      * Returns rate for currency with set numeric code.
-     *
-     * @return CurrencyRate|null
      *
      * @throws CbrfException
      */
@@ -123,8 +120,6 @@ final class CbrfDaily
     /**
      * Returns enum for currency with set char code.
      *
-     * @return CurrencyEnum|null
-     *
      * @throws CbrfException
      */
     public function enumValuteByCharCode(string $charCode, bool $seld = false): ?CurrencyEnum
@@ -144,11 +139,6 @@ final class CbrfDaily
 
     /**
      * Returns enum for currency with set numeric code.
-     *
-     * @param int  $numericCode
-     * @param bool $seld
-     *
-     * @return CurrencyEnum|null
      *
      * @throws CbrfException
      */
@@ -170,10 +160,6 @@ final class CbrfDaily
     /**
      * Latest per day date and time of publication.
      *
-     * @param string $format
-     *
-     * @return \DateTimeInterface
-     *
      * @throws CbrfException
      */
     public function getLatestDateTime(): \DateTimeInterface
@@ -185,10 +171,6 @@ final class CbrfDaily
 
     /**
      * Latest per day date and time of seld.
-     *
-     * @param string $format
-     *
-     * @return \DateTimeInterface
      *
      * @throws CbrfException
      */
@@ -202,10 +184,6 @@ final class CbrfDaily
     /**
      * Latest per month date and time of publication.
      *
-     * @param string $format
-     *
-     * @return \DateTimeInterface
-     *
      * @throws CbrfException
      */
     public function getLatestDate(): \DateTimeInterface
@@ -217,10 +195,6 @@ final class CbrfDaily
 
     /**
      * Latest per month date and time of seld.
-     *
-     * @param string $format
-     *
-     * @return \DateTimeInterface
      *
      * @throws CbrfException
      */
@@ -234,11 +208,9 @@ final class CbrfDaily
     /**
      * Returns rate dynamic for set currency within set dates.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     * @param CurrencyEnum       $currency
-     *
      * @return CurrencyRate[]
+     *
+     * @throws CbrfException
      */
     public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CurrencyEnum $currency): array
     {
@@ -267,10 +239,9 @@ final class CbrfDaily
     /**
      * Returns key rate dynamic within set dates.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return KeyRate[]
+     *
+     * @throws CbrfException
      */
     public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -288,10 +259,9 @@ final class CbrfDaily
     /**
      * Returns list of presious metals prices within set dates.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return PreciousMetalRate[]
+     *
+     * @throws CbrfException
      */
     public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -309,10 +279,9 @@ final class CbrfDaily
     /**
      * Returns list of swap rates within set dates.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return SwapRate[]
+     *
+     * @throws CbrfException
      */
     public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -330,10 +299,9 @@ final class CbrfDaily
     /**
      * Returns list depo dynamic items within set dates.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return DepoRate[]
+     *
+     * @throws CbrfException
      */
     public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -351,10 +319,9 @@ final class CbrfDaily
     /**
      * Returns the dynamic of balances of funds items within set dates.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return OstatRate[]
+     *
+     * @throws CbrfException
      */
     public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -372,10 +339,9 @@ final class CbrfDaily
     /**
      * Returns the banks deposites at bank of Russia.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return OstatDepoRate[]
+     *
+     * @throws CbrfException
      */
     public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -393,10 +359,9 @@ final class CbrfDaily
     /**
      * Returns international valute reseves of Russia for month.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return InternationalReserve[]
+     *
+     * @throws CbrfException
      */
     public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -414,10 +379,9 @@ final class CbrfDaily
     /**
      * Returns international valute reseves of Russia for week.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return InternationalReserveWeek[]
+     *
+     * @throws CbrfException
      */
     public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -435,10 +399,9 @@ final class CbrfDaily
     /**
      * Returns operations saldo.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return Saldo[]
+     *
+     * @throws CbrfException
      */
     public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -456,10 +419,9 @@ final class CbrfDaily
     /**
      * Returns Ruonia index.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return RuoniaIndex[]
+     *
+     * @throws CbrfException
      */
     public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -477,10 +439,9 @@ final class CbrfDaily
     /**
      * Returns Ruonia bid.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return RuoniaBid[]
+     *
+     * @throws CbrfException
      */
     public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -498,10 +459,9 @@ final class CbrfDaily
     /**
      * Returns inter banks credit market bids.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return Mkr[]
+     *
+     * @throws CbrfException
      */
     public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -519,10 +479,9 @@ final class CbrfDaily
     /**
      * Returns requirements for credit organisations.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return Dv[]
+     *
+     * @throws CbrfException
      */
     public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -540,10 +499,9 @@ final class CbrfDaily
     /**
      * Returns debts of credit organisations.
      *
-     * @param \DateTimeInterface $from
-     * @param \DateTimeInterface $to
-     *
      * @return RepoDebt[]
+     *
+     * @throws CbrfException
      */
     public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -560,8 +518,6 @@ final class CbrfDaily
 
     /**
      * Returns list of Reuters rates for all currencies for set date.
-     *
-     * @param \DateTimeInterface $onDate
      *
      * @return ReutersCurrencyRate[]
      *

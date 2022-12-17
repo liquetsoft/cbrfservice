@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Exception\CbrfException;
 use SoapClient;
 
 /**

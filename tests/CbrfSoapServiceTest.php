@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
-use Liquetsoft\CbrfService\CbrfException;
 use Liquetsoft\CbrfService\CbrfSoapService;
+use Liquetsoft\CbrfService\Exception\CbrfException;
 
 /**
  * @internal
