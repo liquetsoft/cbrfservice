@@ -213,8 +213,6 @@ final class DataHelper
         foreach ($arPath as $chainItem) {
             if (\is_array($item) && \array_key_exists($chainItem, $item)) {
                 $item = $item[$chainItem];
-            } elseif (\is_object($item) && property_exists($item, $chainItem)) {
-                $item = $item->$chainItem;
             } else {
                 $item = null;
                 break;
