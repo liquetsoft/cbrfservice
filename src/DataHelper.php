@@ -9,7 +9,7 @@ use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
 
 /**
  * Helper that contains several operations for data accessing and converting.
- * 
+ *
  * @internal
  */
 final class DataHelper
