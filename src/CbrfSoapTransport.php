@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService;
 
 use Liquetsoft\CbrfService\Exception\CbrfTransportException;
-use SoapClient;
 
 /**
- * Class for cbrf SOAP service.
+ * Object for cbrf SOAP transport.
  */
 final class CbrfSoapTransport implements CbrfTransport
 {
     public const WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
-    private const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
+    public const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
 
-    private ?\SoapClient $client = null;
+    private ?\SoapClient $client;
 
     public function __construct(?\SoapClient $client = null)
     {
@@ -46,12 +45,10 @@ final class CbrfSoapTransport implements CbrfTransport
      */
     private function queryInternal(string $method, array $params = []): array
     {
-        // need to do this because every params list are nested to parameters object
-        if (!empty($params)) {
-            $params = [$params];
-        }
-
-        $soapCallResult = $this->getSoapClient()->__soapCall($method, $params);
+        $soapCallResult = $this->getSoapClient()->__soapCall(
+            $method,
+            $this->prepareParams($params)
+        );
 
         $resName = $method . 'Result';
         if (!empty($soapCallResult->$resName->any)) {
@@ -104,5 +101,26 @@ final class CbrfSoapTransport implements CbrfTransport
         );
 
         return $this->client;
+    }
+
+    /**
+     * Prepares array of params for query.
+     */
+    private function prepareParams(array $params): array
+    {
+        if (empty($params)) {
+            return [];
+        }
+
+        $return = [];
+        foreach ($params as $name => $value) {
+            if ($value instanceof \DateTimeInterface) {
+                $value = $value->format(self::DATE_TIME_FORMAT);
+            }
+            $return[$name] = $value;
+        }
+
+        // need to do this because every params list are nested to parameters object
+        return [$return];
     }
 }
