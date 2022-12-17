@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
-use Liquetsoft\CbrfService\Exception\CbrfException;
+use Liquetsoft\CbrfService\Exception\CbrfTransportException;
 use SoapClient;
 
 /**
@@ -12,7 +12,7 @@ use SoapClient;
  */
 final class CbrfSoapTransport implements CbrfTransport
 {
-    public const DEFAULT_WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
+    public const WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
     private const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
 
     private ?\SoapClient $client = null;
@@ -27,11 +27,12 @@ final class CbrfSoapTransport implements CbrfTransport
      */
     public function query(string $method, ?array $params = null): array
     {
+        $params = $params ?: [];
+
         try {
-            return $this->queryInternal($method, $params ?: []);
+            return $this->queryInternal($method, $params);
         } catch (\Throwable $e) {
-            $message = sprintf("Fail on '%s': '%s'.", $method, $e->getMessage());
-            throw new CbrfException($message, 0, $e);
+            throw new CbrfTransportException($method, $params, $e);
         }
     }
 
@@ -96,7 +97,7 @@ final class CbrfSoapTransport implements CbrfTransport
         }
 
         $this->client = new \SoapClient(
-            self::DEFAULT_WSDL,
+            self::WSDL,
             [
                 'exception' => true,
             ]

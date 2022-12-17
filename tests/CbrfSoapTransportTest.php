@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfSoapTransport;
-use Liquetsoft\CbrfService\Exception\CbrfException;
+use Liquetsoft\CbrfService\Exception\CbrfTransportException;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -89,7 +89,7 @@ class CbrfSoapTransportTest extends BaseTestCase
 
         $service = new CbrfSoapTransport($soapClient);
 
-        $this->expectException(CbrfException::class);
+        $this->expectException(CbrfTransportException::class);
         $service->query('test');
     }
 }
