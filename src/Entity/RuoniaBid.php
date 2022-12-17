@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityRate;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,15 +12,15 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class RuoniaBid implements Rate
+final class RuoniaBid implements CbrfEntityRate
 {
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
-    private float $rate;
+    private readonly float $rate;
 
-    private float $dealsVolume;
+    private readonly float $dealsVolume;
 
-    private \DateTimeInterface $dateUpdate;
+    private readonly \DateTimeInterface $dateUpdate;
 
     public function __construct(array $item)
     {

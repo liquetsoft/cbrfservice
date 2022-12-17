@@ -11,19 +11,19 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class SwapRate
+final class SwapRate
 {
-    private \DateTimeInterface $dateBuy;
+    private readonly \DateTimeInterface $dateBuy;
 
-    private \DateTimeInterface $dateSell;
+    private readonly \DateTimeInterface $dateSell;
 
-    private float $baseRate;
+    private readonly float $baseRate;
 
-    private float $tir;
+    private readonly float $tir;
 
-    private float $rate;
+    private readonly float $rate;
 
-    private int $currency;
+    private readonly int $currency;
 
     public function __construct(array $item)
     {

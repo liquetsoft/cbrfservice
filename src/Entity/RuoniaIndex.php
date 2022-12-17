@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityDate;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,17 +12,17 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class RuoniaIndex implements ItemWithDate
+final class RuoniaIndex implements CbrfEntityDate
 {
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
-    private float $index;
+    private readonly float $index;
 
-    private float $average1Month;
+    private readonly float $average1Month;
 
-    private float $average3Month;
+    private readonly float $average3Month;
 
-    private float $average6Month;
+    private readonly float $average6Month;
 
     public function __construct(array $item)
     {

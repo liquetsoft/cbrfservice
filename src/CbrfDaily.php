@@ -25,16 +25,13 @@ use Liquetsoft\CbrfService\Entity\SwapRate;
 /**
  * Class for a daily cb RF service.
  */
-class CbrfDaily
+final class CbrfDaily
 {
-    private CbrfSoapService $soapClient;
+    private readonly CbrfTransport $transport;
 
-    /**
-     * @param \SoapClient|string $client
-     */
-    public function __construct($client = CbrfSoapService::DEFAULT_WSDL)
+    public function __construct(CbrfTransport $transport)
     {
-        $this->soapClient = new CbrfSoapService($client);
+        $this->transport = $transport;
     }
 
     /**
@@ -46,7 +43,7 @@ class CbrfDaily
      */
     public function getCursOnDate(\DateTimeInterface $date): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'GetCursOnDate',
             [
                 'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -113,7 +110,7 @@ class CbrfDaily
      */
     public function enumValutes(bool $seld = false): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'EnumValutes',
             [
                 'Seld' => $seld,
@@ -181,7 +178,7 @@ class CbrfDaily
      */
     public function getLatestDateTime(): \DateTimeInterface
     {
-        $res = $this->soapClient->query('GetLatestDateTime');
+        $res = $this->transport->query('GetLatestDateTime');
 
         return DataHelper::dateTime('GetLatestDateTimeResult', $res);
     }
@@ -197,7 +194,7 @@ class CbrfDaily
      */
     public function getLatestDateTimeSeld(): \DateTimeInterface
     {
-        $res = $this->soapClient->query('GetLatestDateTimeSeld');
+        $res = $this->transport->query('GetLatestDateTimeSeld');
 
         return DataHelper::dateTime('GetLatestDateTimeSeldResult', $res);
     }
@@ -213,7 +210,7 @@ class CbrfDaily
      */
     public function getLatestDate(): \DateTimeInterface
     {
-        $res = $this->soapClient->query('GetLatestDate');
+        $res = $this->transport->query('GetLatestDate');
 
         return DataHelper::dateTime('GetLatestDateResult', $res);
     }
@@ -229,7 +226,7 @@ class CbrfDaily
      */
     public function getLatestDateSeld(): \DateTimeInterface
     {
-        $res = $this->soapClient->query('GetLatestDateSeld');
+        $res = $this->transport->query('GetLatestDateSeld');
 
         return DataHelper::dateTime('GetLatestDateSeldResult', $res);
     }
@@ -245,7 +242,7 @@ class CbrfDaily
      */
     public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CurrencyEnum $currency): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'GetCursDynamic',
             [
                 'FromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -277,7 +274,7 @@ class CbrfDaily
      */
     public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'KeyRate',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -298,7 +295,7 @@ class CbrfDaily
      */
     public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'DragMetDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -319,7 +316,7 @@ class CbrfDaily
      */
     public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'SwapDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -340,7 +337,7 @@ class CbrfDaily
      */
     public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'DepoDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -361,7 +358,7 @@ class CbrfDaily
      */
     public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'OstatDynamic',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -382,7 +379,7 @@ class CbrfDaily
      */
     public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'OstatDepo',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -403,7 +400,7 @@ class CbrfDaily
      */
     public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'mrrf',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -424,7 +421,7 @@ class CbrfDaily
      */
     public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'mrrf7D',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -445,7 +442,7 @@ class CbrfDaily
      */
     public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'Saldo',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -466,7 +463,7 @@ class CbrfDaily
      */
     public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'RuoniaSV',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -487,7 +484,7 @@ class CbrfDaily
      */
     public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'Ruonia',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -508,7 +505,7 @@ class CbrfDaily
      */
     public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'MKR',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -529,7 +526,7 @@ class CbrfDaily
      */
     public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'DV',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -550,7 +547,7 @@ class CbrfDaily
      */
     public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $res = $this->soapClient->query(
+        $res = $this->transport->query(
             'Repo_debt',
             [
                 'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -572,7 +569,7 @@ class CbrfDaily
      */
     public function getReutersCursOnDate(\DateTimeInterface $date): array
     {
-        $enumSoapResults = $this->soapClient->query(
+        $enumSoapResults = $this->transport->query(
             'EnumReutersValutes',
             [
                 'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
@@ -584,7 +581,7 @@ class CbrfDaily
             $enumCurrencies[$enumSoapResult['num_code']] = $enumSoapResult;
         }
 
-        $soapValutesResults = $this->soapClient->query(
+        $soapValutesResults = $this->transport->query(
             'GetReutersCursOnDate',
             [
                 'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),

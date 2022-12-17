@@ -9,7 +9,7 @@ use SoapClient;
 /**
  * Class for cbrf SOAP service.
  */
-class CbrfSoapService
+final class CbrfSoapService implements CbrfTransport
 {
     public const DEFAULT_WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
     public const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
@@ -18,10 +18,7 @@ class CbrfSoapService
 
     private ?\SoapClient $client = null;
 
-    /**
-     * @param \SoapClient|string $client
-     */
-    public function __construct($client)
+    public function __construct(\SoapClient|string $client)
     {
         if ($client instanceof \SoapClient) {
             $this->client = $client;
@@ -31,19 +28,12 @@ class CbrfSoapService
     }
 
     /**
-     * Makes a soap call.
-     *
-     * @param string $method
-     * @param array  $params
-     *
-     * @return array
-     *
-     * @throws CbrfException
+     * {@inheritDoc}
      */
-    public function query(string $method, array $params = []): array
+    public function query(string $method, ?array $params = null): array
     {
         try {
-            return $this->queryInternal($method, $params);
+            return $this->queryInternal($method, $params ?: []);
         } catch (\Throwable $e) {
             $message = sprintf("Fail on '%s': '%s'.", $method, $e->getMessage());
             throw new CbrfException($message, 0, $e);

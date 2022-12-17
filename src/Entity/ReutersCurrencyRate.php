@@ -4,26 +4,28 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityDate;
+
 /**
  * DTO that represents response item from GetCursOnDate method.
  *
  * @psalm-immutable
  */
-class ReutersCurrencyRate implements ItemWithDate
+final class ReutersCurrencyRate implements CbrfEntityDate
 {
-    private string $chCode = '';
+    private readonly string $chCode;
 
-    private string $nameRu = '';
+    private readonly string $nameRu;
 
-    private string $nameEn = '';
+    private readonly string $nameEn;
 
-    private int $code = 0;
+    private readonly int $code;
 
-    private float $curs = .0;
+    private readonly float $curs;
 
-    private int $dir = 0;
+    private readonly int $dir;
 
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
     public function __construct(array $item, \DateTimeInterface $date)
     {

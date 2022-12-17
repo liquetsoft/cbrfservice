@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityDate;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,23 +12,23 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class Mkr implements ItemWithDate
+final class Mkr implements CbrfEntityDate
 {
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
-    private int $p1;
+    private readonly int $p1;
 
-    private ?float $d1;
+    private readonly ?float $d1;
 
-    private ?float $d7;
+    private readonly ?float $d7;
 
-    private ?float $d30;
+    private readonly ?float $d30;
 
-    private ?float $d90;
+    private readonly ?float $d90;
 
-    private ?float $d180;
+    private readonly ?float $d180;
 
-    private ?float $d360;
+    private readonly ?float $d360;
 
     public function __construct(array $item)
     {

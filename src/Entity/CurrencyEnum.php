@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityCurrency;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,21 +12,21 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class CurrencyEnum implements Currency
+class CurrencyEnum implements CbrfEntityCurrency
 {
-    private string $internalCode;
+    private readonly string $internalCode;
 
-    private string $name;
+    private readonly string $name;
 
-    private string $engName;
+    private readonly string $engName;
 
-    private int $nom;
+    private readonly int $nom;
 
-    private string $commonCode;
+    private readonly string $commonCode;
 
-    private int $numericCode;
+    private readonly int $numericCode;
 
-    private string $charCode;
+    private readonly string $charCode;
 
     public function __construct(array $item)
     {

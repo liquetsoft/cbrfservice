@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService\Entity;
+namespace Liquetsoft\CbrfService;
 
 /**
  * Interface for DTO that contains currency.
  */
-interface Currency
+interface CbrfEntityCurrency
 {
     public function getName(): string;
 
