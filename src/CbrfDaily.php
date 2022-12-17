@@ -227,11 +227,13 @@ final class CbrfDaily
         $result = [];
         $list = DataHelper::array('ValuteData.ValuteCursDynamic', $res);
         foreach ($list as $item) {
-            $date = DataHelper::dateTime('CursDate', $item);
-            $item['Vname'] = $currency->getName();
-            $item['VchCode'] = $currency->getCharCode();
-            $item['Vcode'] = $currency->getNumericCode();
-            $result[] = new CurrencyRate($item, $date);
+            if (\is_array($item)) {
+                $date = DataHelper::dateTime('CursDate', $item);
+                $item['Vname'] = $currency->getName();
+                $item['VchCode'] = $currency->getCharCode();
+                $item['Vcode'] = $currency->getNumericCode();
+                $result[] = new CurrencyRate($item, $date);
+            }
         }
 
         return $result;

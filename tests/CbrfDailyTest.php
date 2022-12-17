@@ -218,7 +218,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($courses), $list);
         $this->assertContainsOnlyInstancesOf(CurrencyRate::class, $list);
         foreach ($courses as $key => $course) {
-            $this->assertSame(strtoupper($course['VchCode']), $list[$key]->getCharCode());
+            $this->assertSame(strtoupper((string) $course['VchCode']), $list[$key]->getCharCode());
             $this->assertSame($course['Vname'], $list[$key]->getName());
             $this->assertSame($course['Vcode'], $list[$key]->getNumericCode());
             $this->assertSame($course['Vcurs'], $list[$key]->getRate());
@@ -233,7 +233,7 @@ class CbrfDailyTest extends BaseTestCase
     public function testGetCursOnDateByCharCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
-        $charCode = $courses[0]['VchCode'] ?? '';
+        $charCode = (string) ($courses[0]['VchCode'] ?? '');
         $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->createTransportMock(
@@ -257,7 +257,7 @@ class CbrfDailyTest extends BaseTestCase
     public function testGetCursOnDateByNumericCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
-        $numericCode = $courses[0]['Vcode'] ?? 0;
+        $numericCode = (int) ($courses[0]['Vcode'] ?? 0);
         $onDate = new \DateTimeImmutable();
 
         $soapClient = $this->createTransportMock(
@@ -297,7 +297,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($currencies), $list);
         $this->assertContainsOnlyInstancesOf(CurrencyEnum::class, $list);
         foreach ($currencies as $key => $currency) {
-            $this->assertSame(strtoupper($currency['VcharCode']), $list[$key]->getCharCode());
+            $this->assertSame(strtoupper((string) $currency['VcharCode']), $list[$key]->getCharCode());
             $this->assertSame($currency['Vname'], $list[$key]->getName());
             $this->assertSame($currency['Vcode'], $list[$key]->getInternalCode());
             $this->assertSame($currency['VEngname'], $list[$key]->getEngName());
@@ -313,7 +313,7 @@ class CbrfDailyTest extends BaseTestCase
     public function testEnumValuteByCharCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
-        $charCode = $courses[0]['VcharCode'] ?? '';
+        $charCode = (string) ($courses[0]['VcharCode'] ?? '');
         $seld = false;
 
         $soapClient = $this->createTransportMock(
@@ -337,7 +337,7 @@ class CbrfDailyTest extends BaseTestCase
     public function testEnumValuteByNumericCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
-        $numericCode = $courses[0]['VnumCode'] ?? 0;
+        $numericCode = (int) ($courses[0]['VnumCode'] ?? 0);
         $seld = false;
 
         $soapClient = $this->createTransportMock(
@@ -484,7 +484,7 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($numericCode, $list[$key]->getNumericCode());
             $this->assertSame($currency['Vcurs'], $list[$key]->getRate());
             $this->assertSame($currency['Vnom'], $list[$key]->getNom());
-            $this->assertSameDate(new \DateTimeImmutable($currency['CursDate']), $list[$key]->getDate());
+            $this->assertSameDate($currency['CursDate'], $list[$key]->getDate());
         }
     }
 
@@ -512,7 +512,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($rates), $list);
         $this->assertContainsOnlyInstancesOf(KeyRate::class, $list);
         foreach ($rates as $key => $rate) {
-            $this->assertSameDate(new \DateTimeImmutable($rate['DT']), $list[$key]->getDate());
+            $this->assertSameDate($rate['DT'], $list[$key]->getDate());
             $this->assertSame($rate['Rate'], $list[$key]->getRate());
         }
     }
@@ -541,7 +541,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($metals), $list);
         $this->assertContainsOnlyInstancesOf(PreciousMetalRate::class, $list);
         foreach ($metals as $key => $metal) {
-            $this->assertSameDate(new \DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
+            $this->assertSameDate($metal['DateMet'], $list[$key]->getDate());
             $this->assertSame($metal['CodMet'], $list[$key]->getCode()->value);
             $this->assertSame($metal['price'], $list[$key]->getRate());
         }
@@ -571,8 +571,8 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($swaps), $list);
         $this->assertContainsOnlyInstancesOf(SwapRate::class, $list);
         foreach ($swaps as $key => $swap) {
-            $this->assertSameDate(new \DateTimeImmutable($swap['DateBuy']), $list[$key]->getDateBuy());
-            $this->assertSameDate(new \DateTimeImmutable($swap['DateSell']), $list[$key]->getDateSell());
+            $this->assertSameDate($swap['DateBuy'], $list[$key]->getDateBuy());
+            $this->assertSameDate($swap['DateSell'], $list[$key]->getDateSell());
             $this->assertSame($swap['BaseRate'], $list[$key]->getBaseRate());
             $this->assertSame($swap['TIR'], $list[$key]->getTIR());
             $this->assertSame($swap['Stavka'], $list[$key]->getRate());
@@ -604,7 +604,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($depos), $list);
         $this->assertContainsOnlyInstancesOf(DepoRate::class, $list);
         foreach ($depos as $key => $depo) {
-            $this->assertSameDate(new \DateTimeImmutable($depo['DateDepo']), $list[$key]->getDate());
+            $this->assertSameDate($depo['DateDepo'], $list[$key]->getDate());
             $this->assertSame($depo['Overnight'], $list[$key]->getRate());
         }
     }
@@ -633,7 +633,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($depos), $list);
         $this->assertContainsOnlyInstancesOf(OstatRate::class, $list);
         foreach ($depos as $key => $ostat) {
-            $this->assertSameDate(new \DateTimeImmutable($ostat['DateOst']), $list[$key]->getDate());
+            $this->assertSameDate($ostat['DateOst'], $list[$key]->getDate());
             $this->assertSame($ostat['InMoscow'], $list[$key]->getMoscow());
             $this->assertSame($ostat['InRuss'], $list[$key]->getRussia());
         }
@@ -663,7 +663,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($depos), $list);
         $this->assertContainsOnlyInstancesOf(OstatDepoRate::class, $list);
         foreach ($depos as $key => $ostat) {
-            $this->assertSameDate(new \DateTimeImmutable($ostat['D0']), $list[$key]->getDate());
+            $this->assertSameDate($ostat['D0'], $list[$key]->getDate());
             $this->assertSame($ostat['D1_7'], $list[$key]->getDays1to7());
             $this->assertSame($ostat['total'], $list[$key]->getTotal());
         }
@@ -693,7 +693,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($mrrfs), $list);
         $this->assertContainsOnlyInstancesOf(InternationalReserve::class, $list);
         foreach ($mrrfs as $key => $mrrf) {
-            $this->assertSameDate(new \DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
+            $this->assertSameDate($mrrf['D0'], $list[$key]->getDate());
             $this->assertSame($mrrf['p1'], $list[$key]->getRate());
         }
     }
@@ -722,7 +722,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($mrrfs), $list);
         $this->assertContainsOnlyInstancesOf(InternationalReserveWeek::class, $list);
         foreach ($mrrfs as $key => $mrrf) {
-            $this->assertSameDate(new \DateTimeImmutable($mrrf['D0']), $list[$key]->getDate());
+            $this->assertSameDate($mrrf['D0'], $list[$key]->getDate());
             $this->assertSame($mrrf['val'], $list[$key]->getRate());
         }
     }
@@ -751,7 +751,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($saldos), $list);
         $this->assertContainsOnlyInstancesOf(Saldo::class, $list);
         foreach ($saldos as $key => $saldo) {
-            $this->assertSameDate(new \DateTimeImmutable($saldo['Dt']), $list[$key]->getDate());
+            $this->assertSameDate($saldo['Dt'], $list[$key]->getDate());
             $this->assertSame($saldo['DEADLINEBS'], $list[$key]->getRate());
         }
     }
@@ -780,7 +780,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($ruoniaIndexes), $list);
         $this->assertContainsOnlyInstancesOf(RuoniaIndex::class, $list);
         foreach ($ruoniaIndexes as $key => $ruoniaIndex) {
-            $this->assertSameDate(new \DateTimeImmutable($ruoniaIndex['DT']), $list[$key]->getDate());
+            $this->assertSameDate($ruoniaIndex['DT'], $list[$key]->getDate());
             $this->assertSame($ruoniaIndex['RUONIA_Index'], $list[$key]->getIndex());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_1M'], $list[$key]->getAverage1Month());
             $this->assertSame($ruoniaIndex['RUONIA_AVG_3M'], $list[$key]->getAverage3Month());
@@ -812,10 +812,10 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($ruoniaBids), $list);
         $this->assertContainsOnlyInstancesOf(RuoniaBid::class, $list);
         foreach ($ruoniaBids as $key => $ruoniaBid) {
-            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['D0']), $list[$key]->getDate());
+            $this->assertSameDate($ruoniaBid['D0'], $list[$key]->getDate());
             $this->assertSame($ruoniaBid['ruo'], $list[$key]->getRate());
             $this->assertSame($ruoniaBid['vol'], $list[$key]->getDealsVolume());
-            $this->assertSameDate(new \DateTimeImmutable($ruoniaBid['DateUpdate']), $list[$key]->getDateUpdate());
+            $this->assertSameDate($ruoniaBid['DateUpdate'], $list[$key]->getDateUpdate());
         }
     }
 
@@ -843,7 +843,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($mkrs), $list);
         $this->assertContainsOnlyInstancesOf(Mkr::class, $list);
         foreach ($mkrs as $key => $mkr) {
-            $this->assertSameDate(new \DateTimeImmutable($mkr['CDate']), $list[$key]->getDate());
+            $this->assertSameDate($mkr['CDate'], $list[$key]->getDate());
             $this->assertSame($mkr['p1'], $list[$key]->getP1());
             $this->assertSame($mkr['d1'], $list[$key]->getD1());
             $this->assertSame($mkr['d7'], $list[$key]->getD7());
@@ -878,8 +878,8 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($dvs), $list);
         $this->assertContainsOnlyInstancesOf(Dv::class, $list);
         foreach ($dvs as $key => $dv) {
-            $this->assertSameDate(new \DateTimeImmutable($dv['Date']), $list[$key]->getDate());
-            $this->assertSameDate(new \DateTimeImmutable($dv['VIDate']), $list[$key]->getVIDate());
+            $this->assertSameDate($dv['Date'], $list[$key]->getDate());
+            $this->assertSameDate($dv['VIDate'], $list[$key]->getVIDate());
             $this->assertSame($dv['VOvern'], $list[$key]->getVOvern());
             $this->assertSame($dv['VLomb'], $list[$key]->getVLomb());
             $this->assertSame($dv['VIDay'], $list[$key]->getVIDay());
@@ -912,7 +912,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($debts), $list);
         $this->assertContainsOnlyInstancesOf(RepoDebt::class, $list);
         foreach ($debts as $key => $debt) {
-            $this->assertSameDate(new \DateTimeImmutable($debt['Date']), $list[$key]->getDate());
+            $this->assertSameDate($debt['Date'], $list[$key]->getDate());
             $this->assertSame($debt['debt'], $list[$key]->getRate());
             $this->assertSame($debt['debt_auc'], $list[$key]->getDebtAuc());
             $this->assertSame($debt['debt_fix'], $list[$key]->getDebtFix());
@@ -941,7 +941,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertCount(\count($currencies), $list);
         $this->assertContainsOnlyInstancesOf(ReutersCurrency::class, $list);
         foreach ($currencies as $key => $currency) {
-            $this->assertSame(strtoupper($currency['char_code']), $list[$key]->getCharCode());
+            $this->assertSame(strtoupper((string) $currency['char_code']), $list[$key]->getCharCode());
             $this->assertSame($currency['Title_ru'], $list[$key]->getName());
             $this->assertSame($currency['Title_en'], $list[$key]->getNameEn());
             $this->assertSame($currency['num_code'], $list[$key]->getNumericCode());

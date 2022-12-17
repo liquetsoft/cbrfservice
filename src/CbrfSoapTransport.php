@@ -42,6 +42,8 @@ final class CbrfSoapTransport implements CbrfTransport
      * @param array  $params
      *
      * @return array
+     *
+     * @psalm-suppress MixedPropertyFetch
      */
     private function queryInternal(string $method, array $params = []): array
     {
@@ -53,7 +55,7 @@ final class CbrfSoapTransport implements CbrfTransport
         $resName = $method . 'Result';
         if (!empty($soapCallResult->$resName->any)) {
             $xml = simplexml_load_string(
-                $soapCallResult->$resName->any,
+                (string) $soapCallResult->$resName->any,
                 'SimpleXMLElement',
                 \LIBXML_NOCDATA
             );

@@ -186,7 +186,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider arrayProvider
      */
-    public function testArray(string $path, mixed $input, array|\Exception $result): void
+    public function testArray(string $path, array $input, array|\Exception $result): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -244,7 +244,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider dateTimeProvider
      */
-    public function testDateTime(string $path, mixed $input, \DateTimeInterface|\Exception $result): void
+    public function testDateTime(string $path, array $input, \DateTimeInterface|\Exception $result): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -322,7 +322,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider stringProvider
      */
-    public function testString(string $path, mixed $input, string|\Exception $result, ?string $default = null): void
+    public function testString(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -387,7 +387,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider floatProvider
      */
-    public function testFloat(string $path, mixed $input, float|\Exception $result, ?float $default = null): void
+    public function testFloat(string $path, array $input, float|\Exception $result, ?float $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -452,7 +452,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider floatOrNullProvider
      */
-    public function testFloatOrNull(string $path, mixed $input, ?float $result): void
+    public function testFloatOrNull(string $path, array $input, ?float $result): void
     {
         $testFloat = DataHelper::floatOrNull($path, $input);
 
@@ -505,7 +505,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider intProvider
      */
-    public function testInt(string $path, mixed $input, int|\Exception $result, ?int $default = null): void
+    public function testInt(string $path, array $input, int|\Exception $result, ?int $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -570,7 +570,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider charCodeProvider
      */
-    public function testCharCode(string $path, mixed $input, string|\Exception $result, ?string $default = null): void
+    public function testCharCode(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);

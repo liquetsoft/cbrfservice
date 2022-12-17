@@ -18,8 +18,16 @@ abstract class BaseTestCase extends TestCase
     public const FIXTURE_TYPE_FLOAT = 'float';
     public const FIXTURE_TYPE_DATE = 'date';
 
-    protected function assertSameDate(\DateTimeInterface $date1, \DateTimeInterface $date2): void
+    protected function assertSameDate(mixed $date1, mixed $date2): void
     {
+        if (!($date1 instanceof \DateTimeInterface)) {
+            $date1 = new \DateTimeImmutable((string) $date1);
+        }
+
+        if (!($date2 instanceof \DateTimeInterface)) {
+            $date2 = new \DateTimeImmutable((string) $date2);
+        }
+
         $this->assertSame(
             $date1->getTimestamp(),
             $date2->getTimestamp(),
@@ -86,8 +94,7 @@ abstract class BaseTestCase extends TestCase
                             $value = '2010-10-1' . mt_rand(0, 9);
                             break;
                         default:
-                            $message = sprintf("Can't recognize field type '%s'.", $type);
-                            throw new \RuntimeException($message);
+                            throw new \RuntimeException("Can't recognize field type");
                     }
                 }
                 $datum[$name] = $value;
