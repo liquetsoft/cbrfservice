@@ -13,18 +13,14 @@
     </projectFiles>
 
     <issueHandlers>
-        <MixedArrayAssignment errorLevel="suppress"/>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <directory name="./tests"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
         <MixedAssignment errorLevel="suppress"/>
-        <MixedArgument errorLevel="suppress"/>
-        <MixedArrayAccess errorLevel="suppress"/>
-        <MixedArrayOffset errorLevel="suppress"/>
-        <MixedInferredReturnType errorLevel="suppress"/>
-        <MixedPropertyFetch errorLevel="suppress"/>
-        <MixedReturnTypeCoercion errorLevel="suppress"/>
-        <PropertyNotSetInConstructor errorLevel="suppress"/>
     </issueHandlers>
 
     <plugins>
-        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
 </psalm>

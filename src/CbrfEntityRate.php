@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService\Entity;
+namespace Liquetsoft\CbrfService;
 
 /**
  * Interface for DTO that related to some date.
  */
-interface Rate extends ItemWithDate
+interface CbrfEntityRate extends CbrfEntityDate
 {
     public function getRate(): float;
 }

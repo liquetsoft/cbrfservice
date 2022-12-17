@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService;
+namespace Liquetsoft\CbrfService\Exception;
 
 /**
  * Class for a lib exception.

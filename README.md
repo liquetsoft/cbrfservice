@@ -26,7 +26,7 @@ composer req liquetsoft/cbrfservice
 
 ```php
 //инициируем новый объект сервиса
-$cbrf = new \Liquetsoft\CbrfService\CbrfDaily();
+$cbrf = \Liquetsoft\CbrfService\CbrfFactory::createDaily();
 ```
 
 ```php
@@ -183,7 +183,7 @@ $client = new SoapClient(
 );
 
 //инициируем новый объект сервиса
-$cbrf = new \Liquetsoft\CbrfService\CbrfDaily($client);
+$cbrf = \Liquetsoft\CbrfService\CbrfFactory::createDaily($client);
 ```
 
 

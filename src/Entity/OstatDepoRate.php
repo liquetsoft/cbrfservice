@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityDate;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,13 +12,13 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class OstatDepoRate implements ItemWithDate
+final class OstatDepoRate implements CbrfEntityDate
 {
-    private float $days1to7 = .0;
+    private readonly float $days1to7;
 
-    private float $total = .0;
+    private readonly float $total;
 
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
     public function __construct(array $item)
     {

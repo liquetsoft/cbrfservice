@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
-use Liquetsoft\CbrfService\CbrfException;
 use Liquetsoft\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
+use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
+use Liquetsoft\CbrfService\Tests\Mock\EntityEnumIntMock;
+use Liquetsoft\CbrfService\Tests\Mock\EntityMock;
 
 /**
  * @internal
@@ -13,17 +16,14 @@ use Liquetsoft\CbrfService\DataHelper;
 class DataHelperTest extends BaseTestCase
 {
     /**
-     * @param string|\DateTimeInterface     $input
-     * @param \DateTimeInterface|\Throwable $result
-     *
      * @test
      *
      * @dataProvider createImmutableDateTimeProvider
      */
-    public function testCreateImmutableDateTime($input, $result): void
+    public function testCreateImmutableDateTime(string|\DateTimeInterface $input, \DateTimeInterface|\Exception $result): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testDateTime = DataHelper::createImmutableDateTime($input);
@@ -54,24 +54,142 @@ class DataHelperTest extends BaseTestCase
             ],
             'exception on incorrect date' => [
                 'test',
-                new CbrfException(),
+                new CbrfDataConvertException('string', \DateTimeImmutable::class),
             ],
         ];
     }
 
     /**
-     * @param string           $path
-     * @param mixed            $input
-     * @param array|\Throwable $result
+     * @test
      *
+     * @psalm-param class-string $itemClass
+     * @psalm-param object[]|\Exception $result
+     *
+     * @dataProvider arrayOfItemsProvider
+     */
+    public function testArrayOfItems(string $path, array $data, string $itemClass, array|\Exception $result): void
+    {
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
+        }
+
+        $items = DataHelper::arrayOfItems($path, $data, $itemClass);
+
+        if (\is_array($result)) {
+            $this->assertCount(\count($result), $items);
+            $this->assertContainsOnlyInstancesOf($itemClass, $items);
+            foreach ($result as $key => $resultValue) {
+                $valueToTest = isset($items[$key]) && method_exists($items[$key], 'getTest') ? $items[$key]->getTest() : null;
+                $this->assertSame($resultValue, $valueToTest);
+            }
+        }
+    }
+
+    public function arrayOfItemsProvider(): array
+    {
+        return [
+            'correct list' => [
+                'test1.test2',
+                [
+                    'test1' => [
+                        'test2' => [
+                            ['test' => 'test value 1'],
+                            ['test' => 'test value 2'],
+                        ],
+                    ],
+                ],
+                EntityMock::class,
+                [
+                    'test value 1',
+                    'test value 2',
+                ],
+            ],
+            'empty list' => [
+                'test1',
+                [
+                    'test1' => [],
+                ],
+                EntityMock::class,
+                [],
+            ],
+            'not an array' => [
+                'test1',
+                [
+                    'test1' => 'test',
+                ],
+                EntityMock::class,
+                new CbrfDataAccessException('test1', 'array'),
+            ],
+            'convert exception' => [
+                'test1',
+                [
+                    'test1' => [[], []],
+                ],
+                EntityMock::class,
+                new CbrfDataConvertException('array', EntityMock::class . '[]'),
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @psalm-param class-string $enumClass
+     *
+     * @dataProvider enumIntProvider
+     */
+    public function testEnumInt(string $path, array $data, string $enumClass, object $result): void
+    {
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
+        }
+
+        $enum = DataHelper::enumInt($path, $data, $enumClass);
+
+        if (!($result instanceof \Exception)) {
+            $this->assertSame($result, $enum);
+        }
+    }
+
+    public function enumIntProvider(): array
+    {
+        return [
+            'correct enum' => [
+                'test1.test2',
+                [
+                    'test1' => [
+                        'test2' => 1,
+                    ],
+                ],
+                EntityEnumIntMock::class,
+                EntityEnumIntMock::GOLD,
+            ],
+            'value not found' => [
+                'test1',
+                [],
+                EntityEnumIntMock::class,
+                new CbrfDataAccessException('test1', 'int'),
+            ],
+            'value not in enum' => [
+                'test1',
+                [
+                    'test1' => 'test',
+                ],
+                EntityEnumIntMock::class,
+                new CbrfDataConvertException('int', EntityEnumIntMock::class),
+            ],
+        ];
+    }
+
+    /**
      * @test
      *
      * @dataProvider arrayProvider
      */
-    public function testArray(string $path, $input, $result): void
+    public function testArray(string $path, array $input, array|\Exception $result): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testArray = DataHelper::array($path, $input);
@@ -87,12 +205,10 @@ class DataHelperTest extends BaseTestCase
         $result = ['key' => 'value'];
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $result;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $result,
+        $arrayObjectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -105,14 +221,9 @@ class DataHelperTest extends BaseTestCase
                 ],
                 $result,
             ],
-            'search inside object' => [
-                $path,
-                $object,
-                $result,
-            ],
             'mixed search in array and object' => [
                 $path,
-                $objectMixed,
+                $arrayObjectMixed,
                 $result,
             ],
             'nothing found' => [
@@ -123,24 +234,20 @@ class DataHelperTest extends BaseTestCase
             'wrong type exception' => [
                 $path,
                 ['test1' => ['test2' => 'wqe']],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'array'),
             ],
         ];
     }
 
     /**
-     * @param string                        $path
-     * @param mixed                         $input
-     * @param \DateTimeInterface|\Throwable $result
-     *
      * @test
      *
      * @dataProvider dateTimeProvider
      */
-    public function testDateTime(string $path, $input, $result): void
+    public function testDateTime(string $path, array $input, \DateTimeInterface|\Exception $result): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testDateTime = DataHelper::dateTime($path, $input);
@@ -158,12 +265,10 @@ class DataHelperTest extends BaseTestCase
         $date = $result->format(\DATE_ATOM);
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $date;
+        $object->test2 = $date;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $date,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -174,11 +279,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $date,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -194,7 +294,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'date'),
             ],
             'empty string exception' => [
                 $path,
@@ -203,7 +303,7 @@ class DataHelperTest extends BaseTestCase
                         'test2' => '',
                     ],
                 ],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'date'),
             ],
             'non-string exception' => [
                 $path,
@@ -212,25 +312,20 @@ class DataHelperTest extends BaseTestCase
                         'test2' => false,
                     ],
                 ],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'date'),
             ],
         ];
     }
 
     /**
-     * @param string            $path
-     * @param mixed             $input
-     * @param string|\Throwable $result
-     * @param string|null       $default
-     *
      * @test
      *
      * @dataProvider stringProvider
      */
-    public function testString(string $path, $input, $result, ?string $default = null): void
+    public function testString(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testString = DataHelper::string($path, $input, $default);
@@ -247,12 +342,10 @@ class DataHelperTest extends BaseTestCase
         $result = 'test';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $string;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $string,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -263,11 +356,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $string,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -283,7 +371,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'string'),
             ],
             'test default' => [
                 $path,
@@ -295,19 +383,14 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string           $path
-     * @param mixed            $input
-     * @param float|\Throwable $result
-     * @param float|null       $default
-     *
      * @test
      *
      * @dataProvider floatProvider
      */
-    public function testFloat(string $path, $input, $result, ?float $default = null): void
+    public function testFloat(string $path, array $input, float|\Exception $result, ?float $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testFloat = DataHelper::float($path, $input, $default);
@@ -324,12 +407,10 @@ class DataHelperTest extends BaseTestCase
         $float = '12.3';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $float;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $float,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -340,11 +421,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $float,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -360,7 +436,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'float'),
             ],
             'test default' => [
                 $path,
@@ -372,15 +448,11 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string     $path
-     * @param mixed      $input
-     * @param float|null $result
-     *
      * @test
      *
      * @dataProvider floatOrNullProvider
      */
-    public function testFloatOrNull(string $path, $input, $result): void
+    public function testFloatOrNull(string $path, array $input, ?float $result): void
     {
         $testFloat = DataHelper::floatOrNull($path, $input);
 
@@ -394,12 +466,10 @@ class DataHelperTest extends BaseTestCase
         $float = '12.3';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $float;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $float,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -410,11 +480,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $float,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -436,19 +501,14 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string         $path
-     * @param mixed          $input
-     * @param int|\Throwable $result
-     * @param int|null       $default
-     *
      * @test
      *
      * @dataProvider intProvider
      */
-    public function testInt(string $path, $input, $result, ?int $default = null): void
+    public function testInt(string $path, array $input, int|\Exception $result, ?int $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testInt = DataHelper::int($path, $input, $default);
@@ -465,12 +525,10 @@ class DataHelperTest extends BaseTestCase
         $int = '12';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $int;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $int,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -481,11 +539,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $int,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -501,7 +554,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'int'),
             ],
             'test default' => [
                 $path,
@@ -513,19 +566,14 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @param string            $path
-     * @param mixed             $input
-     * @param string|\Throwable $result
-     * @param string|null       $default
-     *
      * @test
      *
      * @dataProvider charCodeProvider
      */
-    public function testCharCode(string $path, $input, $result, ?string $default = null): void
+    public function testCharCode(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testString = DataHelper::charCode($path, $input, $default);
@@ -542,12 +590,10 @@ class DataHelperTest extends BaseTestCase
         $result = 'TEST';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $string;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $string,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -558,11 +604,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $string,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -578,7 +619,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException($path, 'charCode'),
             ],
             'test default' => [
                 $path,

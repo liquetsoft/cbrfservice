@@ -4,66 +4,45 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityRate;
+use Liquetsoft\CbrfService\DataHelper;
+
 /**
- * DTO that represents response item from GetCursOnDate method.
+ * DTO that represents response item from GetReutersCursOnDate method.
  *
  * @psalm-immutable
  */
-class ReutersCurrencyRate implements ItemWithDate
+final class ReutersCurrencyRate implements CbrfEntityRate
 {
-    private string $chCode = '';
+    private readonly float $rate;
 
-    private string $nameRu = '';
+    private readonly int $dir;
 
-    private string $nameEn = '';
+    private readonly int $numericCode;
 
-    private int $code = 0;
-
-    private float $curs = .0;
-
-    private int $dir = 0;
-
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
     public function __construct(array $item, \DateTimeInterface $date)
     {
-        $this->chCode = strtoupper(trim($item['char_code'] ?? ''));
-        $this->nameRu = trim($item['Title_ru'] ?? '');
-        $this->nameEn = trim($item['Title_en'] ?? '');
-        $this->code = (int) ($item['num_code'] ?? 0);
-        $this->curs = (float) ($item['val'] ?? .0);
-        $this->dir = (int) ($item['dir'] ?? 0);
+        $this->rate = DataHelper::float('val', $item, .0);
+        $this->dir = DataHelper::int('dir', $item, 1);
+        $this->numericCode = DataHelper::int('num_code', $item, 0);
         $this->date = $date;
     }
 
-    public function getChCode(): string
+    public function getRate(): float
     {
-        return $this->chCode;
-    }
-
-    public function getNameRu(): string
-    {
-        return $this->nameRu;
-    }
-
-    public function getNameEn(): string
-    {
-        return $this->nameEn;
-    }
-
-    public function getCode(): int
-    {
-        return $this->code;
-    }
-
-    public function getCurs(): float
-    {
-        return $this->curs;
+        return $this->rate;
     }
 
     public function getDir(): int
     {
         return $this->dir;
+    }
+
+    public function getNumericCode(): int
+    {
+        return $this->numericCode;
     }
 
     public function getDate(): \DateTimeInterface

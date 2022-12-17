@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
-use DateTimeImmutable;
-use DateTimeInterface;
+use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
+use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
 
 /**
- * Helper that contains several operations for data access and converts.
+ * Helper that contains several operations for data accessing and converting.
+ *
+ * @internal
  */
-class DataHelper
+final class DataHelper
 {
+    private function __construct()
+    {
+    }
+
     /**
      * Creates DateTimeImmutable from string or DateTimeInterface.
-     *
-     * @param \DateTimeInterface|string $date
-     *
-     * @return \DateTimeImmutable
      */
-    public static function createImmutableDateTime($date): \DateTimeImmutable
+    public static function createImmutableDateTime(\DateTimeInterface|string $date): \DateTimeImmutable
     {
         try {
             if ($date instanceof \DateTimeInterface) {
@@ -31,7 +33,11 @@ class DataHelper
                 $immutableDate = new \DateTimeImmutable($date);
             }
         } catch (\Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
+            throw new CbrfDataConvertException(
+                \is_string($date) ? 'string' : \get_class($date),
+                \DateTimeImmutable::class,
+                $e
+            );
         }
 
         return $immutableDate;
@@ -40,11 +46,7 @@ class DataHelper
     /**
      * Returns array of items from the set path.
      *
-     * @param string $path
-     * @param mixed  $data
-     * @param string $itemClass
-     *
-     * @return array
+     * @return object[]
      *
      * @psalm-template T
      *
@@ -54,31 +56,31 @@ class DataHelper
      *
      * @psalm-suppress MixedMethodCall
      */
-    public static function arrayOfItems(string $path, $data, string $itemClass): array
+    public static function arrayOfItems(string $path, array $data, string $itemClass): array
     {
         $callback = fn (array $item): object => new $itemClass($item);
         $list = self::array($path, $data);
 
-        return array_map($callback, $list);
+        try {
+            $result = array_map($callback, $list);
+        } catch (\Throwable $e) {
+            throw new CbrfDataConvertException('array', "{$itemClass}[]", $e);
+        }
+
+        return $result;
     }
 
     /**
      * Returns array from the set path.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return array
      */
-    public static function array(string $path, $data): array
+    public static function array(string $path, array $data): array
     {
         $item = self::get($path, $data);
 
         if ($item === null) {
             $item = [];
         } elseif (!\is_array($item)) {
-            $message = sprintf("Can't find an array by '%s' path.", $path);
-            throw new CbrfException($message);
+            throw new CbrfDataAccessException($path, 'array');
         }
 
         return $item;
@@ -86,34 +88,47 @@ class DataHelper
 
     /**
      * Returns DateTimeInterface from the set path.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return \DateTimeInterface
      */
-    public static function dateTime(string $path, $data): \DateTimeInterface
+    public static function dateTime(string $path, array $data): \DateTimeInterface
     {
         $item = self::get($path, $data);
 
         if (!\is_string($item) || empty($item)) {
-            $message = sprintf("Can't find a date by '%s' path.", $path);
-            throw new CbrfException($message);
+            throw new CbrfDataAccessException($path, 'date');
         }
 
         return self::createImmutableDateTime($item);
     }
 
     /**
-     * Returns string from the set path.
+     * Returns enum for value on the set path.
      *
-     * @param string      $path
-     * @param mixed       $data
-     * @param string|null $default
+     * @psalm-template T
      *
-     * @return string
+     * @psalm-param class-string<T> $enumClass
+     *
+     * @psalm-return T
+     *
+     * @psalm-suppress MixedMethodCall
      */
-    public static function string(string $path, $data, ?string $default = null): string
+    public static function enumInt(string $path, array $data, string $enumClass): object
+    {
+        $int = self::int($path, $data);
+
+        try {
+            /** @psalm-var T */
+            $value = $enumClass::from($int);
+        } catch (\Throwable $e) {
+            throw new CbrfDataConvertException('int', $enumClass, $e);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns string from the set path.
+     */
+    public static function string(string $path, array $data, ?string $default = null): string
     {
         $item = self::get($path, $data);
 
@@ -121,8 +136,7 @@ class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find a string by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'string');
             }
         } else {
             $return = trim((string) $item);
@@ -133,14 +147,8 @@ class DataHelper
 
     /**
      * Returns float from the set path.
-     *
-     * @param string     $path
-     * @param mixed      $data
-     * @param float|null $default
-     *
-     * @return float
      */
-    public static function float(string $path, $data, ?float $default = null): float
+    public static function float(string $path, array $data, ?float $default = null): float
     {
         $item = self::get($path, $data);
 
@@ -148,8 +156,7 @@ class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find a float by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'float');
             }
         } else {
             $return = (float) trim((string) $item);
@@ -160,13 +167,8 @@ class DataHelper
 
     /**
      * Returns float from the set path or null is there is no data.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return float|null
      */
-    public static function floatOrNull(string $path, $data): ?float
+    public static function floatOrNull(string $path, array $data): ?float
     {
         $item = self::get($path, $data);
 
@@ -181,14 +183,8 @@ class DataHelper
 
     /**
      * Returns int from the set path.
-     *
-     * @param string   $path
-     * @param mixed    $data
-     * @param int|null $default
-     *
-     * @return int
      */
-    public static function int(string $path, $data, ?int $default = null): int
+    public static function int(string $path, array $data, ?int $default = null): int
     {
         $item = self::get($path, $data);
 
@@ -196,8 +192,7 @@ class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find an int by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'int');
             }
         } else {
             $return = (int) trim((string) $item);
@@ -208,14 +203,8 @@ class DataHelper
 
     /**
      * Returns char code from the set path.
-     *
-     * @param string      $path
-     * @param mixed       $data
-     * @param string|null $default
-     *
-     * @return string
      */
-    public static function charCode(string $path, $data, ?string $default = null): string
+    public static function charCode(string $path, array $data, ?string $default = null): string
     {
         $item = self::get($path, $data);
 
@@ -223,8 +212,7 @@ class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find a char code by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'charCode');
             }
         } else {
             $return = trim((string) $item);
@@ -235,13 +223,8 @@ class DataHelper
 
     /**
      * Returns data from the set path.
-     *
-     * @param string $path
-     * @param mixed  $data
-     *
-     * @return mixed
      */
-    private static function get(string $path, $data)
+    private static function get(string $path, array $data): mixed
     {
         $arPath = explode('.', trim($path, " \n\r\t\v\0."));
 

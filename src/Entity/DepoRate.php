@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityRate;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,11 +12,11 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class DepoRate implements Rate
+final class DepoRate implements CbrfEntityRate
 {
-    private float $rate;
+    private readonly float $rate;
 
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
     public function __construct(array $item)
     {

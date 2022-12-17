@@ -4,49 +4,34 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
-use SoapClient;
+use Liquetsoft\CbrfService\Exception\CbrfTransportException;
 
 /**
- * Class for cbrf SOAP service.
+ * Object for cbrf SOAP transport.
  */
-class CbrfSoapService
+final class CbrfSoapTransport implements CbrfTransport
 {
-    public const DEFAULT_WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
+    public const WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
     public const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
 
-    private ?string $wsdl = null;
+    private ?\SoapClient $client;
 
-    private ?\SoapClient $client = null;
-
-    /**
-     * @param \SoapClient|string $client
-     */
-    public function __construct($client)
+    public function __construct(?\SoapClient $client = null)
     {
-        if ($client instanceof \SoapClient) {
-            $this->client = $client;
-        } else {
-            $this->wsdl = $client;
-        }
+        $this->client = $client;
     }
 
     /**
-     * Makes a soap call.
-     *
-     * @param string $method
-     * @param array  $params
-     *
-     * @return array
-     *
-     * @throws CbrfException
+     * {@inheritDoc}
      */
-    public function query(string $method, array $params = []): array
+    public function query(string $method, ?array $params = null): array
     {
+        $params = $params ?: [];
+
         try {
             return $this->queryInternal($method, $params);
         } catch (\Throwable $e) {
-            $message = sprintf("Fail on '%s': '%s'.", $method, $e->getMessage());
-            throw new CbrfException($message, 0, $e);
+            throw new CbrfTransportException($method, $params, $e);
         }
     }
 
@@ -57,20 +42,20 @@ class CbrfSoapService
      * @param array  $params
      *
      * @return array
+     *
+     * @psalm-suppress MixedPropertyFetch
      */
     private function queryInternal(string $method, array $params = []): array
     {
-        // need to do this because every params list are nested to parameters object
-        if (!empty($params)) {
-            $params = [$params];
-        }
-
-        $soapCallResult = $this->getSoapClient()->__soapCall($method, $params);
+        $soapCallResult = $this->getSoapClient()->__soapCall(
+            $method,
+            $this->prepareParams($params)
+        );
 
         $resName = $method . 'Result';
         if (!empty($soapCallResult->$resName->any)) {
             $xml = simplexml_load_string(
-                $soapCallResult->$resName->any,
+                (string) $soapCallResult->$resName->any,
                 'SimpleXMLElement',
                 \LIBXML_NOCDATA
             );
@@ -83,13 +68,9 @@ class CbrfSoapService
     }
 
     /**
-     * Converts SimpleXMLElement to an associative array,.
-     *
-     * @param mixed $xmlObject
-     *
-     * @return array<string, mixed>
+     * Converts SimpleXMLElement to an associative array.
      */
-    private function xml2array($xmlObject): array
+    private function xml2array(mixed $xmlObject): array
     {
         $out = [];
 
@@ -107,22 +88,41 @@ class CbrfSoapService
 
     /**
      * Returns a SoapClient instance for soap requests.
-     *
-     * @return \SoapClient
      */
-    private function getSoapClient()
+    private function getSoapClient(): \SoapClient
     {
         if ($this->client !== null) {
             return $this->client;
         }
 
         $this->client = new \SoapClient(
-            $this->wsdl,
+            self::WSDL,
             [
                 'exception' => true,
             ]
         );
 
         return $this->client;
+    }
+
+    /**
+     * Prepares array of params for query.
+     */
+    private function prepareParams(array $params): array
+    {
+        if (empty($params)) {
+            return [];
+        }
+
+        $return = [];
+        foreach ($params as $name => $value) {
+            if ($value instanceof \DateTimeInterface) {
+                $value = $value->format(self::DATE_TIME_FORMAT);
+            }
+            $return[$name] = $value;
+        }
+
+        // need to do this because every params list are nested to parameters object
+        return [$return];
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Tests;
 
+use Liquetsoft\CbrfService\CbrfTransport;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -17,8 +18,16 @@ abstract class BaseTestCase extends TestCase
     public const FIXTURE_TYPE_FLOAT = 'float';
     public const FIXTURE_TYPE_DATE = 'date';
 
-    protected function assertSameDate(\DateTimeInterface $date1, \DateTimeInterface $date2): void
+    protected function assertSameDate(mixed $date1, mixed $date2): void
     {
+        if (!($date1 instanceof \DateTimeInterface)) {
+            $date1 = new \DateTimeImmutable((string) $date1);
+        }
+
+        if (!($date2 instanceof \DateTimeInterface)) {
+            $date2 = new \DateTimeImmutable((string) $date2);
+        }
+
         $this->assertSame(
             $date1->getTimestamp(),
             $date2->getTimestamp(),
@@ -31,135 +40,76 @@ abstract class BaseTestCase extends TestCase
      * @param array|null $params
      * @param mixed      $result
      *
-     * @return \SoapClient
+     * @return CbrfTransport
      */
-    protected function createSoapCallMock(string $method, ?array $params, $result = null): \SoapClient
+    protected function createTransportMock(string $method, ?array $params, $result = null): CbrfTransport
     {
-        /** @var MockObject&\SoapClient */
-        $soapClient = $this->getMockBuilder(\SoapClient::class)
+        /** @var MockObject&CbrfTransport */
+        $transport = $this->getMockBuilder(CbrfTransport::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        if ($params === null) {
-            $soapClient->expects($this->once())
-                ->method('__soapCall')
-                ->with(
-                    $this->identicalTo($method)
-                )
-                ->willReturn($result)
-            ;
-        } else {
-            $soapClient->expects($this->once())
-                ->method('__soapCall')
-                ->with(
-                    $this->identicalTo($method),
-                    $this->identicalTo([$params])
-                )
-                ->willReturn($result)
-            ;
-        }
+        $transport->expects($this->once())
+            ->method('query')
+            ->with(
+                $this->identicalTo($method),
+                $this->identicalTo($params)
+            )
+            ->willReturn($result)
+        ;
 
-        return $soapClient;
+        return $transport;
     }
 
     /**
      * Creates full fixture.
      *
-     * @param array $schema
+     * @param array $description
      *
-     * @return array
+     * @return array{0: mixed[][], 1: mixed[]}
      */
-    protected function createFixture(array $schema): array
+    protected function createFixture(array $description, int $count = 4): array
     {
-        $data = $this->createFixtureData($schema['schema'] ?? []);
-        $response = $this->createFixtureResponse($schema['path'] ?? '', $data);
+        $schema = (array) ($description['schema'] ?? []);
+        $path = explode('.', (string) ($description['path'] ?? ''));
 
-        return [$data, $response];
-    }
-
-    /**
-     * Cretaes array of fixtures by schema.
-     *
-     * @param array<string, string> $schema
-     * @param int                   $count
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    protected function createFixtureData(array $schema, int $count = 4): array
-    {
         $data = [];
         for ($i = 0; $i < $count; ++$i) {
             $datum = [];
             foreach ($schema as $name => $type) {
-                switch ($type) {
-                    case self::FIXTURE_TYPE_STRING:
-                        $value = "{$name}_{$i}";
-                        break;
-                    case self::FIXTURE_TYPE_FLOAT:
-                        $value = (float) (mt_rand(101, 999) / 100);
-                        break;
-                    case self::FIXTURE_TYPE_INT:
-                        $value = $i * 10 + mt_rand(0, 9);
-                        break;
-                    case self::FIXTURE_TYPE_DATE:
-                        $value = '2010-10-1' . mt_rand(0, 9);
-                        break;
-                    default:
-                        $message = sprintf("Can't recognize field type '%s'.", $type);
-                        throw new \RuntimeException($message);
+                if (\is_array($type)) {
+                    $value = $type[array_rand($type)];
+                } else {
+                    switch ($type) {
+                        case self::FIXTURE_TYPE_STRING:
+                            $value = "{$name}_{$i}";
+                            break;
+                        case self::FIXTURE_TYPE_FLOAT:
+                            $value = (float) (mt_rand(101, 999) / 100);
+                            break;
+                        case self::FIXTURE_TYPE_INT:
+                            $value = $i * 10 + mt_rand(0, 9);
+                            break;
+                        case self::FIXTURE_TYPE_DATE:
+                            $value = '2010-10-1' . mt_rand(0, 9);
+                            break;
+                        default:
+                            throw new \RuntimeException("Can't recognize field type");
+                    }
                 }
                 $datum[$name] = $value;
             }
             $data[] = $datum;
         }
 
-        return $data;
-    }
+        $response = [];
+        $previous = &$response;
+        foreach ($path as $item) {
+            $previous[$item] = [];
+            $previous = &$previous[$item];
+        }
+        $previous = $data;
 
-    /**
-     * Returns fixture allowed for xml response.
-     *
-     * @param string                           $xmlPath
-     * @param array<int, array<string, mixed>> $data
-     *
-     * @return object
-     */
-    protected function createFixtureResponse(string $xmlPath, array $data): object
-    {
-        $arPath = explode('.any.', $xmlPath);
-        if (\count($arPath) !== 2 || empty($arPath[0]) || empty($arPath[1])) {
-            $message = sprintf("Incorrect XML path '%s'.", $xmlPath);
-            throw new \RuntimeException($message);
-        }
-        [$beforeAny, $afterAny] = $arPath;
-
-        $arAfterAny = explode('.', $afterAny);
-        $lastItem = array_pop($arAfterAny);
-        $any = '<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">';
-        foreach ($arAfterAny as $nodeName) {
-            $any .= "<{$nodeName} xmlns=\"\">";
-        }
-        foreach ($data as $datum) {
-            $any .= "<{$lastItem} xmlns=\"\">";
-            foreach ($datum as $key => $value) {
-                $any .= "<{$key}>{$value}</{$key}>";
-            }
-            $any .= "</{$lastItem}>";
-        }
-        foreach (array_reverse($arAfterAny) as $nodeName) {
-            $any .= "</{$nodeName}>";
-        }
-        $any .= '</diffgr:diffgram>';
-
-        $arBeforeAny = explode('.', $beforeAny);
-        $latest = $soapResponse = new \stdClass();
-        foreach ($arBeforeAny as $objectNode) {
-            $newNode = new \stdClass();
-            $latest->{$objectNode} = $newNode;
-            $latest = $newNode;
-        }
-        $latest->any = $any;
-
-        return $soapResponse;
+        return [$data, $response];
     }
 }

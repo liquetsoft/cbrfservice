@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Entity;
 
+use Liquetsoft\CbrfService\CbrfEntityCurrency;
+use Liquetsoft\CbrfService\CbrfEntityRate;
 use Liquetsoft\CbrfService\DataHelper;
 
 /**
@@ -11,19 +13,19 @@ use Liquetsoft\CbrfService\DataHelper;
  *
  * @psalm-immutable
  */
-class CurrencyRate implements Currency, Rate
+final class CurrencyRate implements CbrfEntityCurrency, CbrfEntityRate
 {
-    private string $charCode;
+    private readonly string $charCode;
 
-    private string $name;
+    private readonly string $name;
 
-    private int $numericCode;
+    private readonly int $numericCode;
 
-    private float $rate;
+    private readonly float $rate;
 
-    private int $nom;
+    private readonly int $nom;
 
-    private \DateTimeInterface $date;
+    private readonly \DateTimeInterface $date;
 
     public function __construct(array $item, \DateTimeInterface $date)
     {
