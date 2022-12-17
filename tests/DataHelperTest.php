@@ -87,12 +87,10 @@ class DataHelperTest extends BaseTestCase
         $result = ['key' => 'value'];
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $result;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $result,
+        $arrayObjectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -105,14 +103,9 @@ class DataHelperTest extends BaseTestCase
                 ],
                 $result,
             ],
-            'search inside object' => [
-                $path,
-                $object,
-                $result,
-            ],
             'mixed search in array and object' => [
                 $path,
-                $objectMixed,
+                $arrayObjectMixed,
                 $result,
             ],
             'nothing found' => [
@@ -158,12 +151,10 @@ class DataHelperTest extends BaseTestCase
         $date = $result->format(\DATE_ATOM);
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $date;
+        $object->test2 = $date;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $date,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -174,11 +165,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $date,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -247,12 +233,10 @@ class DataHelperTest extends BaseTestCase
         $result = 'test';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $string;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $string,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -263,11 +247,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $string,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -324,12 +303,10 @@ class DataHelperTest extends BaseTestCase
         $float = '12.3';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $float;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $float,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -340,11 +317,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $float,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -394,12 +366,10 @@ class DataHelperTest extends BaseTestCase
         $float = '12.3';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $float;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $float,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -410,11 +380,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $float,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -465,12 +430,10 @@ class DataHelperTest extends BaseTestCase
         $int = '12';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $int;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $int,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -481,11 +444,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $int,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [
@@ -542,12 +500,10 @@ class DataHelperTest extends BaseTestCase
         $result = 'TEST';
 
         $object = new \stdClass();
-        $object->test1 = new \stdClass();
-        $object->test1->test2 = $string;
+        $object->test2 = $result;
 
-        $objectMixed = new \stdClass();
-        $objectMixed->test1 = [
-            'test2' => $string,
+        $objectMixed = [
+            'test1' => $object,
         ];
 
         return [
@@ -558,11 +514,6 @@ class DataHelperTest extends BaseTestCase
                         'test2' => $string,
                     ],
                 ],
-                $result,
-            ],
-            'search inside object' => [
-                $path,
-                $object,
                 $result,
             ],
             'mixed search in array and object' => [

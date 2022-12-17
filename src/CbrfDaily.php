@@ -47,7 +47,7 @@ final class CbrfDaily
         $res = $this->transport->query(
             'GetCursOnDate',
             [
-                'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'On_date' => $date,
             ]
         );
 
@@ -217,8 +217,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'GetCursDynamic',
             [
-                'FromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'FromDate' => $from,
+                'ToDate' => $to,
                 'ValutaCode' => $currency->getInternalCode(),
             ]
         );
@@ -248,8 +248,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'KeyRate',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -268,8 +268,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'DragMetDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -288,8 +288,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'SwapDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -308,8 +308,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'DepoDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -328,8 +328,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'OstatDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -348,8 +348,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'OstatDepo',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -368,8 +368,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'mrrf',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -388,8 +388,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'mrrf7D',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -408,8 +408,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'Saldo',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -428,8 +428,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'RuoniaSV',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -448,8 +448,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'Ruonia',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -468,8 +468,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'MKR',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -488,8 +488,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'DV',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -508,8 +508,8 @@ final class CbrfDaily
         $res = $this->transport->query(
             'Repo_debt',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ]
         );
 
@@ -528,7 +528,7 @@ final class CbrfDaily
         $enumSoapResults = $this->transport->query(
             'EnumReutersValutes',
             [
-                'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'On_date' => $date,
             ]
         );
 
@@ -540,7 +540,7 @@ final class CbrfDaily
         $soapValutesResults = $this->transport->query(
             'GetReutersCursOnDate',
             [
-                'On_date' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'On_date' => $date,
             ]
         );
 

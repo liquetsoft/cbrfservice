@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfDaily;
-use Liquetsoft\CbrfService\CbrfSoapService;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -197,7 +196,7 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'GetCursOnDate',
             [
-                'On_date' => $onDate->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'On_date' => $onDate,
             ],
             $response
         );
@@ -229,7 +228,7 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'GetCursOnDate',
             [
-                'On_date' => $onDate->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'On_date' => $onDate,
             ],
             $response
         );
@@ -253,7 +252,7 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'GetCursOnDate',
             [
-                'On_date' => $onDate->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'On_date' => $onDate,
             ],
             $response
         );
@@ -352,7 +351,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         $date = new \DateTimeImmutable();
         $response = [
-            'GetLatestDateTimeResult' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+            'GetLatestDateTimeResult' => $date->format(\DateTimeInterface::ATOM),
         ];
 
         $soapClient = $this->createTransportMock(
@@ -374,7 +373,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         $date = new \DateTimeImmutable();
         $response = [
-            'GetLatestDateTimeSeldResult' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+            'GetLatestDateTimeSeldResult' => $date->format(\DateTimeInterface::ATOM),
         ];
 
         $soapClient = $this->createTransportMock(
@@ -396,7 +395,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         $date = new \DateTimeImmutable();
         $response = [
-            'GetLatestDateResult' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+            'GetLatestDateResult' => $date->format(\DateTimeInterface::ATOM),
         ];
 
         $soapClient = $this->createTransportMock(
@@ -418,7 +417,7 @@ class CbrfDailyTest extends BaseTestCase
     {
         $date = new \DateTimeImmutable();
         $response = [
-            'GetLatestDateSeldResult' => $date->format(CbrfSoapService::DATE_TIME_FORMAT),
+            'GetLatestDateSeldResult' => $date->format(\DateTimeInterface::ATOM),
         ];
 
         $soapClient = $this->createTransportMock(
@@ -458,8 +457,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'GetCursDynamic',
             [
-                'FromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'FromDate' => $from,
+                'ToDate' => $to,
                 'ValutaCode' => $internalCode,
             ],
             $response
@@ -492,8 +491,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'KeyRate',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -521,8 +520,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'DragMetDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -551,8 +550,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'SwapDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -584,8 +583,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'DepoDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -613,8 +612,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'OstatDynamic',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -643,8 +642,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'OstatDepo',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -673,8 +672,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'mrrf',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -702,8 +701,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'mrrf7D',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -731,8 +730,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'Saldo',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -760,8 +759,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'RuoniaSV',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -792,8 +791,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'Ruonia',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -823,8 +822,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'MKR',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -858,8 +857,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'DV',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
@@ -892,8 +891,8 @@ class CbrfDailyTest extends BaseTestCase
         $soapClient = $this->createTransportMock(
             'Repo_debt',
             [
-                'fromDate' => $from->format(CbrfSoapService::DATE_TIME_FORMAT),
-                'ToDate' => $to->format(CbrfSoapService::DATE_TIME_FORMAT),
+                'fromDate' => $from,
+                'ToDate' => $to,
             ],
             $response
         );
