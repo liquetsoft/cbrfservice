@@ -58,7 +58,7 @@ abstract class BaseTestCase extends TestCase
      *
      * @param array $description
      *
-     * @return array
+     * @return array{0: mixed[][], 1: mixed[]}
      */
     protected function createFixture(array $description, int $count = 4): array
     {

@@ -16,6 +16,7 @@ use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
+use Liquetsoft\CbrfService\Entity\ReutersCurrency;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
@@ -517,6 +518,25 @@ final class CbrfDaily
     }
 
     /**
+     * Returns list of Reuters currencies.
+     *
+     * @return ReutersCurrency[]
+     *
+     * @throws CbrfException
+     */
+    public function enumReutersValutes(\DateTimeInterface $date): array
+    {
+        $res = $this->transport->query(
+            'EnumReutersValutes',
+            [
+                'On_date' => $date,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('ReutersValutesList.EnumRValutes', $res, ReutersCurrency::class);
+    }
+
+    /**
      * Returns list of Reuters rates for all currencies for set date.
      *
      * @return ReutersCurrencyRate[]
@@ -532,9 +552,11 @@ final class CbrfDaily
             ]
         );
 
-        $enumCurrencies = [];
-        foreach ($enumSoapResults['ReutersValutesList']['EnumRValutes'] as $enumSoapResult) {
-            $enumCurrencies[$enumSoapResult['num_code']] = $enumSoapResult;
+        $enumCurrenciesByCode = [];
+        foreach (DataHelper::array('ReutersValutesList.EnumRValutes', $enumSoapResults) as $item) {
+            if (\is_array($item) && isset($item['num_code'])) {
+                $enumCurrenciesByCode[(int) $item['num_code']] = $item;
+            }
         }
 
         $soapValutesResults = $this->transport->query(
@@ -544,16 +566,15 @@ final class CbrfDaily
             ]
         );
 
-        foreach ($soapValutesResults['ReutersValutesData']['Currency'] as $soapValutesResult) {
-            $enumCurrencies[$soapValutesResult['num_code']] = array_merge($enumCurrencies[$soapValutesResult['num_code']], $soapValutesResult);
-        }
-
         $results = [];
         $immutableDate = DataHelper::createImmutableDateTime($date);
-
-        foreach ($enumCurrencies as $item) {
-            if (\is_array($item)) {
-                $results[] = new ReutersCurrencyRate($item, $immutableDate);
+        foreach (DataHelper::array('ReutersValutesData.Currency', $soapValutesResults) as $rate) {
+            if (\is_array($rate) && isset($rate['num_code'])) {
+                $code = (int) $rate['num_code'];
+                if (isset($enumCurrenciesByCode[$code])) {
+                    $rate = array_merge($rate, $enumCurrenciesByCode[$code]);
+                }
+                $results[] = new ReutersCurrencyRate($rate, $immutableDate);
             }
         }
 

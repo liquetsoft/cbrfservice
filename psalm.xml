@@ -13,10 +13,8 @@
     </projectFiles>
 
     <issueHandlers>
-        <MixedArrayAssignment errorLevel="suppress"/>
         <MixedAssignment errorLevel="suppress"/>
         <MixedArgument errorLevel="suppress"/>
-        <MixedArrayAccess errorLevel="suppress"/>
         <MixedArrayOffset errorLevel="suppress"/>
         <MixedInferredReturnType errorLevel="suppress"/>
         <MixedPropertyFetch errorLevel="suppress"/>

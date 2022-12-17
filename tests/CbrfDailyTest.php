@@ -18,6 +18,7 @@ use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
+use Liquetsoft\CbrfService\Entity\ReutersCurrency;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
@@ -183,6 +184,15 @@ class CbrfDailyTest extends BaseTestCase
                 'debt_fix' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'Repo_debt.RD',
+        ],
+        'EnumReutersValutes' => [
+            'schema' => [
+                'char_code' => self::FIXTURE_TYPE_STRING,
+                'Title_ru' => self::FIXTURE_TYPE_STRING,
+                'Title_en' => self::FIXTURE_TYPE_STRING,
+                'num_code' => self::FIXTURE_TYPE_INT,
+            ],
+            'path' => 'ReutersValutesList.EnumRValutes',
         ],
     ];
 
@@ -906,6 +916,36 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($debt['debt'], $list[$key]->getRate());
             $this->assertSame($debt['debt_auc'], $list[$key]->getDebtAuc());
             $this->assertSame($debt['debt_fix'], $list[$key]->getDebtFix());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testEnumReutersValutes(): void
+    {
+        [$currencies, $response] = $this->createFixture(self::FIXTURES['EnumReutersValutes']);
+        $onDate = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'EnumReutersValutes',
+            [
+                'On_date' => $onDate,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->enumReutersValutes($onDate);
+
+        $this->assertCount(\count($currencies), $list);
+        $this->assertContainsOnlyInstancesOf(ReutersCurrency::class, $list);
+        foreach ($currencies as $key => $currency) {
+            $this->assertSame(strtoupper($currency['char_code']), $list[$key]->getCharCode());
+            $this->assertSame($currency['Title_ru'], $list[$key]->getName());
+            $this->assertSame($currency['Title_en'], $list[$key]->getNameEn());
+            $this->assertSame($currency['num_code'], $list[$key]->getNumericCode());
+            $this->assertSame(1, $list[$key]->getNom());
         }
     }
 }
