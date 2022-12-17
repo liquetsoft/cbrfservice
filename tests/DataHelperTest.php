@@ -6,7 +6,7 @@ namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\DataHelper;
 use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
-use Liquetsoft\CbrfService\Exception\CbrfException;
+use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
 
 /**
  * @internal
@@ -15,7 +15,7 @@ class DataHelperTest extends BaseTestCase
 {
     /**
      * @param string|\DateTimeInterface     $input
-     * @param \DateTimeInterface|\Throwable $result
+     * @param \DateTimeInterface|\Exception $result
      *
      * @test
      *
@@ -23,8 +23,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testCreateImmutableDateTime($input, $result): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testDateTime = DataHelper::createImmutableDateTime($input);
@@ -55,7 +55,7 @@ class DataHelperTest extends BaseTestCase
             ],
             'exception on incorrect date' => [
                 'test',
-                new CbrfException(),
+                new CbrfDataConvertException('string', \DateTimeImmutable::class),
             ],
         ];
     }
@@ -63,7 +63,7 @@ class DataHelperTest extends BaseTestCase
     /**
      * @param string           $path
      * @param mixed            $input
-     * @param array|\Throwable $result
+     * @param array|\Exception $result
      *
      * @test
      *
@@ -71,8 +71,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testArray(string $path, $input, $result): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testArray = DataHelper::array($path, $input);
@@ -117,7 +117,7 @@ class DataHelperTest extends BaseTestCase
             'wrong type exception' => [
                 $path,
                 ['test1' => ['test2' => 'wqe']],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'array'),
             ],
         ];
     }
@@ -125,7 +125,7 @@ class DataHelperTest extends BaseTestCase
     /**
      * @param string                        $path
      * @param mixed                         $input
-     * @param \DateTimeInterface|\Throwable $result
+     * @param \DateTimeInterface|\Exception $result
      *
      * @test
      *
@@ -133,8 +133,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testDateTime(string $path, $input, $result): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testDateTime = DataHelper::dateTime($path, $input);
@@ -181,7 +181,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'date'),
             ],
             'empty string exception' => [
                 $path,
@@ -190,7 +190,7 @@ class DataHelperTest extends BaseTestCase
                         'test2' => '',
                     ],
                 ],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'date'),
             ],
             'non-string exception' => [
                 $path,
@@ -199,7 +199,7 @@ class DataHelperTest extends BaseTestCase
                         'test2' => false,
                     ],
                 ],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'date'),
             ],
         ];
     }
@@ -207,7 +207,7 @@ class DataHelperTest extends BaseTestCase
     /**
      * @param string            $path
      * @param mixed             $input
-     * @param string|\Throwable $result
+     * @param string|\Exception $result
      * @param string|null       $default
      *
      * @test
@@ -216,8 +216,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testString(string $path, $input, $result, ?string $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testString = DataHelper::string($path, $input, $default);
@@ -263,7 +263,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'string'),
             ],
             'test default' => [
                 $path,
@@ -277,7 +277,7 @@ class DataHelperTest extends BaseTestCase
     /**
      * @param string           $path
      * @param mixed            $input
-     * @param float|\Throwable $result
+     * @param float|\Exception $result
      * @param float|null       $default
      *
      * @test
@@ -286,8 +286,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testFloat(string $path, $input, $result, ?float $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testFloat = DataHelper::float($path, $input, $default);
@@ -333,7 +333,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'float'),
             ],
             'test default' => [
                 $path,
@@ -404,7 +404,7 @@ class DataHelperTest extends BaseTestCase
     /**
      * @param string         $path
      * @param mixed          $input
-     * @param int|\Throwable $result
+     * @param int|\Exception $result
      * @param int|null       $default
      *
      * @test
@@ -413,8 +413,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testInt(string $path, $input, $result, ?int $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testInt = DataHelper::int($path, $input, $default);
@@ -460,7 +460,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'int'),
             ],
             'test default' => [
                 $path,
@@ -474,7 +474,7 @@ class DataHelperTest extends BaseTestCase
     /**
      * @param string            $path
      * @param mixed             $input
-     * @param string|\Throwable $result
+     * @param string|\Exception $result
      * @param string|null       $default
      *
      * @test
@@ -483,8 +483,8 @@ class DataHelperTest extends BaseTestCase
      */
     public function testCharCode(string $path, $input, $result, ?string $default = null): void
     {
-        if ($result instanceof \Throwable) {
-            $this->expectException(\get_class($result));
+        if ($result instanceof \Exception) {
+            $this->expectExceptionObject($result);
         }
 
         $testString = DataHelper::charCode($path, $input, $default);
@@ -530,7 +530,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfDataAccessException(),
+                new CbrfDataAccessException($path, 'charCode'),
             ],
             'test default' => [
                 $path,

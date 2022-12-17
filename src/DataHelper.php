@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService;
 
 use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
-use Liquetsoft\CbrfService\Exception\CbrfException;
+use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
 
 /**
  * Helper that contains several operations for data accessing and converting.
@@ -27,7 +27,11 @@ final class DataHelper
                 $immutableDate = new \DateTimeImmutable($date);
             }
         } catch (\Throwable $e) {
-            throw new CbrfException($e->getMessage(), 0, $e);
+            throw new CbrfDataConvertException(
+                \is_string($date) ? 'string' : \get_class($date),
+                \DateTimeImmutable::class,
+                $e
+            );
         }
 
         return $immutableDate;

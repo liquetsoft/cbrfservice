@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService\Exception;
 
 /**
- * Class for exceptions related to data access with DataHelper.
+ * Class for exceptions related to data accessing with DataHelper.
  */
 final class CbrfDataAccessException extends CbrfException
 {
