@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
 use Liquetsoft\CbrfService\Exception\CbrfException;
 
 /**
@@ -116,7 +117,7 @@ class DataHelperTest extends BaseTestCase
             'wrong type exception' => [
                 $path,
                 ['test1' => ['test2' => 'wqe']],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
         ];
     }
@@ -180,7 +181,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
             'empty string exception' => [
                 $path,
@@ -189,7 +190,7 @@ class DataHelperTest extends BaseTestCase
                         'test2' => '',
                     ],
                 ],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
             'non-string exception' => [
                 $path,
@@ -198,7 +199,7 @@ class DataHelperTest extends BaseTestCase
                         'test2' => false,
                     ],
                 ],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
         ];
     }
@@ -262,7 +263,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
             'test default' => [
                 $path,
@@ -332,7 +333,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
             'test default' => [
                 $path,
@@ -459,7 +460,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
             'test default' => [
                 $path,
@@ -529,7 +530,7 @@ class DataHelperTest extends BaseTestCase
             'not found exception' => [
                 $path,
                 [],
-                new CbrfException(),
+                new CbrfDataAccessException(),
             ],
             'test default' => [
                 $path,

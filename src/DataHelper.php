@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
 use Liquetsoft\CbrfService\Exception\CbrfException;
 
 /**
@@ -61,8 +62,7 @@ final class DataHelper
         if ($item === null) {
             $item = [];
         } elseif (!\is_array($item)) {
-            $message = sprintf("Can't find an array by '%s' path.", $path);
-            throw new CbrfException($message);
+            throw new CbrfDataAccessException($path, 'array');
         }
 
         return $item;
@@ -76,8 +76,7 @@ final class DataHelper
         $item = self::get($path, $data);
 
         if (!\is_string($item) || empty($item)) {
-            $message = sprintf("Can't find a date by '%s' path.", $path);
-            throw new CbrfException($message);
+            throw new CbrfDataAccessException($path, 'date');
         }
 
         return self::createImmutableDateTime($item);
@@ -113,8 +112,7 @@ final class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find a string by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'string');
             }
         } else {
             $return = trim((string) $item);
@@ -134,8 +132,7 @@ final class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find a float by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'float');
             }
         } else {
             $return = (float) trim((string) $item);
@@ -171,8 +168,7 @@ final class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find an int by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'int');
             }
         } else {
             $return = (int) trim((string) $item);
@@ -192,8 +188,7 @@ final class DataHelper
             if ($default !== null) {
                 $return = $default;
             } else {
-                $message = sprintf("Can't find a char code by '%s' path.", $path);
-                throw new CbrfException($message);
+                throw new CbrfDataAccessException($path, 'charCode');
             }
         } else {
             $return = trim((string) $item);
