@@ -19,6 +19,7 @@ use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
 use Liquetsoft\CbrfService\Entity\ReutersCurrency;
+use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
@@ -193,6 +194,14 @@ class CbrfDailyTest extends BaseTestCase
                 'num_code' => self::FIXTURE_TYPE_INT,
             ],
             'path' => 'ReutersValutesList.EnumRValutes',
+        ],
+        'GetReutersCursOnDate' => [
+            'schema' => [
+                'val' => self::FIXTURE_TYPE_FLOAT,
+                'dir' => self::FIXTURE_TYPE_INT,
+                'num_code' => self::FIXTURE_TYPE_INT,
+            ],
+            'path' => 'ReutersValutesData.Currency',
         ],
     ];
 
@@ -946,6 +955,35 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($currency['Title_en'], $list[$key]->getNameEn());
             $this->assertSame($currency['num_code'], $list[$key]->getNumericCode());
             $this->assertSame(1, $list[$key]->getNom());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testGetReutersCursOnDate(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['GetReutersCursOnDate']);
+        $onDate = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'GetReutersCursOnDate',
+            [
+                'On_date' => $onDate,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->getReutersCursOnDate($onDate);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(ReutersCurrencyRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['val'], $list[$key]->getRate());
+            $this->assertSame($rate['dir'], $list[$key]->getDir());
+            $this->assertSame($rate['num_code'], $list[$key]->getNumericCode());
+            $this->assertSameDate($onDate, $list[$key]->getDate());
         }
     }
 }

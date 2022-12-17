@@ -547,21 +547,7 @@ final class CbrfDaily
      */
     public function getReutersCursOnDate(\DateTimeInterface $date): array
     {
-        $enumSoapResults = $this->transport->query(
-            'EnumReutersValutes',
-            [
-                'On_date' => $date,
-            ]
-        );
-
-        $enumCurrenciesByCode = [];
-        foreach (DataHelper::array('ReutersValutesList.EnumRValutes', $enumSoapResults) as $item) {
-            if (\is_array($item) && isset($item['num_code'])) {
-                $enumCurrenciesByCode[(int) $item['num_code']] = $item;
-            }
-        }
-
-        $soapValutesResults = $this->transport->query(
+        $res = $this->transport->query(
             'GetReutersCursOnDate',
             [
                 'On_date' => $date,
@@ -570,13 +556,9 @@ final class CbrfDaily
 
         $results = [];
         $immutableDate = DataHelper::createImmutableDateTime($date);
-        foreach (DataHelper::array('ReutersValutesData.Currency', $soapValutesResults) as $rate) {
-            if (\is_array($rate) && isset($rate['num_code'])) {
-                $code = (int) $rate['num_code'];
-                if (isset($enumCurrenciesByCode[$code])) {
-                    $rate = array_merge($rate, $enumCurrenciesByCode[$code]);
-                }
-                $results[] = new ReutersCurrencyRate($rate, $immutableDate);
+        foreach (DataHelper::array('ReutersValutesData.Currency', $res) as $item) {
+            if (\is_array($item)) {
+                $results[] = new ReutersCurrencyRate($item, $immutableDate);
             }
         }
 
