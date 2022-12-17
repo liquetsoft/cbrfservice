@@ -69,22 +69,26 @@ abstract class BaseTestCase extends TestCase
         for ($i = 0; $i < $count; ++$i) {
             $datum = [];
             foreach ($schema as $name => $type) {
-                switch ($type) {
-                    case self::FIXTURE_TYPE_STRING:
-                        $value = "{$name}_{$i}";
-                        break;
-                    case self::FIXTURE_TYPE_FLOAT:
-                        $value = (float) (mt_rand(101, 999) / 100);
-                        break;
-                    case self::FIXTURE_TYPE_INT:
-                        $value = $i * 10 + mt_rand(0, 9);
-                        break;
-                    case self::FIXTURE_TYPE_DATE:
-                        $value = '2010-10-1' . mt_rand(0, 9);
-                        break;
-                    default:
-                        $message = sprintf("Can't recognize field type '%s'.", $type);
-                        throw new \RuntimeException($message);
+                if (\is_array($type)) {
+                    $value = $type[array_rand($type)];
+                } else {
+                    switch ($type) {
+                        case self::FIXTURE_TYPE_STRING:
+                            $value = "{$name}_{$i}";
+                            break;
+                        case self::FIXTURE_TYPE_FLOAT:
+                            $value = (float) (mt_rand(101, 999) / 100);
+                            break;
+                        case self::FIXTURE_TYPE_INT:
+                            $value = $i * 10 + mt_rand(0, 9);
+                            break;
+                        case self::FIXTURE_TYPE_DATE:
+                            $value = '2010-10-1' . mt_rand(0, 9);
+                            break;
+                        default:
+                            $message = sprintf("Can't recognize field type '%s'.", $type);
+                            throw new \RuntimeException($message);
+                    }
                 }
                 $datum[$name] = $value;
             }

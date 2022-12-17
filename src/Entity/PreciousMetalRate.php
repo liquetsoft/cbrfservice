@@ -14,21 +14,16 @@ use Liquetsoft\CbrfService\DataHelper;
  */
 final class PreciousMetalRate implements CbrfEntityRate
 {
-    public const CODE_GOLD = 1;
-    public const CODE_SILVER = 2;
-    public const CODE_PLATINUM = 3;
-    public const CODE_PALLADIUM = 4;
-
     private readonly \DateTimeInterface $date;
 
-    private readonly int $code;
+    private readonly PreciousMetalCode $code;
 
     private readonly float $rate;
 
     public function __construct(array $item)
     {
         $this->date = DataHelper::dateTime('DateMet', $item);
-        $this->code = DataHelper::int('CodMet', $item, 0);
+        $this->code = DataHelper::enumInt('CodMet', $item, PreciousMetalCode::class);
         $this->rate = DataHelper::float('price', $item, .0);
     }
 
@@ -37,7 +32,7 @@ final class PreciousMetalRate implements CbrfEntityRate
         return $this->date;
     }
 
-    public function getCode(): int
+    public function getCode(): PreciousMetalCode
     {
         return $this->code;
     }

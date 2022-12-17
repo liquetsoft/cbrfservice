@@ -105,6 +105,31 @@ class DataHelper
     }
 
     /**
+     * Returns enum for value on the set path.
+     *
+     * @param string $path
+     * @param mixed  $data
+     * @param string $enumClass
+     *
+     * @return object
+     *
+     * @psalm-template T
+     *
+     * @psalm-param class-string<T> $enumClass
+     *
+     * @psalm-return T
+     *
+     * @psalm-suppress MixedMethodCall
+     */
+    public static function enumInt(string $path, $data, string $enumClass): object
+    {
+        /** @psalm-var T */
+        $value = $enumClass::from(self::int($path, $data));
+
+        return $value;
+    }
+
+    /**
      * Returns string from the set path.
      *
      * @param string      $path

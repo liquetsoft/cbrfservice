@@ -72,7 +72,7 @@ class CbrfDailyTest extends BaseTestCase
             'schema' => [
                 'DateMet' => self::FIXTURE_TYPE_DATE,
                 'price' => self::FIXTURE_TYPE_FLOAT,
-                'CodMet' => self::FIXTURE_TYPE_INT,
+                'CodMet' => [1, 2, 3, 4],
             ],
             'path' => 'DragMetall.DrgMet',
         ],
@@ -534,7 +534,7 @@ class CbrfDailyTest extends BaseTestCase
         $this->assertContainsOnlyInstancesOf(PreciousMetalRate::class, $list);
         foreach ($metals as $key => $metal) {
             $this->assertSameDate(new \DateTimeImmutable($metal['DateMet']), $list[$key]->getDate());
-            $this->assertSame($metal['CodMet'], $list[$key]->getCode());
+            $this->assertSame($metal['CodMet'], $list[$key]->getCode()->value);
             $this->assertSame($metal['price'], $list[$key]->getRate());
         }
     }
