@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService;
 
 use Liquetsoft\CbrfService\Exception\CbrfTransportException;
+use SimpleXMLElement;
 
 /**
  * Object for cbrf SOAP transport.
@@ -56,7 +57,7 @@ final class CbrfSoapTransport implements CbrfTransport
         if (!empty($soapCallResult->$resName->any)) {
             $xml = simplexml_load_string(
                 (string) $soapCallResult->$resName->any,
-                'SimpleXMLElement',
+                \SimpleXMLElement::class,
                 \LIBXML_NOCDATA
             );
             $parsedResult = $this->xml2array($xml);
