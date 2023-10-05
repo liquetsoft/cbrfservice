@@ -22,6 +22,7 @@ use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
+use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use Liquetsoft\CbrfService\Exception\CbrfException;
 
@@ -567,7 +568,7 @@ final class CbrfDaily
     }
 
     /**
-     * Returns prices for coins.
+     * Returns rates of overnight loans.
      *
      * @return OvernightRate[]
      *
@@ -584,5 +585,25 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('Overnight.OB', $res, OvernightRate::class);
+    }
+
+    /**
+     * Returns rates for currency swap by days.
+     *
+     * @return SwapDayTotalRate[]
+     *
+     * @throws CbrfException
+     */
+    public function swapDayTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapDayTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapDayTotal.SDT', $res, SwapDayTotalRate::class);
     }
 }

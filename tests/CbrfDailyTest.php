@@ -24,6 +24,7 @@ use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
+use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -210,6 +211,13 @@ class CbrfDailyTest extends BaseTestCase
                 'date' => self::FIXTURE_TYPE_DATE,
             ],
             'path' => 'Overnight.OB',
+        ],
+        'SwapDayTotal' => [
+            'schema' => [
+                'Swap' => self::FIXTURE_TYPE_FLOAT,
+                'DT' => self::FIXTURE_TYPE_DATE,
+            ],
+            'path' => 'SwapDayTotal.SDT',
         ],
     ];
 
@@ -1021,6 +1029,35 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($rates as $key => $rate) {
             $this->assertSame($rate['date'], $list[$key]->getDate()->format('Y-m-d'));
             $this->assertSame($rate['stavka'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapDayTotal(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapDayTotal']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapDayTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapDayTotal($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapDayTotalRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['Swap'], $list[$key]->getRate());
         }
     }
 }
