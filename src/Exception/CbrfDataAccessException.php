@@ -9,7 +9,7 @@ namespace Liquetsoft\CbrfService\Exception;
  */
 final class CbrfDataAccessException extends CbrfException
 {
-    public function __construct(string $path = '', string $type = '', ?\Throwable $previous = null)
+    public function __construct(string $path = '', string $type = '', \Throwable $previous = null)
     {
         if (!empty($path) && !empty($type)) {
             $message = sprintf("Can't find '%s' value at '%s'", $type, $path);

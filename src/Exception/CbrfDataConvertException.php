@@ -9,7 +9,7 @@ namespace Liquetsoft\CbrfService\Exception;
  */
 final class CbrfDataConvertException extends CbrfException
 {
-    public function __construct(string $from, string $to, ?\Throwable $previous = null)
+    public function __construct(string $from, string $to, \Throwable $previous = null)
     {
         if ($previous) {
             $message = sprintf(

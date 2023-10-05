@@ -6,7 +6,7 @@ $finder = PhpCsFixer\Finder::create()->in(__DIR__);
 
 $rules = [
     '@Symfony' => true,
-    'new_with_braces' => true,
+    'new_with_parentheses' => true,
     'concat_space' => ['spacing' => 'one'],
     'array_syntax' => ['syntax' => 'short'],
     'yoda_style' => false,

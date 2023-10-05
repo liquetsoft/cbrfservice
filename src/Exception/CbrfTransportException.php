@@ -13,7 +13,7 @@ final class CbrfTransportException extends CbrfException
 
     private readonly array $params;
 
-    public function __construct(string $method, array $params = [], ?\Throwable $previous = null)
+    public function __construct(string $method, array $params = [], \Throwable $previous = null)
     {
         $this->method = $method;
         $this->params = $params;

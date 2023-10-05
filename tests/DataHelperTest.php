@@ -322,7 +322,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider stringProvider
      */
-    public function testString(string $path, array $input, string|\Exception $result, ?string $default = null): void
+    public function testString(string $path, array $input, string|\Exception $result, string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -387,7 +387,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider floatProvider
      */
-    public function testFloat(string $path, array $input, float|\Exception $result, ?float $default = null): void
+    public function testFloat(string $path, array $input, float|\Exception $result, float $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -505,7 +505,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider intProvider
      */
-    public function testInt(string $path, array $input, int|\Exception $result, ?int $default = null): void
+    public function testInt(string $path, array $input, int|\Exception $result, int $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -570,7 +570,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider charCodeProvider
      */
-    public function testCharCode(string $path, array $input, string|\Exception $result, ?string $default = null): void
+    public function testCharCode(string $path, array $input, string|\Exception $result, string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
