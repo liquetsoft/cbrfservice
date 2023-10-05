@@ -24,6 +24,7 @@ use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
 use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use Liquetsoft\CbrfService\Exception\CbrfException;
@@ -647,5 +648,25 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('SwapInfoSell.SSU', $res, SwapInfoSellItem::class);
+    }
+
+    /**
+     * Returns sell volume for currency swap.
+     *
+     * @return SwapInfoSellVolItem[]
+     *
+     * @throws CbrfException
+     */
+    public function swapInfoSellVol(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapInfoSellVol',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapInfoSellVol.SSUV', $res, SwapInfoSellVolItem::class);
     }
 }

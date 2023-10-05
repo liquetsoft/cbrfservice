@@ -26,6 +26,7 @@ use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
 use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -244,6 +245,16 @@ class CbrfDailyTest extends BaseTestCase
                 'limit' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'SwapInfoSell.SSU',
+        ],
+        'SwapInfoSellVol' => [
+            'schema' => [
+                'Currency' => [0, 1, 2],
+                'DT' => self::FIXTURE_TYPE_DATE,
+                'Type' => [0],
+                'VOL_FC' => self::FIXTURE_TYPE_FLOAT,
+                'VOL_RUB' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'SwapInfoSellVol.SSUV',
         ],
     ];
 
@@ -1152,6 +1163,38 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($rate['TIR'], $list[$key]->getTIR());
             $this->assertSame($rate['Stavka'], $list[$key]->getRate());
             $this->assertSame($rate['limit'], $list[$key]->getLimit());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapInfoSellVol(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapInfoSellVol']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapInfoSellVol',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapInfoSellVol($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapInfoSellVolItem::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['Currency'], $list[$key]->getCurrency()->value);
+            $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['Type'], $list[$key]->getType());
+            $this->assertSame($rate['VOL_FC'], $list[$key]->getVolumeForeignCurrency());
+            $this->assertSame($rate['VOL_RUB'], $list[$key]->getVolumeRub());
         }
     }
 }
