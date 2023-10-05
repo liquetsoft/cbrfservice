@@ -21,5 +21,5 @@ interface CbrfTransport
      *
      * @throws CbrfTransportException
      */
-    public function query(string $method, ?array $params = null): array;
+    public function query(string $method, array $params = null): array;
 }

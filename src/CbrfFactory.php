@@ -16,7 +16,7 @@ final class CbrfFactory
     /**
      * Creates and returns new CbrfDaily object.
      */
-    public static function createDaily(?\SoapClient $soap = null): CbrfDaily
+    public static function createDaily(\SoapClient $soap = null): CbrfDaily
     {
         $transport = new CbrfSoapTransport($soap);
 

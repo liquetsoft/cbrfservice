@@ -17,7 +17,7 @@ final class CbrfSoapTransport implements CbrfTransport
 
     private ?\SoapClient $client;
 
-    public function __construct(?\SoapClient $client = null)
+    public function __construct(\SoapClient $client = null)
     {
         $this->client = $client;
     }
@@ -25,7 +25,7 @@ final class CbrfSoapTransport implements CbrfTransport
     /**
      * {@inheritDoc}
      */
-    public function query(string $method, ?array $params = null): array
+    public function query(string $method, array $params = null): array
     {
         $params = $params ?: [];
 

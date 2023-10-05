@@ -12,10 +12,11 @@ RUN set -xe && apk update && apk add --no-cache \
     git \
     autoconf \
     g++ \
-    make
+    make \
+    linux-headers
 
 
-RUN docker-php-ext-install zip soap \
+RUN docker-php-ext-install soap zip opcache \
     && docker-php-source extract \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
@@ -24,7 +25,7 @@ RUN docker-php-ext-install zip soap \
     && echo 'xdebug.mode=coverage' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer  --version=2.4.4 \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer  --version=2.5.8 \
     && mkdir -p /.composer && chmod -Rf 777 /.composer
 
 

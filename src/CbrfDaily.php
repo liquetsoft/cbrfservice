@@ -14,6 +14,7 @@ use Liquetsoft\CbrfService\Entity\KeyRate;
 use Liquetsoft\CbrfService\Entity\Mkr;
 use Liquetsoft\CbrfService\Entity\OstatDepoRate;
 use Liquetsoft\CbrfService\Entity\OstatRate;
+use Liquetsoft\CbrfService\Entity\OvernightRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
 use Liquetsoft\CbrfService\Entity\ReutersCurrency;
@@ -563,5 +564,25 @@ final class CbrfDaily
         }
 
         return $results;
+    }
+
+    /**
+     * Returns prices for coins.
+     *
+     * @return OvernightRate[]
+     *
+     * @throws CbrfException
+     */
+    public function overnight(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'Overnight',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('Overnight.OB', $res, OvernightRate::class);
     }
 }

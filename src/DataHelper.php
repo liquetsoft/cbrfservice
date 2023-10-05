@@ -128,7 +128,7 @@ final class DataHelper
     /**
      * Returns string from the set path.
      */
-    public static function string(string $path, array $data, ?string $default = null): string
+    public static function string(string $path, array $data, string $default = null): string
     {
         $item = self::get($path, $data);
 
@@ -148,7 +148,7 @@ final class DataHelper
     /**
      * Returns float from the set path.
      */
-    public static function float(string $path, array $data, ?float $default = null): float
+    public static function float(string $path, array $data, float $default = null): float
     {
         $item = self::get($path, $data);
 
@@ -184,7 +184,7 @@ final class DataHelper
     /**
      * Returns int from the set path.
      */
-    public static function int(string $path, array $data, ?int $default = null): int
+    public static function int(string $path, array $data, int $default = null): int
     {
         $item = self::get($path, $data);
 
@@ -204,7 +204,7 @@ final class DataHelper
     /**
      * Returns char code from the set path.
      */
-    public static function charCode(string $path, array $data, ?string $default = null): string
+    public static function charCode(string $path, array $data, string $default = null): string
     {
         $item = self::get($path, $data);
 
