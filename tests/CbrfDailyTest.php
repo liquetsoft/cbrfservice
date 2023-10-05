@@ -25,6 +25,7 @@ use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
 use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -228,6 +229,21 @@ class CbrfDailyTest extends BaseTestCase
                 'D0' => self::FIXTURE_TYPE_DATE,
             ],
             'path' => 'SwapMonthTotal.SMT',
+        ],
+        'SwapInfoSell' => [
+            'schema' => [
+                'Currency' => [0, 1, 2],
+                'DateBuy' => self::FIXTURE_TYPE_DATE,
+                'DateSell' => self::FIXTURE_TYPE_DATE,
+                'DateSPOT' => self::FIXTURE_TYPE_DATE,
+                'Type' => [0],
+                'BaseRate' => self::FIXTURE_TYPE_FLOAT,
+                'SD' => self::FIXTURE_TYPE_FLOAT,
+                'TIR' => self::FIXTURE_TYPE_FLOAT,
+                'Stavka' => self::FIXTURE_TYPE_FLOAT,
+                'limit' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'SwapInfoSell.SSU',
         ],
     ];
 
@@ -1099,6 +1115,43 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($rate['RUB'], $list[$key]->getRate());
             $this->assertSame($rate['EUR'], $list[$key]->getEUR());
             $this->assertSame($rate['USD'], $list[$key]->getUSD());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapInfoSell(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapInfoSell']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapInfoSell',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapInfoSell($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapInfoSellItem::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['Currency'], $list[$key]->getCurrency()->value);
+            $this->assertSame($rate['DateBuy'], $list[$key]->getDateBuy()->format('Y-m-d'));
+            $this->assertSame($rate['DateSell'], $list[$key]->getDateSell()->format('Y-m-d'));
+            $this->assertSame($rate['DateSPOT'], $list[$key]->getDateSPOT()->format('Y-m-d'));
+            $this->assertSame($rate['Type'], $list[$key]->getType());
+            $this->assertSame($rate['BaseRate'], $list[$key]->getBaseRate());
+            $this->assertSame($rate['SD'], $list[$key]->getSD());
+            $this->assertSame($rate['TIR'], $list[$key]->getTIR());
+            $this->assertSame($rate['Stavka'], $list[$key]->getRate());
+            $this->assertSame($rate['limit'], $list[$key]->getLimit());
         }
     }
 }
