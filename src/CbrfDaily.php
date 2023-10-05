@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Entity\BiCurBacketItem;
+use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
+use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -17,11 +20,16 @@ use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\OvernightRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
+use Liquetsoft\CbrfService\Entity\RepoDebtUSDRate;
 use Liquetsoft\CbrfService\Entity\ReutersCurrency;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
+use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
+use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use Liquetsoft\CbrfService\Exception\CbrfException;
 
@@ -567,7 +575,7 @@ final class CbrfDaily
     }
 
     /**
-     * Returns prices for coins.
+     * Returns rates of overnight loans.
      *
      * @return OvernightRate[]
      *
@@ -584,5 +592,159 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('Overnight.OB', $res, OvernightRate::class);
+    }
+
+    /**
+     * Returns rates for currency swap.
+     *
+     * @return SwapDayTotalRate[]
+     *
+     * @throws CbrfException
+     */
+    public function swapDayTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapDayTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapDayTotal.SDT', $res, SwapDayTotalRate::class);
+    }
+
+    /**
+     * Returns rates for currency swap by eur and usd.
+     *
+     * @return SwapMonthTotalRate[]
+     *
+     * @throws CbrfException
+     */
+    public function swapMonthTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapMonthTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapMonthTotal.SMT', $res, SwapMonthTotalRate::class);
+    }
+
+    /**
+     * Returns conditions for currency swap.
+     *
+     * @return SwapInfoSellItem[]
+     *
+     * @throws CbrfException
+     */
+    public function swapInfoSell(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapInfoSell',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapInfoSell.SSU', $res, SwapInfoSellItem::class);
+    }
+
+    /**
+     * Returns sell volume for currency swap.
+     *
+     * @return SwapInfoSellVolItem[]
+     *
+     * @throws CbrfException
+     */
+    public function swapInfoSellVol(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapInfoSellVol',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapInfoSellVol.SSUV', $res, SwapInfoSellVolItem::class);
+    }
+
+    /**
+     * Returns banks liquidity.
+     *
+     * @return BliquidityRate[]
+     *
+     * @throws CbrfException
+     */
+    public function bLiquidity(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'Bliquidity',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('Bliquidity.BL', $res, BliquidityRate::class);
+    }
+
+    /**
+     * Returns bi currency backet price.
+     *
+     * @return BiCurBaseRate[]
+     *
+     * @throws CbrfException
+     */
+    public function biCurBase(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'BiCurBase',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('BiCurBase.BCB', $res, BiCurBaseRate::class);
+    }
+
+    /**
+     * Returns bi currency backet structure.
+     *
+     * @return BiCurBacketItem[]
+     *
+     * @throws CbrfException
+     */
+    public function biCurBacket(): array
+    {
+        $res = $this->transport->query('BiCurBacket');
+
+        return DataHelper::arrayOfItems('BiCurBacket.BC', $res, BiCurBacketItem::class);
+    }
+
+    /**
+     * Returns repo debts.
+     *
+     * @return RepoDebtUSDRate[]
+     *
+     * @throws CbrfException
+     */
+    public function repoDebtUSD(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'RepoDebtUSD',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('RepoDebtUSD.rd', $res, RepoDebtUSDRate::class);
     }
 }

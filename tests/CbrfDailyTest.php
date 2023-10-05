@@ -6,6 +6,9 @@ namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
+use Liquetsoft\CbrfService\Entity\BiCurBacketItem;
+use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
+use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -19,11 +22,16 @@ use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\OvernightRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
+use Liquetsoft\CbrfService\Entity\RepoDebtUSDRate;
 use Liquetsoft\CbrfService\Entity\ReutersCurrency;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
+use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
+use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
+use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -210,6 +218,86 @@ class CbrfDailyTest extends BaseTestCase
                 'date' => self::FIXTURE_TYPE_DATE,
             ],
             'path' => 'Overnight.OB',
+        ],
+        'SwapDayTotal' => [
+            'schema' => [
+                'Swap' => self::FIXTURE_TYPE_FLOAT,
+                'DT' => self::FIXTURE_TYPE_DATE,
+            ],
+            'path' => 'SwapDayTotal.SDT',
+        ],
+        'SwapMonthTotal' => [
+            'schema' => [
+                'RUB' => self::FIXTURE_TYPE_FLOAT,
+                'EUR' => self::FIXTURE_TYPE_FLOAT,
+                'USD' => self::FIXTURE_TYPE_FLOAT,
+                'D0' => self::FIXTURE_TYPE_DATE,
+            ],
+            'path' => 'SwapMonthTotal.SMT',
+        ],
+        'SwapInfoSell' => [
+            'schema' => [
+                'Currency' => [0, 1, 2],
+                'DateBuy' => self::FIXTURE_TYPE_DATE,
+                'DateSell' => self::FIXTURE_TYPE_DATE,
+                'DateSPOT' => self::FIXTURE_TYPE_DATE,
+                'Type' => [0],
+                'BaseRate' => self::FIXTURE_TYPE_FLOAT,
+                'SD' => self::FIXTURE_TYPE_FLOAT,
+                'TIR' => self::FIXTURE_TYPE_FLOAT,
+                'Stavka' => self::FIXTURE_TYPE_FLOAT,
+                'limit' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'SwapInfoSell.SSU',
+        ],
+        'SwapInfoSellVol' => [
+            'schema' => [
+                'Currency' => [0, 1, 2],
+                'DT' => self::FIXTURE_TYPE_DATE,
+                'Type' => [0],
+                'VOL_FC' => self::FIXTURE_TYPE_FLOAT,
+                'VOL_RUB' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'SwapInfoSellVol.SSUV',
+        ],
+        'Bliquidity' => [
+            'schema' => [
+                'DT' => self::FIXTURE_TYPE_DATE,
+                'StrLiDef' => self::FIXTURE_TYPE_FLOAT,
+                'claims' => self::FIXTURE_TYPE_FLOAT,
+                'actionBasedRepoFX' => self::FIXTURE_TYPE_FLOAT,
+                'actionBasedSecureLoans' => self::FIXTURE_TYPE_FLOAT,
+                'standingFacilitiesRepoFX' => self::FIXTURE_TYPE_FLOAT,
+                'standingFacilitiesSecureLoans' => self::FIXTURE_TYPE_FLOAT,
+                'liabilities' => self::FIXTURE_TYPE_FLOAT,
+                'depositAuctionBased' => self::FIXTURE_TYPE_FLOAT,
+                'depositStandingFacilities' => self::FIXTURE_TYPE_FLOAT,
+                'CBRbonds' => self::FIXTURE_TYPE_FLOAT,
+                'netCBRclaims' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'Bliquidity.BL',
+        ],
+        'BiCurBase' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'VAL' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'BiCurBase.BCB',
+        ],
+        'BiCurBacket' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'USD' => self::FIXTURE_TYPE_FLOAT,
+                'EUR' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'BiCurBacket.BC',
+        ],
+        'RepoDebtUSD' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'TP' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'RepoDebtUSD.rd',
         ],
     ];
 
@@ -1021,6 +1109,257 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($rates as $key => $rate) {
             $this->assertSame($rate['date'], $list[$key]->getDate()->format('Y-m-d'));
             $this->assertSame($rate['stavka'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapDayTotal(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapDayTotal']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapDayTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapDayTotal($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapDayTotalRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['Swap'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapMonthTotal(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapMonthTotal']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapMonthTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapMonthTotal($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapMonthTotalRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['RUB'], $list[$key]->getRate());
+            $this->assertSame($rate['EUR'], $list[$key]->getEUR());
+            $this->assertSame($rate['USD'], $list[$key]->getUSD());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapInfoSell(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapInfoSell']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapInfoSell',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapInfoSell($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapInfoSellItem::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['Currency'], $list[$key]->getCurrency()->value);
+            $this->assertSame($rate['DateBuy'], $list[$key]->getDateBuy()->format('Y-m-d'));
+            $this->assertSame($rate['DateSell'], $list[$key]->getDateSell()->format('Y-m-d'));
+            $this->assertSame($rate['DateSPOT'], $list[$key]->getDateSPOT()->format('Y-m-d'));
+            $this->assertSame($rate['Type'], $list[$key]->getType());
+            $this->assertSame($rate['BaseRate'], $list[$key]->getBaseRate());
+            $this->assertSame($rate['SD'], $list[$key]->getSD());
+            $this->assertSame($rate['TIR'], $list[$key]->getTIR());
+            $this->assertSame($rate['Stavka'], $list[$key]->getRate());
+            $this->assertSame($rate['limit'], $list[$key]->getLimit());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapInfoSellVol(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapInfoSellVol']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapInfoSellVol',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapInfoSellVol($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapInfoSellVolItem::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['Currency'], $list[$key]->getCurrency()->value);
+            $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['Type'], $list[$key]->getType());
+            $this->assertSame($rate['VOL_FC'], $list[$key]->getVolumeForeignCurrency());
+            $this->assertSame($rate['VOL_RUB'], $list[$key]->getVolumeRub());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testBLiquidity(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['Bliquidity']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'Bliquidity',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->bLiquidity($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(BliquidityRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['StrLiDef'], $list[$key]->getRate());
+            $this->assertSame($rate['claims'], $list[$key]->getClaims());
+            $this->assertSame($rate['actionBasedRepoFX'], $list[$key]->getActionBasedRepoFX());
+            $this->assertSame($rate['actionBasedSecureLoans'], $list[$key]->getActionBasedSecureLoans());
+            $this->assertSame($rate['standingFacilitiesRepoFX'], $list[$key]->getStandingFacilitiesRepoFX());
+            $this->assertSame($rate['standingFacilitiesSecureLoans'], $list[$key]->getStandingFacilitiesSecureLoans());
+            $this->assertSame($rate['liabilities'], $list[$key]->getLiabilities());
+            $this->assertSame($rate['depositAuctionBased'], $list[$key]->getDepositAuctionBased());
+            $this->assertSame($rate['depositStandingFacilities'], $list[$key]->getDepositStandingFacilities());
+            $this->assertSame($rate['CBRbonds'], $list[$key]->getCBRbonds());
+            $this->assertSame($rate['netCBRclaims'], $list[$key]->getNetCBRclaims());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testBiCurBase(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['BiCurBase']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'BiCurBase',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->biCurBase($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(BiCurBaseRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['VAL'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testBiCurBacket(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['BiCurBacket']);
+
+        $soapClient = $this->createTransportMock(
+            'BiCurBacket',
+            null,
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->biCurBacket();
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(BiCurBacketItem::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['USD'], $list[$key]->getUSD());
+            $this->assertSame($rate['EUR'], $list[$key]->getEUR());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testRepoDebtUSD(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['RepoDebtUSD']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'RepoDebtUSD',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->repoDebtUSD($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(RepoDebtUSDRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['TP'], $list[$key]->getRate());
         }
     }
 }
