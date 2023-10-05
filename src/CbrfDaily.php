@@ -630,7 +630,7 @@ final class CbrfDaily
     }
 
     /**
-     * Returns rates for currency swap by eur and usd.
+     * Returns conditions for currency swap.
      *
      * @return SwapInfoSellItem[]
      *
