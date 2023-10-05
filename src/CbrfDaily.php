@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -668,5 +669,25 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('SwapInfoSellVol.SSUV', $res, SwapInfoSellVolItem::class);
+    }
+
+    /**
+     * Returns banks liquidity.
+     *
+     * @return BliquidityRate[]
+     *
+     * @throws CbrfException
+     */
+    public function bLiquidity(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'Bliquidity',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('Bliquidity.BL', $res, BliquidityRate::class);
     }
 }

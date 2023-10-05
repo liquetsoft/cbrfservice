@@ -6,6 +6,7 @@ namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
+use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
 use Liquetsoft\CbrfService\Entity\DepoRate;
@@ -255,6 +256,23 @@ class CbrfDailyTest extends BaseTestCase
                 'VOL_RUB' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'SwapInfoSellVol.SSUV',
+        ],
+        'Bliquidity' => [
+            'schema' => [
+                'DT' => self::FIXTURE_TYPE_DATE,
+                'StrLiDef' => self::FIXTURE_TYPE_FLOAT,
+                'claims' => self::FIXTURE_TYPE_FLOAT,
+                'actionBasedRepoFX' => self::FIXTURE_TYPE_FLOAT,
+                'actionBasedSecureLoans' => self::FIXTURE_TYPE_FLOAT,
+                'standingFacilitiesRepoFX' => self::FIXTURE_TYPE_FLOAT,
+                'standingFacilitiesSecureLoans' => self::FIXTURE_TYPE_FLOAT,
+                'liabilities' => self::FIXTURE_TYPE_FLOAT,
+                'depositAuctionBased' => self::FIXTURE_TYPE_FLOAT,
+                'depositStandingFacilities' => self::FIXTURE_TYPE_FLOAT,
+                'CBRbonds' => self::FIXTURE_TYPE_FLOAT,
+                'netCBRclaims' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'Bliquidity.BL',
         ],
     ];
 
@@ -1195,6 +1213,45 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($rate['Type'], $list[$key]->getType());
             $this->assertSame($rate['VOL_FC'], $list[$key]->getVolumeForeignCurrency());
             $this->assertSame($rate['VOL_RUB'], $list[$key]->getVolumeRub());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testBLiquidity(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['Bliquidity']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'Bliquidity',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->bLiquidity($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(BliquidityRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['StrLiDef'], $list[$key]->getRate());
+            $this->assertSame($rate['claims'], $list[$key]->getClaims());
+            $this->assertSame($rate['actionBasedRepoFX'], $list[$key]->getActionBasedRepoFX());
+            $this->assertSame($rate['actionBasedSecureLoans'], $list[$key]->getActionBasedSecureLoans());
+            $this->assertSame($rate['standingFacilitiesRepoFX'], $list[$key]->getStandingFacilitiesRepoFX());
+            $this->assertSame($rate['standingFacilitiesSecureLoans'], $list[$key]->getStandingFacilitiesSecureLoans());
+            $this->assertSame($rate['liabilities'], $list[$key]->getLiabilities());
+            $this->assertSame($rate['depositAuctionBased'], $list[$key]->getDepositAuctionBased());
+            $this->assertSame($rate['depositStandingFacilities'], $list[$key]->getDepositStandingFacilities());
+            $this->assertSame($rate['CBRbonds'], $list[$key]->getCBRbonds());
+            $this->assertSame($rate['netCBRclaims'], $list[$key]->getNetCBRclaims());
         }
     }
 }
