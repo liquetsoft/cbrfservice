@@ -22,6 +22,7 @@ use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\OvernightRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
+use Liquetsoft\CbrfService\Entity\RepoDebtUSDRate;
 use Liquetsoft\CbrfService\Entity\ReutersCurrency;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
@@ -290,6 +291,13 @@ class CbrfDailyTest extends BaseTestCase
                 'EUR' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'BiCurBacket.BC',
+        ],
+        'RepoDebtUSD' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'TP' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'RepoDebtUSD.rd',
         ],
     ];
 
@@ -1323,6 +1331,35 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
             $this->assertSame($rate['USD'], $list[$key]->getUSD());
             $this->assertSame($rate['EUR'], $list[$key]->getEUR());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testRepoDebtUSD(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['RepoDebtUSD']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'RepoDebtUSD',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->repoDebtUSD($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(RepoDebtUSDRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['TP'], $list[$key]->getRate());
         }
     }
 }

@@ -20,6 +20,7 @@ use Liquetsoft\CbrfService\Entity\OstatRate;
 use Liquetsoft\CbrfService\Entity\OvernightRate;
 use Liquetsoft\CbrfService\Entity\PreciousMetalRate;
 use Liquetsoft\CbrfService\Entity\RepoDebt;
+use Liquetsoft\CbrfService\Entity\RepoDebtUSDRate;
 use Liquetsoft\CbrfService\Entity\ReutersCurrency;
 use Liquetsoft\CbrfService\Entity\ReutersCurrencyRate;
 use Liquetsoft\CbrfService\Entity\RuoniaBid;
@@ -725,5 +726,25 @@ final class CbrfDaily
         $res = $this->transport->query('BiCurBacket');
 
         return DataHelper::arrayOfItems('BiCurBacket.BC', $res, BiCurBacketItem::class);
+    }
+
+    /**
+     * Returns repo debts.
+     *
+     * @return RepoDebtUSDRate[]
+     *
+     * @throws CbrfException
+     */
+    public function repoDebtUSD(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'RepoDebtUSD',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('RepoDebtUSD.rd', $res, RepoDebtUSDRate::class);
     }
 }
