@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Entity\BiCurBacketItem;
 use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
 use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
@@ -693,7 +694,7 @@ final class CbrfDaily
     }
 
     /**
-     * Returns bi currency backet.
+     * Returns bi currency backet price.
      *
      * @return BiCurBaseRate[]
      *
@@ -710,5 +711,19 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('BiCurBase.BCB', $res, BiCurBaseRate::class);
+    }
+
+    /**
+     * Returns bi currency backet structure.
+     *
+     * @return BiCurBacketItem[]
+     *
+     * @throws CbrfException
+     */
+    public function biCurBacket(): array
+    {
+        $res = $this->transport->query('BiCurBacket');
+
+        return DataHelper::arrayOfItems('BiCurBacket.BC', $res, BiCurBacketItem::class);
     }
 }

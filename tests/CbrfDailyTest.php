@@ -6,6 +6,7 @@ namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
+use Liquetsoft\CbrfService\Entity\BiCurBacketItem;
 use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
 use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
@@ -281,6 +282,14 @@ class CbrfDailyTest extends BaseTestCase
                 'VAL' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'BiCurBase.BCB',
+        ],
+        'BiCurBacket' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'USD' => self::FIXTURE_TYPE_FLOAT,
+                'EUR' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'BiCurBacket.BC',
         ],
     ];
 
@@ -1289,6 +1298,31 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($rates as $key => $rate) {
             $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
             $this->assertSame($rate['VAL'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testBiCurBacket(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['BiCurBacket']);
+
+        $soapClient = $this->createTransportMock(
+            'BiCurBacket',
+            null,
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->biCurBacket();
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(BiCurBacketItem::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['USD'], $list[$key]->getUSD());
+            $this->assertSame($rate['EUR'], $list[$key]->getEUR());
         }
     }
 }
