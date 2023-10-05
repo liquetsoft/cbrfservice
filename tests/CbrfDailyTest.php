@@ -25,6 +25,7 @@ use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
+use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -218,6 +219,15 @@ class CbrfDailyTest extends BaseTestCase
                 'DT' => self::FIXTURE_TYPE_DATE,
             ],
             'path' => 'SwapDayTotal.SDT',
+        ],
+        'SwapMonthTotal' => [
+            'schema' => [
+                'RUB' => self::FIXTURE_TYPE_FLOAT,
+                'EUR' => self::FIXTURE_TYPE_FLOAT,
+                'USD' => self::FIXTURE_TYPE_FLOAT,
+                'D0' => self::FIXTURE_TYPE_DATE,
+            ],
+            'path' => 'SwapMonthTotal.SMT',
         ],
     ];
 
@@ -1058,6 +1068,37 @@ class CbrfDailyTest extends BaseTestCase
         foreach ($rates as $key => $rate) {
             $this->assertSame($rate['DT'], $list[$key]->getDate()->format('Y-m-d'));
             $this->assertSame($rate['Swap'], $list[$key]->getRate());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testSwapMonthTotal(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['SwapMonthTotal']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'SwapMonthTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->swapMonthTotal($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(SwapMonthTotalRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['RUB'], $list[$key]->getRate());
+            $this->assertSame($rate['EUR'], $list[$key]->getEUR());
+            $this->assertSame($rate['USD'], $list[$key]->getUSD());
         }
     }
 }

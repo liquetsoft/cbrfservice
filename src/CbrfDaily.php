@@ -23,6 +23,7 @@ use Liquetsoft\CbrfService\Entity\RuoniaBid;
 use Liquetsoft\CbrfService\Entity\RuoniaIndex;
 use Liquetsoft\CbrfService\Entity\Saldo;
 use Liquetsoft\CbrfService\Entity\SwapDayTotalRate;
+use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use Liquetsoft\CbrfService\Exception\CbrfException;
 
@@ -588,7 +589,7 @@ final class CbrfDaily
     }
 
     /**
-     * Returns rates for currency swap by days.
+     * Returns rates for currency swap.
      *
      * @return SwapDayTotalRate[]
      *
@@ -605,5 +606,25 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('SwapDayTotal.SDT', $res, SwapDayTotalRate::class);
+    }
+
+    /**
+     * Returns rates for currency swap by eur and usd.
+     *
+     * @return SwapMonthTotalRate[]
+     *
+     * @throws CbrfException
+     */
+    public function swapMonthTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'SwapMonthTotal',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('SwapMonthTotal.SMT', $res, SwapMonthTotalRate::class);
     }
 }
