@@ -6,6 +6,7 @@ namespace Liquetsoft\CbrfService\Tests;
 
 use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
+use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
 use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
@@ -273,6 +274,13 @@ class CbrfDailyTest extends BaseTestCase
                 'netCBRclaims' => self::FIXTURE_TYPE_FLOAT,
             ],
             'path' => 'Bliquidity.BL',
+        ],
+        'BiCurBase' => [
+            'schema' => [
+                'D0' => self::FIXTURE_TYPE_DATE,
+                'VAL' => self::FIXTURE_TYPE_FLOAT,
+            ],
+            'path' => 'BiCurBase.BCB',
         ],
     ];
 
@@ -1252,6 +1260,35 @@ class CbrfDailyTest extends BaseTestCase
             $this->assertSame($rate['depositStandingFacilities'], $list[$key]->getDepositStandingFacilities());
             $this->assertSame($rate['CBRbonds'], $list[$key]->getCBRbonds());
             $this->assertSame($rate['netCBRclaims'], $list[$key]->getNetCBRclaims());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testBiCurBase(): void
+    {
+        [$rates, $response] = $this->createFixture(self::FIXTURES['BiCurBase']);
+        $from = new \DateTimeImmutable('-1 month');
+        $to = new \DateTimeImmutable();
+
+        $soapClient = $this->createTransportMock(
+            'BiCurBase',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ],
+            $response
+        );
+
+        $service = new CbrfDaily($soapClient);
+        $list = $service->biCurBase($from, $to);
+
+        $this->assertCount(\count($rates), $list);
+        $this->assertContainsOnlyInstancesOf(BiCurBaseRate::class, $list);
+        foreach ($rates as $key => $rate) {
+            $this->assertSame($rate['D0'], $list[$key]->getDate()->format('Y-m-d'));
+            $this->assertSame($rate['VAL'], $list[$key]->getRate());
         }
     }
 }

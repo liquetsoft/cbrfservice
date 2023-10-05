@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
 use Liquetsoft\CbrfService\Entity\BliquidityRate;
 use Liquetsoft\CbrfService\Entity\CurrencyEnum;
 use Liquetsoft\CbrfService\Entity\CurrencyRate;
@@ -689,5 +690,25 @@ final class CbrfDaily
         );
 
         return DataHelper::arrayOfItems('Bliquidity.BL', $res, BliquidityRate::class);
+    }
+
+    /**
+     * Returns bi currency backet.
+     *
+     * @return BiCurBaseRate[]
+     *
+     * @throws CbrfException
+     */
+    public function biCurBase(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $res = $this->transport->query(
+            'BiCurBase',
+            [
+                'fromDate' => $from,
+                'ToDate' => $to,
+            ]
+        );
+
+        return DataHelper::arrayOfItems('BiCurBase.BCB', $res, BiCurBaseRate::class);
     }
 }
