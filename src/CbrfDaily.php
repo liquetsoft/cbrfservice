@@ -38,17 +38,14 @@ use Liquetsoft\CbrfService\Exception\CbrfException;
  */
 final class CbrfDaily
 {
-    private readonly CbrfTransport $transport;
-
-    public function __construct(CbrfTransport $transport)
+    public function __construct(private readonly CbrfTransport $transport)
     {
-        $this->transport = $transport;
     }
 
     /**
      * Returns list of rates for all currencies for set date.
      *
-     * @return CurrencyRate[]
+     * @return array<int, CurrencyRate>
      *
      * @throws CbrfException
      */
@@ -62,7 +59,7 @@ final class CbrfDaily
         );
 
         $immutableDate = DataHelper::createImmutableDateTime($date);
-        $list = DataHelper::array('ValuteData.ValuteCursOnDate', $res);
+        $list = array_values(DataHelper::array('ValuteData.ValuteCursOnDate', $res));
         $callback = fn (array $item): CurrencyRate => new CurrencyRate($item, $immutableDate);
 
         return array_map($callback, $list);
@@ -111,7 +108,7 @@ final class CbrfDaily
     /**
      * List of all currencies that allowed on cbrf service.
      *
-     * @return CurrencyEnum[]
+     * @return array<int, CurrencyEnum>
      *
      * @throws CbrfException
      */
@@ -218,7 +215,7 @@ final class CbrfDaily
     /**
      * Returns rate dynamic for set currency within set dates.
      *
-     * @return CurrencyRate[]
+     * @return array<int, CurrencyRate>
      *
      * @throws CbrfException
      */
@@ -251,7 +248,7 @@ final class CbrfDaily
     /**
      * Returns key rate dynamic within set dates.
      *
-     * @return KeyRate[]
+     * @return array<int, KeyRate>
      *
      * @throws CbrfException
      */
@@ -271,7 +268,7 @@ final class CbrfDaily
     /**
      * Returns list of presious metals prices within set dates.
      *
-     * @return PreciousMetalRate[]
+     * @return array<int, PreciousMetalRate>
      *
      * @throws CbrfException
      */
@@ -291,7 +288,7 @@ final class CbrfDaily
     /**
      * Returns list of swap rates within set dates.
      *
-     * @return SwapRate[]
+     * @return array<int, SwapRate>
      *
      * @throws CbrfException
      */
@@ -311,7 +308,7 @@ final class CbrfDaily
     /**
      * Returns list depo dynamic items within set dates.
      *
-     * @return DepoRate[]
+     * @return array<int, DepoRate>
      *
      * @throws CbrfException
      */
@@ -331,7 +328,7 @@ final class CbrfDaily
     /**
      * Returns the dynamic of balances of funds items within set dates.
      *
-     * @return OstatRate[]
+     * @return array<int, OstatRate>
      *
      * @throws CbrfException
      */
@@ -351,7 +348,7 @@ final class CbrfDaily
     /**
      * Returns the banks deposites at bank of Russia.
      *
-     * @return OstatDepoRate[]
+     * @return array<int, OstatDepoRate>
      *
      * @throws CbrfException
      */
@@ -371,7 +368,7 @@ final class CbrfDaily
     /**
      * Returns international valute reseves of Russia for month.
      *
-     * @return InternationalReserve[]
+     * @return array<int, InternationalReserve>
      *
      * @throws CbrfException
      */
@@ -391,7 +388,7 @@ final class CbrfDaily
     /**
      * Returns international valute reseves of Russia for week.
      *
-     * @return InternationalReserveWeek[]
+     * @return array<int, InternationalReserveWeek>
      *
      * @throws CbrfException
      */
@@ -411,7 +408,7 @@ final class CbrfDaily
     /**
      * Returns operations saldo.
      *
-     * @return Saldo[]
+     * @return array<int, Saldo>
      *
      * @throws CbrfException
      */
@@ -431,7 +428,7 @@ final class CbrfDaily
     /**
      * Returns Ruonia index.
      *
-     * @return RuoniaIndex[]
+     * @return array<int, RuoniaIndex>
      *
      * @throws CbrfException
      */
@@ -451,7 +448,7 @@ final class CbrfDaily
     /**
      * Returns Ruonia bid.
      *
-     * @return RuoniaBid[]
+     * @return array<int, RuoniaBid>
      *
      * @throws CbrfException
      */
@@ -471,7 +468,7 @@ final class CbrfDaily
     /**
      * Returns inter banks credit market bids.
      *
-     * @return Mkr[]
+     * @return array<int, Mkr>
      *
      * @throws CbrfException
      */
@@ -491,7 +488,7 @@ final class CbrfDaily
     /**
      * Returns requirements for credit organisations.
      *
-     * @return Dv[]
+     * @return array<int, Dv>
      *
      * @throws CbrfException
      */
@@ -511,7 +508,7 @@ final class CbrfDaily
     /**
      * Returns debts of credit organisations.
      *
-     * @return RepoDebt[]
+     * @return array<int, RepoDebt>
      *
      * @throws CbrfException
      */
@@ -531,7 +528,7 @@ final class CbrfDaily
     /**
      * Returns list of Reuters currencies.
      *
-     * @return ReutersCurrency[]
+     * @return array<int, ReutersCurrency>
      *
      * @throws CbrfException
      */
@@ -550,7 +547,7 @@ final class CbrfDaily
     /**
      * Returns list of Reuters rates for all currencies for set date.
      *
-     * @return ReutersCurrencyRate[]
+     * @return array<int, ReutersCurrencyRate>
      *
      * @throws CbrfException
      */
@@ -577,7 +574,7 @@ final class CbrfDaily
     /**
      * Returns rates of overnight loans.
      *
-     * @return OvernightRate[]
+     * @return array<int, OvernightRate>
      *
      * @throws CbrfException
      */
@@ -597,7 +594,7 @@ final class CbrfDaily
     /**
      * Returns rates for currency swap.
      *
-     * @return SwapDayTotalRate[]
+     * @return array<int, SwapDayTotalRate>
      *
      * @throws CbrfException
      */
@@ -617,7 +614,7 @@ final class CbrfDaily
     /**
      * Returns rates for currency swap by eur and usd.
      *
-     * @return SwapMonthTotalRate[]
+     * @return array<int, SwapMonthTotalRate>
      *
      * @throws CbrfException
      */
@@ -637,7 +634,7 @@ final class CbrfDaily
     /**
      * Returns conditions for currency swap.
      *
-     * @return SwapInfoSellItem[]
+     * @return array<int, SwapInfoSellItem>
      *
      * @throws CbrfException
      */
@@ -657,7 +654,7 @@ final class CbrfDaily
     /**
      * Returns sell volume for currency swap.
      *
-     * @return SwapInfoSellVolItem[]
+     * @return array<int, SwapInfoSellVolItem>
      *
      * @throws CbrfException
      */
@@ -677,7 +674,7 @@ final class CbrfDaily
     /**
      * Returns banks liquidity.
      *
-     * @return BliquidityRate[]
+     * @return array<int, BliquidityRate>
      *
      * @throws CbrfException
      */
@@ -697,7 +694,7 @@ final class CbrfDaily
     /**
      * Returns bi currency backet price.
      *
-     * @return BiCurBaseRate[]
+     * @return array<int, BiCurBaseRate>
      *
      * @throws CbrfException
      */
@@ -717,7 +714,7 @@ final class CbrfDaily
     /**
      * Returns bi currency backet structure.
      *
-     * @return BiCurBacketItem[]
+     * @return array<int, BiCurBacketItem>
      *
      * @throws CbrfException
      */
@@ -731,7 +728,7 @@ final class CbrfDaily
     /**
      * Returns repo debts.
      *
-     * @return RepoDebtUSDRate[]
+     * @return array<int, RepoDebtUSDRate>
      *
      * @throws CbrfException
      */

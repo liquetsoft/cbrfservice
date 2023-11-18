@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService;
 
 use Liquetsoft\CbrfService\Exception\CbrfTransportException;
-use SimpleXMLElement;
 
 /**
  * Object for cbrf SOAP transport.
@@ -15,11 +14,8 @@ final class CbrfSoapTransport implements CbrfTransport
     public const WSDL = 'http://www.cbr.ru/DailyInfoWebServ/DailyInfo.asmx?WSDL';
     public const DATE_TIME_FORMAT = 'Y-m-d\TH:i:s';
 
-    private ?\SoapClient $client;
-
-    public function __construct(\SoapClient $client = null)
+    public function __construct(private ?\SoapClient $client = null)
     {
-        $this->client = $client;
     }
 
     /**

@@ -52,7 +52,7 @@ final class DataHelper
      *
      * @psalm-param class-string<T> $itemClass
      *
-     * @psalm-return T[]
+     * @psalm-return array<int, T>
      *
      * @psalm-suppress MixedMethodCall
      */
@@ -67,7 +67,7 @@ final class DataHelper
             throw new CbrfDataConvertException('array', "{$itemClass}[]", $e);
         }
 
-        return $result;
+        return array_values($result);
     }
 
     /**
