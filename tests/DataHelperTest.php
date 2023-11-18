@@ -63,7 +63,7 @@ class DataHelperTest extends BaseTestCase
      * @test
      *
      * @psalm-param class-string $itemClass
-     * @psalm-param object[]|\Exception $result
+     * @psalm-param array<int, mixed>|\Exception $result
      *
      * @dataProvider arrayOfItemsProvider
      */
