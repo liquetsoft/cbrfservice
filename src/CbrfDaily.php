@@ -32,6 +32,7 @@ use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
 use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
 use Liquetsoft\CbrfService\Exception\CbrfException;
+use Liquetsoft\CbrfService\Helper\DataHelper;
 
 /**
  * Class for a daily cb RF service.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService;
+namespace Liquetsoft\CbrfService\Helper;
 
 use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
 use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;

@@ -6,7 +6,7 @@ namespace Liquetsoft\CbrfService\Entity;
 
 use Liquetsoft\CbrfService\CbrfEntityCurrency;
 use Liquetsoft\CbrfService\CbrfEntityRate;
-use Liquetsoft\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\Helper\DataHelper;
 
 /**
  * DTO that represents response item from GetCursOnDate method.

@@ -9,6 +9,8 @@ use Liquetsoft\CbrfService\Exception\CbrfTransportException;
 
 /**
  * Object for cbrf SOAP transport.
+ *
+ * @internal
  */
 final class CbrfSoapTransport implements CbrfTransport
 {
