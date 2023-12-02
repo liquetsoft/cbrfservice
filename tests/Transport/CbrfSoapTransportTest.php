@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests\Transport;
 
-use Liquetsoft\CbrfService\CbrfSoapTransport;
 use Liquetsoft\CbrfService\Exception\CbrfTransportException;
+use Liquetsoft\CbrfService\Tests\BaseTestCase;
+use Liquetsoft\CbrfService\Transport\CbrfSoapTransport;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Transport\CbrfSoapTransport;
+
 /**
  * Factory that can initialize daily service.
  */

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService;
+namespace Liquetsoft\CbrfService\Transport;
 
+use Liquetsoft\CbrfService\CbrfTransport;
 use Liquetsoft\CbrfService\Exception\CbrfTransportException;
 
 /**
@@ -119,7 +120,7 @@ final class CbrfSoapTransport implements CbrfTransport
             $return[$name] = $value;
         }
 
-        // need to do this because every params list are nested to parameters object
+        // need to do this because every params list is nested to parameters object
         return [$return];
     }
 }
