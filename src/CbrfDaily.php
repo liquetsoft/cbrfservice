@@ -34,14 +34,10 @@ use Liquetsoft\CbrfService\Entity\SwapRate;
 use Liquetsoft\CbrfService\Exception\CbrfException;
 
 /**
- * Class for a daily cb RF service.
+ * Interface for a daily cb RF service.
  */
-final class CbrfDaily
+interface CbrfDaily
 {
-    public function __construct(private readonly CbrfTransport $transport)
-    {
-    }
-
     /**
      * Returns list of rates for all currencies for set date.
      *
@@ -49,61 +45,21 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function getCursOnDate(\DateTimeInterface $date): array
-    {
-        $res = $this->transport->query(
-            'GetCursOnDate',
-            [
-                'On_date' => $date,
-            ]
-        );
-
-        $immutableDate = DataHelper::createImmutableDateTime($date);
-        $list = array_values(DataHelper::array('ValuteData.ValuteCursOnDate', $res));
-        $callback = fn (array $item): CurrencyRate => new CurrencyRate($item, $immutableDate);
-
-        return array_map($callback, $list);
-    }
+    public function getCursOnDate(\DateTimeInterface $date): array;
 
     /**
      * Returns rate for currency with set char code.
      *
      * @throws CbrfException
      */
-    public function getCursOnDateByCharCode(\DateTimeInterface $date, string $charCode): ?CurrencyRate
-    {
-        $list = $this->getCursOnDate($date);
-
-        $return = null;
-        foreach ($list as $item) {
-            if (strcasecmp($charCode, $item->getCharCode()) === 0) {
-                $return = $item;
-                break;
-            }
-        }
-
-        return $return;
-    }
+    public function getCursOnDateByCharCode(\DateTimeInterface $date, string $charCode): ?CurrencyRate;
 
     /**
      * Returns rate for currency with set numeric code.
      *
      * @throws CbrfException
      */
-    public function getCursOnDateByNumericCode(\DateTimeInterface $date, int $numericCode): ?CurrencyRate
-    {
-        $list = $this->getCursOnDate($date);
-
-        $return = null;
-        foreach ($list as $item) {
-            if ($item->getNumericCode() === $numericCode) {
-                $return = $item;
-                break;
-            }
-        }
-
-        return $return;
-    }
+    public function getCursOnDateByNumericCode(\DateTimeInterface $date, int $numericCode): ?CurrencyRate;
 
     /**
      * List of all currencies that allowed on cbrf service.
@@ -112,105 +68,49 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function enumValutes(bool $seld = false): array
-    {
-        $res = $this->transport->query(
-            'EnumValutes',
-            [
-                'Seld' => $seld,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('ValuteData.EnumValutes', $res, CurrencyEnum::class);
-    }
+    public function enumValutes(bool $seld = false): array;
 
     /**
      * Returns enum for currency with set char code.
      *
      * @throws CbrfException
      */
-    public function enumValuteByCharCode(string $charCode, bool $seld = false): ?CurrencyEnum
-    {
-        $list = $this->enumValutes($seld);
-
-        $return = null;
-        foreach ($list as $item) {
-            if (strcasecmp($charCode, $item->getCharCode()) === 0) {
-                $return = $item;
-                break;
-            }
-        }
-
-        return $return;
-    }
+    public function enumValuteByCharCode(string $charCode, bool $seld = false): ?CurrencyEnum;
 
     /**
      * Returns enum for currency with set numeric code.
      *
      * @throws CbrfException
      */
-    public function enumValuteByNumericCode(int $numericCode, bool $seld = false): ?CurrencyEnum
-    {
-        $list = $this->enumValutes($seld);
-
-        $return = null;
-        foreach ($list as $item) {
-            if ($item->getNumericCode() === $numericCode) {
-                $return = $item;
-                break;
-            }
-        }
-
-        return $return;
-    }
+    public function enumValuteByNumericCode(int $numericCode, bool $seld = false): ?CurrencyEnum;
 
     /**
      * Latest per day date and time of publication.
      *
      * @throws CbrfException
      */
-    public function getLatestDateTime(): \DateTimeInterface
-    {
-        $res = $this->transport->query('GetLatestDateTime');
-
-        return DataHelper::dateTime('GetLatestDateTimeResult', $res);
-    }
+    public function getLatestDateTime(): \DateTimeInterface;
 
     /**
      * Latest per day date and time of seld.
      *
      * @throws CbrfException
      */
-    public function getLatestDateTimeSeld(): \DateTimeInterface
-    {
-        $res = $this->transport->query('GetLatestDateTimeSeld');
-
-        return DataHelper::dateTime('GetLatestDateTimeSeldResult', $res);
-    }
+    public function getLatestDateTimeSeld(): \DateTimeInterface;
 
     /**
      * Latest per month date and time of publication.
      *
      * @throws CbrfException
      */
-    public function getLatestDate(): \DateTimeInterface
-    {
-        $res = $this->transport->query('GetLatestDate');
-
-        return DataHelper::dateTime('GetLatestDateResult', $res);
-    }
+    public function getLatestDate(): \DateTimeInterface;
 
     /**
      * Latest per month date and time of seld.
      *
      * @throws CbrfException
      */
-    public function getLatestDateSeld(): \DateTimeInterface
-    {
-        $res = $this->transport->query('GetLatestDateSeld');
-
-        return DataHelper::dateTime('GetLatestDateSeldResult', $res);
-    }
+    public function getLatestDateSeld(): \DateTimeInterface;
 
     /**
      * Returns rate dynamic for set currency within set dates.
@@ -219,31 +119,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CbrfEntityCurrencyInternal $currency): array
-    {
-        $res = $this->transport->query(
-            'GetCursDynamic',
-            [
-                'FromDate' => $from,
-                'ToDate' => $to,
-                'ValutaCode' => $currency->getInternalCode(),
-            ]
-        );
-
-        $result = [];
-        $list = DataHelper::array('ValuteData.ValuteCursDynamic', $res);
-        foreach ($list as $item) {
-            if (\is_array($item)) {
-                $date = DataHelper::dateTime('CursDate', $item);
-                $item['Vname'] = $currency->getName();
-                $item['VchCode'] = $currency->getCharCode();
-                $item['Vcode'] = $currency->getNumericCode();
-                $result[] = new CurrencyRate($item, $date);
-            }
-        }
-
-        return $result;
-    }
+    public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CbrfEntityCurrencyInternal $currency): array;
 
     /**
      * Returns key rate dynamic within set dates.
@@ -252,18 +128,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'KeyRate',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('KeyRate.KR', $res, KeyRate::class);
-    }
+    public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns list of presious metals prices within set dates.
@@ -272,18 +137,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'DragMetDynamic',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('DragMetall.DrgMet', $res, PreciousMetalRate::class);
-    }
+    public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns list of swap rates within set dates.
@@ -292,18 +146,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'SwapDynamic',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('SwapDynamic.Swap', $res, SwapRate::class);
-    }
+    public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns list depo dynamic items within set dates.
@@ -312,18 +155,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'DepoDynamic',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('DepoDynamic.Depo', $res, DepoRate::class);
-    }
+    public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns the dynamic of balances of funds items within set dates.
@@ -332,18 +164,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'OstatDynamic',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('OstatDynamic.Ostat', $res, OstatRate::class);
-    }
+    public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns the banks deposites at bank of Russia.
@@ -352,18 +173,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'OstatDepo',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('OD.odr', $res, OstatDepoRate::class);
-    }
+    public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns international valute reseves of Russia for month.
@@ -372,18 +182,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'mrrf',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('mmrf.mr', $res, InternationalReserve::class);
-    }
+    public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns international valute reseves of Russia for week.
@@ -392,18 +191,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'mrrf7D',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('mmrf7d.mr', $res, InternationalReserveWeek::class);
-    }
+    public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns operations saldo.
@@ -412,18 +200,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'Saldo',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('Saldo.So', $res, Saldo::class);
-    }
+    public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns Ruonia index.
@@ -432,18 +209,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'RuoniaSV',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('RuoniaSV.ra', $res, RuoniaIndex::class);
-    }
+    public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns Ruonia bid.
@@ -452,18 +218,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'Ruonia',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('Ruonia.ro', $res, RuoniaBid::class);
-    }
+    public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns inter banks credit market bids.
@@ -472,18 +227,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'MKR',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('mkr_base.MKR', $res, Mkr::class);
-    }
+    public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns requirements for credit organisations.
@@ -492,18 +236,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'DV',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('DV_base.DV', $res, Dv::class);
-    }
+    public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns debts of credit organisations.
@@ -512,18 +245,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'Repo_debt',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('Repo_debt.RD', $res, RepoDebt::class);
-    }
+    public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns list of Reuters currencies.
@@ -532,17 +254,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function enumReutersValutes(\DateTimeInterface $date): array
-    {
-        $res = $this->transport->query(
-            'EnumReutersValutes',
-            [
-                'On_date' => $date,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('ReutersValutesList.EnumRValutes', $res, ReutersCurrency::class);
-    }
+    public function enumReutersValutes(\DateTimeInterface $date): array;
 
     /**
      * Returns list of Reuters rates for all currencies for set date.
@@ -551,25 +263,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function getReutersCursOnDate(\DateTimeInterface $date): array
-    {
-        $res = $this->transport->query(
-            'GetReutersCursOnDate',
-            [
-                'On_date' => $date,
-            ]
-        );
-
-        $results = [];
-        $immutableDate = DataHelper::createImmutableDateTime($date);
-        foreach (DataHelper::array('ReutersValutesData.Currency', $res) as $item) {
-            if (\is_array($item)) {
-                $results[] = new ReutersCurrencyRate($item, $immutableDate);
-            }
-        }
-
-        return $results;
-    }
+    public function getReutersCursOnDate(\DateTimeInterface $date): array;
 
     /**
      * Returns rates of overnight loans.
@@ -578,18 +272,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function overnight(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'Overnight',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('Overnight.OB', $res, OvernightRate::class);
-    }
+    public function overnight(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns rates for currency swap.
@@ -598,18 +281,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function swapDayTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'SwapDayTotal',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('SwapDayTotal.SDT', $res, SwapDayTotalRate::class);
-    }
+    public function swapDayTotal(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns rates for currency swap by eur and usd.
@@ -618,18 +290,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function swapMonthTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'SwapMonthTotal',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('SwapMonthTotal.SMT', $res, SwapMonthTotalRate::class);
-    }
+    public function swapMonthTotal(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns conditions for currency swap.
@@ -638,18 +299,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function swapInfoSell(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'SwapInfoSell',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('SwapInfoSell.SSU', $res, SwapInfoSellItem::class);
-    }
+    public function swapInfoSell(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns sell volume for currency swap.
@@ -658,18 +308,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function swapInfoSellVol(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'SwapInfoSellVol',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('SwapInfoSellVol.SSUV', $res, SwapInfoSellVolItem::class);
-    }
+    public function swapInfoSellVol(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns banks liquidity.
@@ -678,18 +317,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function bLiquidity(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'Bliquidity',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('Bliquidity.BL', $res, BliquidityRate::class);
-    }
+    public function bLiquidity(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns bi currency backet price.
@@ -698,18 +326,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function biCurBase(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'BiCurBase',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('BiCurBase.BCB', $res, BiCurBaseRate::class);
-    }
+    public function biCurBase(\DateTimeInterface $from, \DateTimeInterface $to): array;
 
     /**
      * Returns bi currency backet structure.
@@ -718,12 +335,7 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function biCurBacket(): array
-    {
-        $res = $this->transport->query('BiCurBacket');
-
-        return DataHelper::arrayOfItems('BiCurBacket.BC', $res, BiCurBacketItem::class);
-    }
+    public function biCurBacket(): array;
 
     /**
      * Returns repo debts.
@@ -732,16 +344,5 @@ final class CbrfDaily
      *
      * @throws CbrfException
      */
-    public function repoDebtUSD(\DateTimeInterface $from, \DateTimeInterface $to): array
-    {
-        $res = $this->transport->query(
-            'RepoDebtUSD',
-            [
-                'fromDate' => $from,
-                'ToDate' => $to,
-            ]
-        );
-
-        return DataHelper::arrayOfItems('RepoDebtUSD.rd', $res, RepoDebtUSDRate::class);
-    }
+    public function repoDebtUSD(\DateTimeInterface $from, \DateTimeInterface $to): array;
 }

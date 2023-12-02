@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Liquetsoft\CbrfService\Entity;
 
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
-use Liquetsoft\CbrfService\DataHelper;
+use Liquetsoft\CbrfService\Helper\DataHelper;
 
 /**
  * DTO that represents currency from currencies vocabulary.

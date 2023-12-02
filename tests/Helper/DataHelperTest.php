@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests\Helper;
 
-use Liquetsoft\CbrfService\DataHelper;
 use Liquetsoft\CbrfService\Exception\CbrfDataAccessException;
 use Liquetsoft\CbrfService\Exception\CbrfDataConvertException;
+use Liquetsoft\CbrfService\Helper\DataHelper;
+use Liquetsoft\CbrfService\Tests\BaseTestCase;
 use Liquetsoft\CbrfService\Tests\Mock\EntityEnumIntMock;
 use Liquetsoft\CbrfService\Tests\Mock\EntityMock;
 

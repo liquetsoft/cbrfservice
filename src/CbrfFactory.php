@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService;
 
+use Liquetsoft\CbrfService\Service\CbrfDailyService;
+use Liquetsoft\CbrfService\Transport\CbrfSoapTransport;
+
 /**
  * Factory that can initialize daily service.
  */
@@ -20,6 +23,6 @@ final class CbrfFactory
     {
         $transport = new CbrfSoapTransport($soap);
 
-        return new CbrfDaily($transport);
+        return new CbrfDailyService($transport);
     }
 }

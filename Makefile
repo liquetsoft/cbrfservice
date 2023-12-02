@@ -29,3 +29,8 @@ test: ## Run tests
 
 coverage: ## Run tests with coverage
 	$(php_composer_script) coverage
+
+release: ## Run all preparations before release
+	$(php_composer_script) fixer
+	$(php_composer_script) linter
+	$(php_composer_script) test
