@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Liquetsoft\CbrfService\Service;
 
+use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
 use Liquetsoft\CbrfService\CbrfTransport;
 use Liquetsoft\CbrfService\Entity\BiCurBacketItem;
@@ -33,24 +34,21 @@ use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
 use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
 use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
-use Liquetsoft\CbrfService\Exception\CbrfException;
 use Liquetsoft\CbrfService\Helper\DataHelper;
 
 /**
  * Class for a daily cb RF service.
+ *
+ * @internal
  */
-final class CbrfDailyService
+final class CbrfDailyService implements CbrfDaily
 {
     public function __construct(private readonly CbrfTransport $transport)
     {
     }
 
     /**
-     * Returns list of rates for all currencies for set date.
-     *
-     * @return array<int, CurrencyRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getCursOnDate(\DateTimeInterface $date): array
     {
@@ -69,9 +67,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns rate for currency with set char code.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getCursOnDateByCharCode(\DateTimeInterface $date, string $charCode): ?CurrencyRate
     {
@@ -89,9 +85,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns rate for currency with set numeric code.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getCursOnDateByNumericCode(\DateTimeInterface $date, int $numericCode): ?CurrencyRate
     {
@@ -109,11 +103,7 @@ final class CbrfDailyService
     }
 
     /**
-     * List of all currencies that allowed on cbrf service.
-     *
-     * @return array<int, CurrencyEnum>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function enumValutes(bool $seld = false): array
     {
@@ -128,9 +118,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns enum for currency with set char code.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function enumValuteByCharCode(string $charCode, bool $seld = false): ?CurrencyEnum
     {
@@ -148,9 +136,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns enum for currency with set numeric code.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function enumValuteByNumericCode(int $numericCode, bool $seld = false): ?CurrencyEnum
     {
@@ -168,9 +154,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Latest per day date and time of publication.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getLatestDateTime(): \DateTimeInterface
     {
@@ -180,9 +164,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Latest per day date and time of seld.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getLatestDateTimeSeld(): \DateTimeInterface
     {
@@ -192,9 +174,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Latest per month date and time of publication.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getLatestDate(): \DateTimeInterface
     {
@@ -204,9 +184,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Latest per month date and time of seld.
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getLatestDateSeld(): \DateTimeInterface
     {
@@ -216,11 +194,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns rate dynamic for set currency within set dates.
-     *
-     * @return array<int, CurrencyRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CbrfEntityCurrencyInternal $currency): array
     {
@@ -249,11 +223,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns key rate dynamic within set dates.
-     *
-     * @return array<int, KeyRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -269,11 +239,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns list of presious metals prices within set dates.
-     *
-     * @return array<int, PreciousMetalRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -289,11 +255,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns list of swap rates within set dates.
-     *
-     * @return array<int, SwapRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -309,11 +271,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns list depo dynamic items within set dates.
-     *
-     * @return array<int, DepoRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -329,11 +287,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns the dynamic of balances of funds items within set dates.
-     *
-     * @return array<int, OstatRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -349,11 +303,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns the banks deposites at bank of Russia.
-     *
-     * @return array<int, OstatDepoRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -369,11 +319,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns international valute reseves of Russia for month.
-     *
-     * @return array<int, InternationalReserve>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -389,11 +335,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns international valute reseves of Russia for week.
-     *
-     * @return array<int, InternationalReserveWeek>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -409,11 +351,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns operations saldo.
-     *
-     * @return array<int, Saldo>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -429,11 +367,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns Ruonia index.
-     *
-     * @return array<int, RuoniaIndex>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -449,11 +383,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns Ruonia bid.
-     *
-     * @return array<int, RuoniaBid>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -469,11 +399,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns inter banks credit market bids.
-     *
-     * @return array<int, Mkr>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -489,11 +415,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns requirements for credit organisations.
-     *
-     * @return array<int, Dv>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -509,11 +431,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns debts of credit organisations.
-     *
-     * @return array<int, RepoDebt>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -529,11 +447,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns list of Reuters currencies.
-     *
-     * @return array<int, ReutersCurrency>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function enumReutersValutes(\DateTimeInterface $date): array
     {
@@ -548,11 +462,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns list of Reuters rates for all currencies for set date.
-     *
-     * @return array<int, ReutersCurrencyRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function getReutersCursOnDate(\DateTimeInterface $date): array
     {
@@ -575,11 +485,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns rates of overnight loans.
-     *
-     * @return array<int, OvernightRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function overnight(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -595,11 +501,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns rates for currency swap.
-     *
-     * @return array<int, SwapDayTotalRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function swapDayTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -615,11 +517,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns rates for currency swap by eur and usd.
-     *
-     * @return array<int, SwapMonthTotalRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function swapMonthTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -635,11 +533,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns conditions for currency swap.
-     *
-     * @return array<int, SwapInfoSellItem>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function swapInfoSell(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -655,11 +549,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns sell volume for currency swap.
-     *
-     * @return array<int, SwapInfoSellVolItem>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function swapInfoSellVol(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -675,11 +565,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns banks liquidity.
-     *
-     * @return array<int, BliquidityRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function bLiquidity(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -695,11 +581,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns bi currency backet price.
-     *
-     * @return array<int, BiCurBaseRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function biCurBase(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
@@ -715,11 +597,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns bi currency backet structure.
-     *
-     * @return array<int, BiCurBacketItem>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function biCurBacket(): array
     {
@@ -729,11 +607,7 @@ final class CbrfDailyService
     }
 
     /**
-     * Returns repo debts.
-     *
-     * @return array<int, RepoDebtUSDRate>
-     *
-     * @throws CbrfException
+     * {@inheritdoc}
      */
     public function repoDebtUSD(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
