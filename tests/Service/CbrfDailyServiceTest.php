@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Liquetsoft\CbrfService\Tests;
+namespace Liquetsoft\CbrfService\Tests\Service;
 
-use Liquetsoft\CbrfService\CbrfDaily;
 use Liquetsoft\CbrfService\CbrfEntityCurrencyInternal;
 use Liquetsoft\CbrfService\Entity\BiCurBacketItem;
 use Liquetsoft\CbrfService\Entity\BiCurBaseRate;
@@ -33,12 +32,14 @@ use Liquetsoft\CbrfService\Entity\SwapInfoSellItem;
 use Liquetsoft\CbrfService\Entity\SwapInfoSellVolItem;
 use Liquetsoft\CbrfService\Entity\SwapMonthTotalRate;
 use Liquetsoft\CbrfService\Entity\SwapRate;
+use Liquetsoft\CbrfService\Service\CbrfDailyService;
+use Liquetsoft\CbrfService\Tests\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @internal
  */
-class CbrfDailyTest extends BaseTestCase
+class CbrfDailyServiceTest extends BaseTestCase
 {
     public const FIXTURES = [
         'CurrencyRate' => [
@@ -317,7 +318,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->getCursOnDate($onDate);
 
         $this->assertCount(\count($courses), $list);
@@ -349,7 +350,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $item = $service->getCursOnDateByCharCode($onDate, $charCode);
 
         $this->assertInstanceOf(CurrencyRate::class, $item);
@@ -373,7 +374,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $item = $service->getCursOnDateByNumericCode($onDate, $numericCode);
 
         $this->assertInstanceOf(CurrencyRate::class, $item);
@@ -396,7 +397,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->enumValutes($seld);
 
         $this->assertCount(\count($currencies), $list);
@@ -429,7 +430,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $item = $service->enumValuteByCharCode($charCode, $seld);
 
         $this->assertInstanceOf(CurrencyEnum::class, $item);
@@ -453,7 +454,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $item = $service->enumValuteByNumericCode($numericCode, $seld);
 
         $this->assertInstanceOf(CurrencyEnum::class, $item);
@@ -476,7 +477,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $testDate = $service->getLatestDateTime();
 
         $this->assertSameDate($date, $testDate);
@@ -498,7 +499,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $testDate = $service->getLatestDateTimeSeld();
 
         $this->assertSameDate($date, $testDate);
@@ -520,7 +521,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $testDate = $service->getLatestDate();
 
         $this->assertSameDate($date, $testDate);
@@ -542,7 +543,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $testDate = $service->getLatestDateSeld();
 
         $this->assertSameDate($date, $testDate);
@@ -578,7 +579,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->getCursDynamic($from, $to, $currencyEnum);
 
         $this->assertCount(\count($currencies), $list);
@@ -611,7 +612,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->keyRate($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -640,7 +641,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->dragMetDynamic($from, $to);
 
         $this->assertCount(\count($metals), $list);
@@ -670,7 +671,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->swapDynamic($from, $to);
 
         $this->assertCount(\count($swaps), $list);
@@ -703,7 +704,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->depoDynamic($from, $to);
 
         $this->assertCount(\count($depos), $list);
@@ -732,7 +733,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->ostatDynamic($from, $to);
 
         $this->assertCount(\count($depos), $list);
@@ -762,7 +763,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->ostatDepo($from, $to);
 
         $this->assertCount(\count($depos), $list);
@@ -792,7 +793,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->mrrf($from, $to);
 
         $this->assertCount(\count($mrrfs), $list);
@@ -821,7 +822,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->mrrf7d($from, $to);
 
         $this->assertCount(\count($mrrfs), $list);
@@ -850,7 +851,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->saldo($from, $to);
 
         $this->assertCount(\count($saldos), $list);
@@ -879,7 +880,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->ruoniaSV($from, $to);
 
         $this->assertCount(\count($ruoniaIndexes), $list);
@@ -911,7 +912,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->ruonia($from, $to);
 
         $this->assertCount(\count($ruoniaBids), $list);
@@ -942,7 +943,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->mkr($from, $to);
 
         $this->assertCount(\count($mkrs), $list);
@@ -977,7 +978,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->dv($from, $to);
 
         $this->assertCount(\count($dvs), $list);
@@ -1011,7 +1012,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->repoDebt($from, $to);
 
         $this->assertCount(\count($debts), $list);
@@ -1040,7 +1041,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->enumReutersValutes($onDate);
 
         $this->assertCount(\count($currencies), $list);
@@ -1070,7 +1071,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->getReutersCursOnDate($onDate);
 
         $this->assertCount(\count($rates), $list);
@@ -1101,7 +1102,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->overnight($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1130,7 +1131,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->swapDayTotal($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1159,7 +1160,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->swapMonthTotal($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1190,7 +1191,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->swapInfoSell($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1227,7 +1228,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->swapInfoSellVol($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1259,7 +1260,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->bLiquidity($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1298,7 +1299,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->biCurBase($from, $to);
 
         $this->assertCount(\count($rates), $list);
@@ -1322,7 +1323,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->biCurBacket();
 
         $this->assertCount(\count($rates), $list);
@@ -1352,7 +1353,7 @@ class CbrfDailyTest extends BaseTestCase
             $response
         );
 
-        $service = new CbrfDaily($soapClient);
+        $service = new CbrfDailyService($soapClient);
         $list = $service->repoDebtUSD($from, $to);
 
         $this->assertCount(\count($rates), $list);
