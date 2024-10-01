@@ -1,9 +1,9 @@
 Php курсы валют
 ===============
 
-[![Latest Stable Version](https://poser.pugx.org/liquetsoft/cbrfservice/v/stable.png)](https://packagist.org/packages/liquetsoft/cbrfservice)
-[![Total Downloads](https://poser.pugx.org/liquetsoft/cbrfservice/downloads.png)](https://packagist.org/packages/liquetsoft/cbrfservice)
-[![License](https://poser.pugx.org/liquetsoft/cbrfservice/license.svg)](https://packagist.org/packages/liquetsoft/cbrfservice)
+[![Latest Stable Version](https://poser.pugx.org/liquetsoft/cbrfservice/v)](https://packagist.org/packages/liquetsoft/cbrfservice)
+[![Total Downloads](https://poser.pugx.org/liquetsoft/cbrfservice/downloads)](https://packagist.org/packages/liquetsoft/cbrfservice)
+[![License](https://poser.pugx.org/liquetsoft/cbrfservice/license)](https://packagist.org/packages/liquetsoft/cbrfservice)
 [![Build Status](https://github.com/liquetsoft/cbrfservice/workflows/cbrf_service/badge.svg)](https://github.com/liquetsoft/cbrfservice/actions?query=workflow%3A%22cbrf_service%22)
 
 Php обертка для [сервиса Центробанка РФ](https://www.cbr.ru/development/DWS/).

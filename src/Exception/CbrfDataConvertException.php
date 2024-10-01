@@ -9,17 +9,17 @@ namespace Liquetsoft\CbrfService\Exception;
  */
 final class CbrfDataConvertException extends CbrfException
 {
-    public function __construct(string $from, string $to, \Throwable $previous = null)
+    public function __construct(string $from, string $to, ?\Throwable $previous = null)
     {
         if ($previous) {
-            $message = sprintf(
+            $message = \sprintf(
                 "Can't convert value from '%s' to '%s': %s",
                 $from,
                 $to,
                 $previous->getMessage()
             );
         } else {
-            $message = sprintf(
+            $message = \sprintf(
                 "Can't convert value from '%s' to '%s'",
                 $from,
                 $to

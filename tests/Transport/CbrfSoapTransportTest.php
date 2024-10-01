@@ -38,7 +38,7 @@ class CbrfSoapTransportTest extends BaseTestCase
         $this->assertSame($response, $testResponse);
     }
 
-    public function queryProvider(): array
+    public static function queryProvider(): array
     {
         $responseXml = new \stdClass();
         $responseXml->TestSoapAnyXmlResult = new \stdClass();

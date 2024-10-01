@@ -21,6 +21,7 @@
             </errorLevel>
         </PropertyNotSetInConstructor>
         <MixedAssignment errorLevel="suppress"/>
+        <MissingClassConstType errorLevel="suppress"/>
     </issueHandlers>
 
     <plugins>

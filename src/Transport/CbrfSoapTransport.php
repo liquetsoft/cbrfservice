@@ -24,9 +24,9 @@ final class CbrfSoapTransport implements CbrfTransport
     /**
      * {@inheritDoc}
      */
-    public function query(string $method, array $params = null): array
+    public function query(string $method, ?array $params = null): array
     {
-        $params = $params ?: [];
+        $params = $params ?? [];
 
         try {
             return $this->queryInternal($method, $params);
@@ -37,11 +37,6 @@ final class CbrfSoapTransport implements CbrfTransport
 
     /**
      * Makes an internal soap call.
-     *
-     * @param string $method
-     * @param array  $params
-     *
-     * @return array
      *
      * @psalm-suppress MixedPropertyFetch
      */

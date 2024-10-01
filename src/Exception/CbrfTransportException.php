@@ -13,15 +13,15 @@ final class CbrfTransportException extends CbrfException
 
     private readonly array $params;
 
-    public function __construct(string $method, array $params = [], \Throwable $previous = null)
+    public function __construct(string $method, array $params = [], ?\Throwable $previous = null)
     {
         $this->method = $method;
         $this->params = $params;
 
         if ($previous) {
-            $message = sprintf("Method '%s' query failed: '%s'", $method, $previous->getMessage());
+            $message = \sprintf("Method '%s' query failed: '%s'", $method, $previous->getMessage());
         } else {
-            $message = sprintf("Method '%s' query failed", $method);
+            $message = \sprintf("Method '%s' query failed", $method);
         }
 
         parent::__construct($message, 0, $previous);

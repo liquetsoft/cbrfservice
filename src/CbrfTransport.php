@@ -14,12 +14,7 @@ interface CbrfTransport
     /**
      * Creates and sends query to the service.
      *
-     * @param string     $method
-     * @param array|null $params
-     *
-     * @return array
-     *
      * @throws CbrfTransportException
      */
-    public function query(string $method, array $params = null): array;
+    public function query(string $method, ?array $params = null): array;
 }
