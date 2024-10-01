@@ -35,14 +35,7 @@ abstract class BaseTestCase extends TestCase
         );
     }
 
-    /**
-     * @param string     $method
-     * @param array|null $params
-     * @param mixed      $result
-     *
-     * @return CbrfTransport
-     */
-    protected function createTransportMock(string $method, ?array $params, $result = null): CbrfTransport
+    protected function createTransportMock(string $method, ?array $params, mixed $result = null): CbrfTransport
     {
         /** @var MockObject&CbrfTransport */
         $transport = $this->getMockBuilder(CbrfTransport::class)
@@ -63,8 +56,6 @@ abstract class BaseTestCase extends TestCase
 
     /**
      * Creates full fixture.
-     *
-     * @param array $description
      *
      * @return array{0: array<int, array<string, mixed>>, 1: mixed[]}
      *

@@ -35,7 +35,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function createImmutableDateTimeProvider(): array
+    public static function createImmutableDateTimeProvider(): array
     {
         $dateTime = new \DateTimeImmutable('-1 hour');
         $dateTimeTz = new \DateTimeImmutable('+1 hour', new \DateTimeZone('Asia/ShangHai'));
@@ -86,7 +86,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function arrayOfItemsProvider(): array
+    public static function arrayOfItemsProvider(): array
     {
         return [
             'correct list' => [
@@ -152,7 +152,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function enumIntProvider(): array
+    public static function enumIntProvider(): array
     {
         return [
             'correct enum' => [
@@ -200,10 +200,12 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function arrayProvider(): array
+    public static function arrayProvider(): array
     {
         $path = 'test1.test2';
-        $result = ['key' => 'value'];
+        $result = [
+            'key' => 'value',
+        ];
 
         $object = new \stdClass();
         $object->test2 = $result;
@@ -234,7 +236,11 @@ class DataHelperTest extends BaseTestCase
             ],
             'wrong type exception' => [
                 $path,
-                ['test1' => ['test2' => 'wqe']],
+                [
+                    'test1' => [
+                        'test2' => 'wqe',
+                    ],
+                ],
                 new CbrfDataAccessException($path, 'array'),
             ],
         ];
@@ -259,7 +265,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function dateTimeProvider(): array
+    public static function dateTimeProvider(): array
     {
         $path = 'test1.test2';
         $result = new \DateTimeImmutable();
@@ -323,7 +329,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider stringProvider
      */
-    public function testString(string $path, array $input, string|\Exception $result, string $default = null): void
+    public function testString(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -336,7 +342,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function stringProvider(): array
+    public static function stringProvider(): array
     {
         $path = 'test1.test2';
         $string = '     test     ';
@@ -388,7 +394,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider floatProvider
      */
-    public function testFloat(string $path, array $input, float|\Exception $result, float $default = null): void
+    public function testFloat(string $path, array $input, float|\Exception $result, ?float $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -401,7 +407,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function floatProvider(): array
+    public static function floatProvider(): array
     {
         $path = 'test1.test2';
         $result = 12.3;
@@ -460,7 +466,7 @@ class DataHelperTest extends BaseTestCase
         $this->assertSame($result, $testFloat);
     }
 
-    public function floatOrNullProvider(): array
+    public static function floatOrNullProvider(): array
     {
         $path = 'test1.test2';
         $result = 12.3;
@@ -506,7 +512,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider intProvider
      */
-    public function testInt(string $path, array $input, int|\Exception $result, int $default = null): void
+    public function testInt(string $path, array $input, int|\Exception $result, ?int $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -519,7 +525,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function intProvider(): array
+    public static function intProvider(): array
     {
         $path = 'test1.test2';
         $result = 12;
@@ -571,7 +577,7 @@ class DataHelperTest extends BaseTestCase
      *
      * @dataProvider charCodeProvider
      */
-    public function testCharCode(string $path, array $input, string|\Exception $result, string $default = null): void
+    public function testCharCode(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
             $this->expectExceptionObject($result);
@@ -584,7 +590,7 @@ class DataHelperTest extends BaseTestCase
         }
     }
 
-    public function charCodeProvider(): array
+    public static function charCodeProvider(): array
     {
         $path = 'test1.test2';
         $string = '     TeSt     ';
