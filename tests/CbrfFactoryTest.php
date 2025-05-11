@@ -10,11 +10,8 @@ use Liquetsoft\CbrfService\CbrfFactory;
 /**
  * @internal
  */
-class CbrfFactoryTest extends BaseTestCase
+final class CbrfFactoryTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
     public function testCreateDaily(): void
     {
         $daily = CbrfFactory::createDaily();

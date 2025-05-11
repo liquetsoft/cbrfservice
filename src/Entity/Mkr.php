@@ -42,6 +42,7 @@ final class Mkr implements CbrfEntityDate
         $this->d360 = DataHelper::floatOrNull('d360', $item);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

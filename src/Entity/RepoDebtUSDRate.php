@@ -24,11 +24,13 @@ final class RepoDebtUSDRate implements CbrfEntityRate
         $this->rate = DataHelper::float('TP', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;

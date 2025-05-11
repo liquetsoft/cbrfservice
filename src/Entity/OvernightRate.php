@@ -24,11 +24,13 @@ final class OvernightRate implements CbrfEntityRate
         $this->rate = DataHelper::float('stavka', $item, .0);
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

@@ -30,6 +30,7 @@ final class ReutersCurrency implements CbrfEntityCurrency
         $this->numericCode = DataHelper::int('num_code', $item);
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
@@ -40,16 +41,19 @@ final class ReutersCurrency implements CbrfEntityCurrency
         return $this->nameEn;
     }
 
+    #[\Override]
     public function getNom(): int
     {
         return 1;
     }
 
+    #[\Override]
     public function getNumericCode(): int
     {
         return $this->numericCode;
     }
 
+    #[\Override]
     public function getCharCode(): string
     {
         return $this->charCode;

@@ -27,6 +27,7 @@ final class PreciousMetalRate implements CbrfEntityRate
         $this->rate = DataHelper::float('price', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
@@ -37,6 +38,7 @@ final class PreciousMetalRate implements CbrfEntityRate
         return $this->code;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;

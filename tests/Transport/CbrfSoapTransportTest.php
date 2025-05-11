@@ -12,13 +12,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @internal
  */
-class CbrfSoapTransportTest extends BaseTestCase
+final class CbrfSoapTransportTest extends BaseTestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider queryProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queryProvider')]
     public function testQueryXmlResult(string $method, ?array $rawParams, ?array $queryParams, object $responseXml, array $response): void
     {
         /** @var MockObject&\SoapClient */
@@ -115,9 +111,6 @@ class CbrfSoapTransportTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     */
     public function testQueryException(): void
     {
         /** @var MockObject&\SoapClient */

@@ -30,6 +30,7 @@ final class ReutersCurrencyRate implements CbrfEntityRate
         $this->date = $date;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;
@@ -45,6 +46,7 @@ final class ReutersCurrencyRate implements CbrfEntityRate
         return $this->numericCode;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

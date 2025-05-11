@@ -27,6 +27,7 @@ final class OstatDepoRate implements CbrfEntityDate
         $this->total = DataHelper::float('total', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

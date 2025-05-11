@@ -7,7 +7,7 @@ namespace Liquetsoft\CbrfService\Tests\Mock;
 /**
  * @internal
  */
-class EntityMock
+final class EntityMock
 {
     private readonly string $test;
 

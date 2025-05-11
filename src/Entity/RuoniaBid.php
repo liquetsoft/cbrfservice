@@ -30,11 +30,13 @@ final class RuoniaBid implements CbrfEntityRate
         $this->dateUpdate = DataHelper::dateTime('DateUpdate', $item);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;

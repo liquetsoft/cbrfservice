@@ -14,13 +14,9 @@ use Liquetsoft\CbrfService\Tests\Mock\EntityMock;
 /**
  * @internal
  */
-class DataHelperTest extends BaseTestCase
+final class DataHelperTest extends BaseTestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider createImmutableDateTimeProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('createImmutableDateTimeProvider')]
     public function testCreateImmutableDateTime(string|\DateTimeInterface $input, \DateTimeInterface|\Exception $result): void
     {
         if ($result instanceof \Exception) {
@@ -61,13 +57,10 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @test
-     *
      * @psalm-param class-string $itemClass
      * @psalm-param array<int, mixed>|\Exception $result
-     *
-     * @dataProvider arrayOfItemsProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('arrayOfItemsProvider')]
     public function testArrayOfItems(string $path, array $data, string $itemClass, array|\Exception $result): void
     {
         if ($result instanceof \Exception) {
@@ -133,12 +126,9 @@ class DataHelperTest extends BaseTestCase
     }
 
     /**
-     * @test
-     *
      * @psalm-param class-string $enumClass
-     *
-     * @dataProvider enumIntProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enumIntProvider')]
     public function testEnumInt(string $path, array $data, string $enumClass, object $result): void
     {
         if ($result instanceof \Exception) {
@@ -182,11 +172,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider arrayProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('arrayProvider')]
     public function testArray(string $path, array $input, array|\Exception $result): void
     {
         if ($result instanceof \Exception) {
@@ -246,11 +232,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider dateTimeProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('dateTimeProvider')]
     public function testDateTime(string $path, array $input, \DateTimeInterface|\Exception $result): void
     {
         if ($result instanceof \Exception) {
@@ -324,11 +306,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider stringProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('stringProvider')]
     public function testString(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {
@@ -389,11 +367,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider floatProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('floatProvider')]
     public function testFloat(string $path, array $input, float|\Exception $result, ?float $default = null): void
     {
         if ($result instanceof \Exception) {
@@ -454,11 +428,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider floatOrNullProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('floatOrNullProvider')]
     public function testFloatOrNull(string $path, array $input, ?float $result): void
     {
         $testFloat = DataHelper::floatOrNull($path, $input);
@@ -507,11 +477,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider intProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('intProvider')]
     public function testInt(string $path, array $input, int|\Exception $result, ?int $default = null): void
     {
         if ($result instanceof \Exception) {
@@ -572,11 +538,7 @@ class DataHelperTest extends BaseTestCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider charCodeProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('charCodeProvider')]
     public function testCharCode(string $path, array $input, string|\Exception $result, ?string $default = null): void
     {
         if ($result instanceof \Exception) {

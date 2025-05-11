@@ -39,7 +39,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @internal
  */
-class CbrfDailyServiceTest extends BaseTestCase
+final class CbrfDailyServiceTest extends BaseTestCase
 {
     public const FIXTURES = [
         'CurrencyRate' => [
@@ -302,9 +302,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         ],
     ];
 
-    /**
-     * @test
-     */
     public function testGetCursOnDate(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
@@ -333,9 +330,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testGetCursOnDateByCharCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
@@ -357,9 +351,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSame(strtoupper($charCode), $item->getCharCode());
     }
 
-    /**
-     * @test
-     */
     public function testGetCursOnDateByNumericCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['CurrencyRate']);
@@ -381,9 +372,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSame($numericCode, $item->getNumericCode());
     }
 
-    /**
-     * @test
-     */
     public function testEnumValutes(): void
     {
         [$currencies, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
@@ -413,9 +401,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testEnumValuteByCharCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
@@ -437,9 +422,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSame(strtoupper($charCode), $item->getCharCode());
     }
 
-    /**
-     * @test
-     */
     public function testEnumValuteByNumericCode(): void
     {
         [$courses, $response] = $this->createFixture(self::FIXTURES['EnumValutes']);
@@ -461,9 +443,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSame($numericCode, $item->getNumericCode());
     }
 
-    /**
-     * @test
-     */
     public function testGetLatestDateTime(): void
     {
         $date = new \DateTimeImmutable();
@@ -483,9 +462,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSameDate($date, $testDate);
     }
 
-    /**
-     * @test
-     */
     public function testGetLatestDateTimeSeld(): void
     {
         $date = new \DateTimeImmutable();
@@ -505,9 +481,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSameDate($date, $testDate);
     }
 
-    /**
-     * @test
-     */
     public function testGetLatestDate(): void
     {
         $date = new \DateTimeImmutable();
@@ -527,9 +500,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSameDate($date, $testDate);
     }
 
-    /**
-     * @test
-     */
     public function testGetLatestDateSeld(): void
     {
         $date = new \DateTimeImmutable();
@@ -549,9 +519,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         $this->assertSameDate($date, $testDate);
     }
 
-    /**
-     * @test
-     */
     public function testGetCursDynamic(): void
     {
         [$currencies, $response] = $this->createFixture(self::FIXTURES['CursDynamic']);
@@ -594,9 +561,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testKeyRate(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['KeyRate']);
@@ -623,9 +587,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testDragMetDynamic(): void
     {
         [$metals, $response] = $this->createFixture(self::FIXTURES['DragMetDynamic']);
@@ -653,9 +614,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testSwapDynamic(): void
     {
         [$swaps, $response] = $this->createFixture(self::FIXTURES['SwapDynamic']);
@@ -686,9 +644,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testDepoDynamic(): void
     {
         [$depos, $response] = $this->createFixture(self::FIXTURES['DepoDynamic']);
@@ -715,9 +670,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testOstatDynamic(): void
     {
         [$depos, $response] = $this->createFixture(self::FIXTURES['OstatDynamic']);
@@ -745,9 +697,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testOstatDepo(): void
     {
         [$depos, $response] = $this->createFixture(self::FIXTURES['OstatDepo']);
@@ -775,9 +724,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testMrrf(): void
     {
         [$mrrfs, $response] = $this->createFixture(self::FIXTURES['Mrrf']);
@@ -804,9 +750,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testMrrf7d(): void
     {
         [$mrrfs, $response] = $this->createFixture(self::FIXTURES['Mrrf7D']);
@@ -833,9 +776,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testSaldo(): void
     {
         [$saldos, $response] = $this->createFixture(self::FIXTURES['Saldo']);
@@ -862,9 +802,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testRuoniaSV(): void
     {
         [$ruoniaIndexes, $response] = $this->createFixture(self::FIXTURES['RuoniaSV']);
@@ -894,9 +831,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testRuonia(): void
     {
         [$ruoniaBids, $response] = $this->createFixture(self::FIXTURES['Ruonia']);
@@ -925,9 +859,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testMKR(): void
     {
         [$mkrs, $response] = $this->createFixture(self::FIXTURES['MKR']);
@@ -960,9 +891,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testDV(): void
     {
         [$dvs, $response] = $this->createFixture(self::FIXTURES['DV']);
@@ -994,9 +922,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testRepoDebt(): void
     {
         [$debts, $response] = $this->createFixture(self::FIXTURES['RepoDebt']);
@@ -1025,9 +950,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testEnumReutersValutes(): void
     {
         [$currencies, $response] = $this->createFixture(self::FIXTURES['EnumReutersValutes']);
@@ -1055,9 +977,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testGetReutersCursOnDate(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['GetReutersCursOnDate']);
@@ -1084,9 +1003,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testOvernight(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['Overnight']);
@@ -1113,9 +1029,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testSwapDayTotal(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['SwapDayTotal']);
@@ -1142,9 +1055,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testSwapMonthTotal(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['SwapMonthTotal']);
@@ -1173,9 +1083,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testSwapInfoSell(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['SwapInfoSell']);
@@ -1210,9 +1117,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testSwapInfoSellVol(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['SwapInfoSellVol']);
@@ -1242,9 +1146,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testBLiquidity(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['Bliquidity']);
@@ -1281,9 +1182,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testBiCurBase(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['BiCurBase']);
@@ -1310,9 +1208,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testBiCurBacket(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['BiCurBacket']);
@@ -1335,9 +1230,6 @@ class CbrfDailyServiceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
     public function testRepoDebtUSD(): void
     {
         [$rates, $response] = $this->createFixture(self::FIXTURES['RepoDebtUSD']);

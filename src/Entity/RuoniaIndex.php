@@ -33,6 +33,7 @@ final class RuoniaIndex implements CbrfEntityDate
         $this->average6Month = DataHelper::float('RUONIA_AVG_6M', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
