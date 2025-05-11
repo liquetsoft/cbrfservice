@@ -12,9 +12,6 @@ use Liquetsoft\CbrfService\Tests\BaseTestCase;
  */
 final class CbrfDataConvertExceptionTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
     public function testGetMessageWithoutPreviuos(): void
     {
         $from = 'from_test';
@@ -26,9 +23,6 @@ final class CbrfDataConvertExceptionTest extends BaseTestCase
         $this->assertStringContainsString($to, $exception->getMessage());
     }
 
-    /**
-     * @test
-     */
     public function testGetMessageWithPreviuos(): void
     {
         $from = 'from_test';

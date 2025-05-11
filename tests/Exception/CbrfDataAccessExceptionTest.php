@@ -12,9 +12,6 @@ use Liquetsoft\CbrfService\Tests\BaseTestCase;
  */
 final class CbrfDataAccessExceptionTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
     public function testGetMessageWithPathAndType(): void
     {
         $path = 'path';
@@ -26,9 +23,6 @@ final class CbrfDataAccessExceptionTest extends BaseTestCase
         $this->assertStringContainsString($type, $exception->getMessage());
     }
 
-    /**
-     * @test
-     */
     public function testGetMessageWithPath(): void
     {
         $path = 'path';
@@ -38,9 +32,6 @@ final class CbrfDataAccessExceptionTest extends BaseTestCase
         $this->assertStringContainsString($path, $exception->getMessage());
     }
 
-    /**
-     * @test
-     */
     public function testGetMessageWithoutAll(): void
     {
         $exception = new CbrfDataAccessException();

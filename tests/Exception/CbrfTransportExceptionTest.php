@@ -12,9 +12,6 @@ use Liquetsoft\CbrfService\Tests\BaseTestCase;
  */
 final class CbrfTransportExceptionTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
     public function testGetMethod(): void
     {
         $method = 'test';
@@ -24,9 +21,6 @@ final class CbrfTransportExceptionTest extends BaseTestCase
         $this->assertSame($method, $exception->getMethod());
     }
 
-    /**
-     * @test
-     */
     public function testGetParams(): void
     {
         $method = 'test';
@@ -37,9 +31,6 @@ final class CbrfTransportExceptionTest extends BaseTestCase
         $this->assertSame($params, $exception->getParams());
     }
 
-    /**
-     * @test
-     */
     public function testGetMessageWithoutPreviuos(): void
     {
         $method = 'test';
@@ -49,9 +40,6 @@ final class CbrfTransportExceptionTest extends BaseTestCase
         $this->assertStringContainsString($method, $exception->getMessage());
     }
 
-    /**
-     * @test
-     */
     public function testGetMessageWithPreviuos(): void
     {
         $method = 'test';
