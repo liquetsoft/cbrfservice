@@ -14,7 +14,7 @@ use Liquetsoft\CbrfService\Tests\Mock\EntityMock;
 /**
  * @internal
  */
-class DataHelperTest extends BaseTestCase
+final class DataHelperTest extends BaseTestCase
 {
     /**
      * @test

@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\CbrfFactory;
 /**
  * @internal
  */
-class CbrfFactoryTest extends BaseTestCase
+final class CbrfFactoryTest extends BaseTestCase
 {
     /**
      * @test

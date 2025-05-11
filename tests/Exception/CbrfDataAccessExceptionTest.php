@@ -10,7 +10,7 @@ use Liquetsoft\CbrfService\Tests\BaseTestCase;
 /**
  * @internal
  */
-class CbrfDataAccessExceptionTest extends BaseTestCase
+final class CbrfDataAccessExceptionTest extends BaseTestCase
 {
     /**
      * @test

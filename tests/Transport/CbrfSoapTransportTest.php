@@ -12,7 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @internal
  */
-class CbrfSoapTransportTest extends BaseTestCase
+final class CbrfSoapTransportTest extends BaseTestCase
 {
     /**
      * @test

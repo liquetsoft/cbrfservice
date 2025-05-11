@@ -39,7 +39,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @internal
  */
-class CbrfDailyServiceTest extends BaseTestCase
+final class CbrfDailyServiceTest extends BaseTestCase
 {
     public const FIXTURES = [
         'CurrencyRate' => [
