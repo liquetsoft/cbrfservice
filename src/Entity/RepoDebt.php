@@ -30,6 +30,7 @@ final class RepoDebt implements CbrfEntityRate
         $this->date = DataHelper::dateTime('Date', $item);
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;
@@ -45,6 +46,7 @@ final class RepoDebt implements CbrfEntityRate
         return $this->debtFix;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

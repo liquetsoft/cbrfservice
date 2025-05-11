@@ -37,31 +37,37 @@ final class CurrencyRate implements CbrfEntityCurrency, CbrfEntityRate
         $this->date = $date;
     }
 
+    #[\Override]
     public function getCharCode(): string
     {
         return $this->charCode;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
     }
 
+    #[\Override]
     public function getNumericCode(): int
     {
         return $this->numericCode;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;
     }
 
+    #[\Override]
     public function getNom(): int
     {
         return $this->nom;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

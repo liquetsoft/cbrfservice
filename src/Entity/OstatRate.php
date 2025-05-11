@@ -27,6 +27,7 @@ final class OstatRate implements CbrfEntityDate
         $this->russia = DataHelper::float('InRuss', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

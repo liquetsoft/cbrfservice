@@ -24,11 +24,13 @@ final class DepoRate implements CbrfEntityRate
         $this->date = DataHelper::dateTime('DateDepo', $item);
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

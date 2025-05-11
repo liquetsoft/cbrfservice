@@ -24,11 +24,13 @@ final class BiCurBaseRate implements CbrfEntityRate
         $this->rate = DataHelper::float('VAL', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;

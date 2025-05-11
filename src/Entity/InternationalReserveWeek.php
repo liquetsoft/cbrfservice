@@ -24,11 +24,13 @@ final class InternationalReserveWeek implements CbrfEntityRate
         $this->rate = DataHelper::float('val', $item, .0);
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

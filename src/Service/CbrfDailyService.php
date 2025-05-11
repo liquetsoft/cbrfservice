@@ -50,6 +50,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getCursOnDate(\DateTimeInterface $date): array
     {
         $res = $this->transport->query(
@@ -69,6 +70,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getCursOnDateByCharCode(\DateTimeInterface $date, string $charCode): ?CurrencyRate
     {
         $list = $this->getCursOnDate($date);
@@ -87,6 +89,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getCursOnDateByNumericCode(\DateTimeInterface $date, int $numericCode): ?CurrencyRate
     {
         $list = $this->getCursOnDate($date);
@@ -105,6 +108,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function enumValutes(bool $seld = false): array
     {
         $res = $this->transport->query(
@@ -120,6 +124,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function enumValuteByCharCode(string $charCode, bool $seld = false): ?CurrencyEnum
     {
         $list = $this->enumValutes($seld);
@@ -138,6 +143,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function enumValuteByNumericCode(int $numericCode, bool $seld = false): ?CurrencyEnum
     {
         $list = $this->enumValutes($seld);
@@ -156,6 +162,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getLatestDateTime(): \DateTimeInterface
     {
         $res = $this->transport->query('GetLatestDateTime');
@@ -166,6 +173,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getLatestDateTimeSeld(): \DateTimeInterface
     {
         $res = $this->transport->query('GetLatestDateTimeSeld');
@@ -176,6 +184,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getLatestDate(): \DateTimeInterface
     {
         $res = $this->transport->query('GetLatestDate');
@@ -186,6 +195,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getLatestDateSeld(): \DateTimeInterface
     {
         $res = $this->transport->query('GetLatestDateSeld');
@@ -196,6 +206,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getCursDynamic(\DateTimeInterface $from, \DateTimeInterface $to, CbrfEntityCurrencyInternal $currency): array
     {
         $res = $this->transport->query(
@@ -225,6 +236,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function keyRate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -241,6 +253,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function dragMetDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -257,6 +270,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function swapDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -273,6 +287,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function depoDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -289,6 +304,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function ostatDynamic(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -305,6 +321,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function ostatDepo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -321,6 +338,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function mrrf(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -337,6 +355,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function mrrf7d(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -353,6 +372,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function saldo(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -369,6 +389,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function ruoniaSV(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -385,6 +406,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function ruonia(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -401,6 +423,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function mkr(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -417,6 +440,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function dv(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -433,6 +457,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function repoDebt(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -449,6 +474,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function enumReutersValutes(\DateTimeInterface $date): array
     {
         $res = $this->transport->query(
@@ -464,6 +490,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function getReutersCursOnDate(\DateTimeInterface $date): array
     {
         $res = $this->transport->query(
@@ -487,6 +514,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function overnight(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -503,6 +531,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function swapDayTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -519,6 +548,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function swapMonthTotal(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -535,6 +565,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function swapInfoSell(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -551,6 +582,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function swapInfoSellVol(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -567,6 +599,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function bLiquidity(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -583,6 +616,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function biCurBase(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(
@@ -599,6 +633,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function biCurBacket(): array
     {
         $res = $this->transport->query('BiCurBacket');
@@ -609,6 +644,7 @@ final class CbrfDailyService implements CbrfDaily
     /**
      * {@inheritdoc}
      */
+    #[\Override]
     public function repoDebtUSD(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $res = $this->transport->query(

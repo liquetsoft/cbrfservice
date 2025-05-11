@@ -69,6 +69,7 @@ final class Dv implements CbrfEntityDate
         return $this->vIDate;
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;

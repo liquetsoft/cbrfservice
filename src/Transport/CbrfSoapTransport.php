@@ -24,6 +24,7 @@ final class CbrfSoapTransport implements CbrfTransport
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function query(string $method, ?array $params = null): array
     {
         $params = $params ?? [];

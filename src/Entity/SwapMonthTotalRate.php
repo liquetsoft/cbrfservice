@@ -30,11 +30,13 @@ final class SwapMonthTotalRate implements CbrfEntityRate
         $this->eur = DataHelper::float('EUR', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;

@@ -43,8 +43,8 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Run test suite
-      run: composer run-script test
-
     - name: Run linters
       run: composer run-script linter
+
+    - name: Run test suite
+      run: composer run-script test

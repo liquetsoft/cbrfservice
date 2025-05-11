@@ -24,11 +24,13 @@ final class Saldo implements CbrfEntityRate
         $this->rate = DataHelper::float('DEADLINEBS', $item, .0);
     }
 
+    #[\Override]
     public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
+    #[\Override]
     public function getRate(): float
     {
         return $this->rate;

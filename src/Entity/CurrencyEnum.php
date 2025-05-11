@@ -39,11 +39,13 @@ final class CurrencyEnum implements CbrfEntityCurrencyInternal
         $this->charCode = DataHelper::charCode('VcharCode', $item, '');
     }
 
+    #[\Override]
     public function getInternalCode(): string
     {
         return $this->internalCode;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
@@ -54,6 +56,7 @@ final class CurrencyEnum implements CbrfEntityCurrencyInternal
         return $this->engName;
     }
 
+    #[\Override]
     public function getNom(): int
     {
         return $this->nom;
@@ -64,11 +67,13 @@ final class CurrencyEnum implements CbrfEntityCurrencyInternal
         return $this->commonCode;
     }
 
+    #[\Override]
     public function getNumericCode(): int
     {
         return $this->numericCode;
     }
 
+    #[\Override]
     public function getCharCode(): string
     {
         return $this->charCode;
